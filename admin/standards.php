@@ -21,15 +21,17 @@
 	 	// underscores for variables names
 	 	$this_variable = "something";
 	 	if (somethingFails()) {
-	 		throw new Exception("This is the specific problem");
+	 		throw new Exception(0001);
 	 	}
 
 	 	return true;
 
 
 	 } catch (Exception $e) {
-	 	error_log("Generic description $e->getMessage()");
-	 	return false;
+	 	$error = new Error($e->getCode()); 
+	 	$msg = "Error in doAThing: $error->message()";
+	 	error_log($msg);
+	 	return $error;
 	 }
  }
 

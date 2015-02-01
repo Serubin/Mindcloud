@@ -1,13 +1,15 @@
 <?php
-	/******************************************************************************
-	 * index.php
-	 * Author: Solomon Rubin, Michael Shullick
-	 * 31 January 2015
-	 * Index of api.mindcloud.io which handles requests made to the API.
-	 ******************************************************************************/
+/******************************************************************************
+ * index.php
+ * Author: Solomon Rubin, Michael Shullick
+ * 31 January 2015
+ * © mindcloud
+ * Index of api.mindcloud.io which handles requests made to the API.
+ ******************************************************************************/
 
 	// Check that the user is logged in
 	require_once "/var/www/api/include/db_config.php";
+	require_once "/var/www/api/include/error.php"
 	require_once "/var/www/api/include/utils.php";
 
 	// All CORS -- Security considerations?
@@ -82,7 +84,10 @@
 		// execute
 		$result['data'] = $controller->$action();
 
-		if
+		if ($result['data'] instanceof Error) {
+			throw new Exception($result['data']->message);
+		}
+
 		// The request itself was valid
 		$result['success'] = true;
 
