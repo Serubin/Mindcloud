@@ -10,7 +10,7 @@
   </head>
   <body>
 
-    <!-- top bar -->
+  	<!-- top bar -->
     <div class="fixed">
       <nav class="top-bar" data-topbar role="navigation">
         <ul class="title-area">
@@ -24,45 +24,46 @@
       <section class="top-bar-section">
           <!-- Right Nav Section -->
           <ul class="right">
+              <li class=""><a href="#" data-reveal-id="login_modal">log in</a></li>
               <li class=""><a href="#" data-reveal-id="register_modal">sign up</a></li>
-              <li class=""><a href="#">announcements</a></li>
-              <li class=""><a href="#">about</a></li>
-              <li class=""><a href="#">help</a></li>
-              <li class="show-for-small-only"><a href="#" >terms of service</a></li>
-              <li class="show-for-small-only"><a href="#">privacy policy</a></li>
-              <li class="show-for-small-only"><a href="#">contact</a></li>
+              <li class=""><a href="#">what is this?</a></li>
+              <li class="has-dropdown">
+                <a href="#">username</a>
+                <ul class="dropdown">
+                  <li><a href="#">First link in dropdown</a></li>
+                  <li class="active"><a href="#">Active link in dropdown</a></li>
+                </ul>
+            </li>
           </ul>
         </section>
       </nav>
     </div><!-- end top bar -->
 
-    <!-- title -->
-    <div id="title"> 
-      <p class="subtitle">welcome to</p>
-      <h1 class="title">mindcloud</h1>
-    </div>
 
-    <div class="row">
-      <div class="small-10 medium-4 column small-offset-1 medium-offset-4" id="login-pane">
-        <p>Please log in.</p>
-        <input id="login-email" type="text" placeholder="Email">
-        <input id="login-password" type="password" placeholder="Password">
-      </div> <!-- end login pane -->
-    </div>
+    <!-- bottom bar -->
+    <div class="bottom-bar">
+      <nav class="top-bar bottom-bar" data-topbar role="navigation">
+        <ul class="title-area">
+      		<a href="#" data-options="align:top" data-dropdown="drop" class="button">Link Dropdown &raquo;</a>
+			<ul id="drop" class="[tiny small medium large content]f-dropdown" data-dropdown-content>
+				<li><a href="#">solutions</a></li>
+				<li><a href="#">problems</a></li>
+			</ul>
+          <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+          <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+        </ul>
 
-
-    <nav class="top-bar bottom-bar show-for-medium-up" data-topbar role="navigation">
-
-      <section class="top-bar-section" >
+      <section class="top-bar-section">
           <!-- Right Nav Section -->
           <ul class="right">
-              <li class="show-for-small-up"><a href="#" >terms of service</a></li>
-              <li class="show-for-small-up"><a href="#">privacy policy</a></li>
-              <li class=""><a href="#">contact</a></li>
+              <li class=""><a href="#" data-reveal-id="login_modal">log in</a></li>
+              <li class=""><a href="#" data-reveal-id="register_modal">sign up</a></li>
+              <li class=""><a href="#">what is this?</a></li>
               
           </ul>
         </section>
       </nav>
+    </div><!-- end bottom bar -->
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/foundation/js/foundation.min.js"></script>
