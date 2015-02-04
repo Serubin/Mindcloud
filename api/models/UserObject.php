@@ -126,7 +126,7 @@ class UserObject
 							// Store user id, init status, email, and a session-specific salt in session array
 							$_SESSION['uid'] = $uid;
 							$_SESSION['email'] = $this->email;
-							$_SESSION['salt'] = create_salt();
+							$_SESSION['salt'] = create_salt(); // TODO remove use of salt from everywhere but password
 							$_SESSION['init'] = $init;
 						
 							// create session identification
@@ -134,7 +134,7 @@ class UserObject
 								0, "/", $_SERVER['SERVER_NAME'], true, true)) {
 								throw new Exception ("Failed to set ctoken cookie.");
 							}
-							$_SESSION['login_string'] = create_hash($db_password . $user_browser, $_SESSION['salt']);
+							$_SESSION['login_string'] = create_hash($db_password . $user_browser, $_SESSION['salt']); // TODO remove use of password hashing function for session ids. Rename to session id
 
 							// Obtain the id of the current list and store it as a session variable
 							$stmt->close();
