@@ -39,42 +39,7 @@ define("HASH_ITERATION_INDEX", 1);
 define("HASH_SALT_INDEX", 2);
 define("HASH_PBKDF2_INDEX", 3);
 
-// @author Michael Shullick
-function create_salt() {
-    return base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTE_SIZE, MCRYPT_DEV_URANDOM));
-}
-
-function create_hash($key, $salt) {
-    return base64_encode(pbkdf2(
-            PBKDF2_HASH_ALGORITHM,
-            $key,
-            $salt,
-            PBKDF2_ITERATIONS,
-            PBKDF2_HASH_BYTE_SIZE,
-            true
-        )
-    );
-}
-
-function validate_password($password, $salt, $hash) { 
-    //error_log("Password: $password, Salt: $salt, hash: $hash");
-    $pbkdf2 = base64_decode($hash);
-    return slow_equals(
-        $pbkdf2,
-        pbkdf2(
-            PBKDF2_HASH_ALGORITHM,
-            $password,
-            $salt,
-            PBKDF2_ITERATIONS,
-            PBKDF2_HASH_BYTE_SIZE,
-            true
-        )
-    );
-}
-
-// stock
-
-/*function create_hash($password)
+function create_hash($password)
 {
     // format: algorithm:iterations:salt:hash
     $salt = base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTE_SIZE, MCRYPT_DEV_URANDOM));
@@ -106,7 +71,7 @@ function validate_password($password, $correct_hash)
             true
         )
     );
-}*/
+}
 
 // Compares two strings $a and $b in length-constant time.
 function slow_equals($a, $b)

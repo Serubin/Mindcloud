@@ -12,15 +12,12 @@ require_once "/var/www/api/include/PasswordHash.php";
 	
 class UserObject
 {
-	public $email;
-	public $gender;
-	public $name;
-	public $password;
 	public $uid;
-	public $zip;
-	public $coords;
-	public $memberships;
-	public $current_list;
+	public $email;
+	public $password;
+	public $name;
+	public $birthday;
+	public $join_date;
 	private $_mysqli;
 
 	// Constructor
@@ -38,45 +35,56 @@ class UserObject
 
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->email, $this->password, $this->gender, $this->coords, $this->year)) {
+			if (!isset($this->email, $this->password, $this->name, $this->birthday, $this->join_date)) {
 				throw new Exception("unset vars."); ;
 			}
 
 			// Create a random salt, hash passwd
-			$random_salt = create_salt();
-			$password = create_hash($this->password, $random_salt);
+			$password = create_hash($this->password);
 
 			// Join data
 			$date = date('Y-m-d H:i:s');
 
+			$uid = 0;
+
 			// Submit login information
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO login (email, password, salt, init) VALUES (?, ?, ?, 1)")) {
-				$stmt->bind_param('sss', $this->email, $password, $random_salt);
+			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_accounts (email, password) VALUES (?, ?)")) {
+				$stmt->bind_param('ss', $this->email, $password);
 				$stmt->execute();
 			}
-			else {
+			else
 				throw new Exception($this->_mysqli->error);
-			}
+
+			$uid = $this->_mysqli->insert_id;
 
 			// reuse same stmt var
 			$stmt->close();
 
 			// Submit user data
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_data (gender, join_date, location) VALUES (?, ?, ?)")) {
-				$stmt->bind_param('sss', $this->gender, $date, $this->coords);
+			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_data (id, name, birthday, join_date) VALUES (?, ?, ?, ?)")) {
+				$stmt->bind_param('isss', $uid, $this->name, $this->birthday, $this->join_date);
 				$stmt->execute();
 			}
 			else
 				throw new Exception($this->_mysqli->error);
 			
+			// Submit user data
+			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_meta (id) VALUES (?)")) {
+				$stmt->bind_param('i', $uid);
+				$stmt->execute();
+			}
+			else
+				throw new Exception($this->_mysqli->error);
+
 			// Return true on success
 			return true;
 
 			// Report any failure
 		} catch (Exception $e) {
-			$msg = $e->getMessage() . " Registration failed.";
+			$error = new Error($e->getCode()); 
+			$msg = "Error in user registration: $error->message()"; // TODO change to better errors
 			error_log($msg);
-			return $msg;
+			return $error;
 		}
 	}
 
@@ -100,7 +108,7 @@ class UserObject
 			}
 
 			// prepare SQL statement 
-			if ($stmt = $this->_mysqli->prepare("SELECT uid, password, salt, init FROM login WHERE email = ? LIMIT 1")) {
+			if ($stmt = $this->_mysqli->prepare("SELECT id, password, salt, init FROM login WHERE email = ? LIMIT 1")) {
 				$stmt->bind_param('s', $this->email); // puts the email in place of the '?'
 				$stmt->execute();
 				$stmt->store_result();
