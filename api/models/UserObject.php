@@ -5,7 +5,7 @@
  * ©mindcloud
  * 1 February 2015
  * Model for the object representation of a user.
- * !!! NOT YET ADAPTED !!!!
+ * !!! NOT YET ADAPTED !!!! -- Inprogress
  ******************************************************************************/
 
 require_once "/var/www/api/include/PasswordHash.php"; 
@@ -18,6 +18,7 @@ class UserObject
 	public $name;
 	public $birthday;
 	public $join_date;
+	public $verified;
 	private $_mysqli;
 
 	// Constructor
@@ -51,8 +52,7 @@ class UserObject
 			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_accounts (email, password) VALUES (?, ?)")) {
 				$stmt->bind_param('ss', $this->email, $password);
 				$stmt->execute();
-			}
-			else
+			} else
 				throw new Exception($this->_mysqli->error);
 
 			$uid = $this->_mysqli->insert_id;
@@ -64,60 +64,20 @@ class UserObject
 			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_data (id, name, birthday, join_date) VALUES (?, ?, ?, ?)")) {
 				$stmt->bind_param('isss', $uid, $this->name, $this->birthday, $this->join_date);
 				$stmt->execute();
-			}
-			else
+			} else
 				throw new Exception($this->_mysqli->error);
 			
 			// Submit user data
 			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_meta (id) VALUES (?)")) {
 				$stmt->bind_param('i', $uid);
 				$stmt->execute();
-			}
-			else
+			} else
 				throw new Exception($this->_mysqli->error);
 
 			// Return true on success
 			return true;
 
 			// Report any failure
-		} catch (Exception $e) {
-			return $e;
-		}
-	}
-	
-	/* checkVerified()
-	 * Checks database to verify that the user has verified their email
-	 *
-	 * @returns true or false based on databse entry
-	 */
-	public function checkVerified(){
-		$result = array();
-		
-		try {
-			// Checks that required vars
-			if (!isset($this->uid)) {
-				throw new UserException("Unsert vars", "LOGIN");
-			}
-
-			// prepared SQL statement
-			if ($stmt = $this->_mysqli->prepare("SELECT id, verified FROM user_meta WHERE `id` = ? LIMIT 1"){
-				$stmt->bind_param('i', $this->uid);
-				$stmt->execute();
-				$stmt->store_results();
-				
-				// stores results from query in variables
-				$stmt->bind_result($db_uid, $verified);
-				$stmt->fetch();
-			
-				if($stmt->num_rows == 1){
-					// Returns true false based on database
-					return ($verified == 1) ? true : false;
-				} else {
-					throw new UserException("More than one row returned", "LOGIN")
-				}
-			} else {
-				throw new UserException($this->_mysqli->error, "LOGIN");
-			}
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -143,7 +103,7 @@ class UserObject
 			}
 
 			// prepare SQL statement 
-			if ($stmt = $this->_mysqli->prepare("SELECT id, password, salt, init FROM login WHERE email = ? LIMIT 1")) {
+			if ($stmt = $this->_mysqli->prepare("SELECT id, password, init FROM login WHERE email = ? LIMIT 1")) {
 				$stmt->bind_param('s', $this->email); // puts the email in place of the '?'
 				$stmt->execute();
 				$stmt->store_result();
@@ -156,52 +116,40 @@ class UserObject
 					
 					// TODO Defense against brute-force attacks
 					// Compare the submitted password to the stored password
-					if (validate_password($this->password, $salt, $db_password)) {
-						
+					if (validate_password($this->password, $db_password)) {
+
+						// Check if user has been verified
+						$verified  = checkVerified();
+						if (!$verified){
+							return false; // TODO how to specify the need to verify? should we use this guy or the one below
+						}
 						// TODO migrate to database session storage
 
-						// Password correct; retrieve, store, and sanitize info
-						$user_browser = $_SERVER['HTTP_USER_AGENT'];
+						// Calculates login length - 2 weeks (unix timestamp)
+						$expire = time() + (60*60*24*7*2);
+						$sid = hash('sha256', $uid . $this->email . time()); 
+						
+						if($stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
+							$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
+							$stmt->execute();
+						} else
+							throw new UserException($this->_mysqli->error, "LOGIN"));
 
-						// Store user id, init status, email, and a session-specific salt in session array
-						// TODO get rid of sessions bullshit
-						$_SESSION['uid'] = $uid;
-						$_SESSION['email'] = $this->email;
-						$_SESSION['verified'] = $verified;
+						}
+
+						// Store user id, verified status
+						$this->uid = $uid;
+						$this->verified = $verified;
 					
 						// create session identification
-						// TODO get rid of create_hash in cookie... add time for uniqueness
-						if (!setcookie('ctoken', create_hash($this->email . $user_browser, $_SESSION['salt']), 0, "/", $_SERVER['SERVER_NAME'], true, true)) {
-							throw new Exception ("Failed to set ctoken cookie.");
+						if (!setcookie('stoken', $sid, true, true)) {
+							throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
 						}
-						$_SESSION['login_string'] = create_hash($db_password . $user_browser, $_SESSION['salt']); // TODO remove use of password hashing function for session ids. Rename to session id
 
-						// Obtain the id of the current list and store it as a session variable
 						$stmt->close();
 						if (!$init) { // only if the user actually has a list at this point
-							if ($stmt = $this->_mysqli->prepare("SELECT current_list FROM user_data WHERE uid=?")) {
-								$stmt->bind_param("s", $uid);
-								$stmt->execute();
-								$stmt->store_result();
-								if ($stmt->num_rows == 1) {
-									$stmt->bind_result($listid);
-									$stmt->fetch();
-									$_SESSION['list'] = $listid;
-									//error_log("list set: " . $_SESSION['list']);
-
-									// Everthing executed correctly
-									return true;
-								}
-								else {
-									throw new Exception("Multiple or no lists found.");
-								}
-							}
-							else {
-								// Error encountered during prepare
-								throw new Exception("Failed to set current list in session; prepare failed: " . $mysqli->error);
-							}
-						}
-							else {
+							//TODO do an unverified action?? or move above
+						} else {
 							// Password is correct, but this is the user's first log in
 							return "init";
 						}
@@ -209,12 +157,10 @@ class UserObject
 						// Password is incorrect
 						return false;
 					}
+				} else {
+					throw new Exception("Multiple emails found."); //TODO REVIEW: This should return false, the more lickly outcome is the email doesn't exist in the database rather than multiples, please review
 				}
-				else {
-					throw new Exception("Multiple emails found.");
-				}
-			}
-			else {
+			} else {
 				throw new Exception("Prepare failed." . $this->_mysqli->error);
 			}
 		} catch (Exception $e) {
@@ -308,6 +254,44 @@ class UserObject
 			$msg = "User init failed. " . $e->getMessage();
 			error_log($msg);
 			return false;
+		}
+	}
+
+	/* checkVerified()
+	 * Checks database to verify that the user has verified their email
+	 *
+	 * @returns true or false based on databse entry
+	 */
+	public function checkVerified(){
+		$result = array();
+		
+		try {
+			// Checks that required vars
+			if (!isset($this->uid)) {
+				throw new UserException("Unsert vars", "LOGIN");
+			}
+
+			// prepared SQL statement
+			if ($stmt = $this->_mysqli->prepare("SELECT id, verified FROM user_meta WHERE `id` = ? LIMIT 1"){
+				$stmt->bind_param('i', $this->uid);
+				$stmt->execute();
+				$stmt->store_results();
+				
+				// stores results from query in variables
+				$stmt->bind_result($db_uid, $verified);
+				$stmt->fetch();
+			
+				if($stmt->num_rows == 1){
+					// Returns true false based on database
+					return ($verified == 1) ? true : false;
+				} else {
+					throw new UserException("More than one row returned", "LOGIN")
+				}
+			} else {
+				throw new UserException($this->_mysqli->error, "LOGIN");
+			}
+		} catch (Exception $e) {
+			return $e;
 		}
 	}
 
