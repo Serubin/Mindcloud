@@ -27,11 +27,8 @@
 	 	return true;
 
 
-	 } catch (Exception $e) {
-	 	$error = new Error($e->getCode()); 
-	 	$msg = "Error in doAThing: $error->message()";
-	 	error_log($msg);
-	 	return $error;
+	 } catch (Exception $e) { 
+	 	return $e;	
 	 }
  }
 

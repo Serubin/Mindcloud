@@ -84,8 +84,9 @@
 		// execute
 		$result['data'] = $controller->$action();
 
-		if ($result['data'] instanceof Error) {
-			throw new Exception($result['data']->message);
+		if ($result['data'] instanceof Exception) {
+
+			throw new Exception($result['data']);
 		}
 
 		// The request itself was valid
@@ -95,7 +96,7 @@
 	catch (Exception $e) {
 		$result = Array();
 		$result['success'] = false;
-		$result['error'] = $e->getMessage();
+		$result['error'] = $e->stringify();
 	}
 	
 	// return the result
