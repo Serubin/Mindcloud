@@ -8,11 +8,25 @@
  * Error digits are in hexadecimal.
  *****************************************************************************/
 
+/**
+ * MindcloudException
+ * Contains any functions we may need for app-specific exceptions.
+ * For use with module-specific exception handlers.
+ */
 class MindcloudException extends Exception {
 
+	// numeric id for the individual module of error
 	private $module_id;
+
+	// numeric id for the individual function in which the error occurred
 	private $function_id;
 
+	/**
+	 * consutructor
+	 * @param $msg String containing an explaination of what happened
+	 * @param $module numeric id for the individual module of error
+	 * @param $function numeric id for theindividual function that failed
+	 */
 	public function __construct($msg, $module, $function) {
 		parent::__construct($msg, (int) ($MODULE_ID . $function));
 
@@ -23,17 +37,17 @@ class MindcloudException extends Exception {
 
 	/*
 	 * stringify()
-	 * @return string containing the info of this exception
+	 * @return a pretty string containing the info of this exception
 	 */
 	public function stringify() {
-		return 	$module_id . $function_id . $this->getMessage();
+		return 	$module_id . $function_id . ": " . $this->getMessage();
 	}
 
 }
 
-
 /*
- * Class for problems in Users
+ * Class for exceptions in handling Users
+ * Module ID: 0
  */
 class UserException extends MindcloudException {
 
@@ -51,6 +65,10 @@ class UserException extends MindcloudException {
 	}
 }
 
+/*
+ * Class for exceptions in handling posts
+ * Module ID: 1
+ */
 class PostException extends MindcloudException {
 
 	$MODULE_ID = '1';
@@ -66,6 +84,10 @@ class PostException extends MindcloudException {
 
 }
 
+/*
+ * Class for exceptions in Problem handlers
+ * Module ID: 2
+ */
 class ProblemException extends MindcloudException {
 
 	$MODULE_ID = '2';
@@ -81,6 +103,10 @@ class ProblemException extends MindcloudException {
 
 }
 
+/*
+ * Class for exceptions in handling Solutions
+ * Module ID: 3
+ */
 class SolutionException extends MindcloudException {
 	
 	$MODULE_ID = '3';
@@ -96,6 +122,10 @@ class SolutionException extends MindcloudException {
 
 }
 
+/*
+ * Class for exceptions in handling chat Threads
+ * Module ID: 4
+ */
 class ThreadException extends MindcloudException {
 
 	$MODULE_ID = '4';
@@ -111,6 +141,10 @@ class ThreadException extends MindcloudException {
 
 }
 
+/*
+ * Class for exceptions individual Forum
+ * Module ID: 0
+ */
 class ForumException extends MindcloudException {
 
 	$MODULE_ID = '5';
@@ -125,4 +159,3 @@ class ForumException extends MindcloudException {
 	}
 
 }
-

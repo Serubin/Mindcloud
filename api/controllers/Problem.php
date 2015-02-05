@@ -17,4 +17,8 @@ class Problem
 		$this->_params = $params;
 		$this->_mysqli = $mysqli;
 	}
+
+	public function create() {
+		
+	}
 }
