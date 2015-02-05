@@ -81,10 +81,45 @@ class UserObject
 
 			// Report any failure
 		} catch (Exception $e) {
-			$error = new Error($e->getCode()); 
-			$msg = "Error in user registration: $error->message()"; // TODO change to better errors
-			error_log($msg);
-			return $error;
+			return $e;
+		}
+	}
+	
+	/* checkVerified()
+	 * Checks database to verify that the user has verified their email
+	 *
+	 * @returns true or false based on databse entry
+	 */
+	public function checkVerified(){
+		$result = array();
+		
+		try {
+			// Checks that required vars
+			if (!isset($this->uid)) {
+				throw new UserException("Unsert vars", "LOGIN");
+			}
+
+			// prepared SQL statement
+			if ($stmt = $this->_mysqli->prepare("SELECT id, verified FROM user_meta WHERE `id` = ? LIMIT 1"){
+				$stmt->bind_param('i', $this->uid);
+				$stmt->execute();
+				$stmt->store_results();
+				
+				// stores results from query in variables
+				$stmt->bind_result($db_uid, $verified);
+				$stmt->fetch();
+			
+				if($stmt->num_rows == 1){
+					// Returns true false based on database
+					return ($verified == 1) ? true : false;
+				} else {
+					throw new UserException("More than one row returned", "LOGIN")
+				}
+			} else {
+				throw new UserException($this->_mysqli->error, "LOGIN");
+			}
+		} catch (Exception $e) {
+			return $e;
 		}
 	}
 
@@ -102,7 +137,7 @@ class UserObject
 		$result = array();
 
 		try {
-			// Check that vars are set
+			// Check that requires vars are set
 			if (!isset($this->email, $this->password)) {
 				throw new Exception("Unset vars.");
 			}
@@ -114,83 +149,80 @@ class UserObject
 				$stmt->store_result();
 				
 				// stores results from query in variables corresponding to statement
-				$stmt->bind_result($uid, $db_password, $salt, $init);
+				$stmt->bind_result($uid, $db_password);
 				$stmt->fetch();
 
 				if ($stmt->num_rows == 1) { // if there is not 0 results
 					
-					// Defense against brute-force attacks
-					/*if (checkbrute($email, $this->_mysqli) == true) {
-						// Account locked; act accordingly
-						return false;
-					}
-					else {*/
-						// Compare the submitted password to the stored password
-						if (validate_password($this->password, $salt, $db_password)) {
-							
-							// Password correct; retrieve, store, and sanitize info
-							$user_browser = $_SERVER['HTTP_USER_AGENT'];
-
-							// Store user id, init status, email, and a session-specific salt in session array
-							$_SESSION['uid'] = $uid;
-							$_SESSION['email'] = $this->email;
-							$_SESSION['salt'] = create_salt(); // TODO remove use of salt from everywhere but password
-							$_SESSION['init'] = $init;
+					// TODO Defense against brute-force attacks
+					// Compare the submitted password to the stored password
+					if (validate_password($this->password, $salt, $db_password)) {
 						
-							// create session identification
-							if (!setcookie('ctoken', create_hash($this->email . $user_browser, $_SESSION['salt']), 
-								0, "/", $_SERVER['SERVER_NAME'], true, true)) {
-								throw new Exception ("Failed to set ctoken cookie.");
-							}
-							$_SESSION['login_string'] = create_hash($db_password . $user_browser, $_SESSION['salt']); // TODO remove use of password hashing function for session ids. Rename to session id
+						// TODO migrate to database session storage
 
-							// Obtain the id of the current list and store it as a session variable
-							$stmt->close();
-							if (!$init) { // only if the user actually has a list at this point
-								if ($stmt = $this->_mysqli->prepare("SELECT current_list FROM user_data WHERE uid=?")) {
-									$stmt->bind_param("s", $uid);
-									$stmt->execute();
-									$stmt->store_result();
-									if ($stmt->num_rows == 1) {
-										$stmt->bind_result($listid);
-										$stmt->fetch();
-										$_SESSION['list'] = $listid;
-										//error_log("list set: " . $_SESSION['list']);
+						// Password correct; retrieve, store, and sanitize info
+						$user_browser = $_SERVER['HTTP_USER_AGENT'];
 
-										// Everthing executed correctly
-										return true;
-									}
-									else {
-										throw new Exception("Multiple or no lists found.");
-									}
-								}
-								else {
-									// Error encountered during prepare
-									throw new Exception("Failed to set current list in session; prepare failed: " . $mysqli->error);
-								}
-							}
-								else {
-								// Password is correct, but this is the user's first log in
-								return "init";
-							}
-						} else {
-							// Password is incorrect
-							return false;
+						// Store user id, init status, email, and a session-specific salt in session array
+						// TODO get rid of sessions bullshit
+						$_SESSION['uid'] = $uid;
+						$_SESSION['email'] = $this->email;
+						$_SESSION['verified'] = $verified;
+					
+						// create session identification
+						// TODO get rid of create_hash in cookie... add time for uniqueness
+						if (!setcookie('ctoken', create_hash($this->email . $user_browser, $_SESSION['salt']), 0, "/", $_SERVER['SERVER_NAME'], true, true)) {
+							throw new Exception ("Failed to set ctoken cookie.");
 						}
-					}
-					else {
-						throw new Exception("Multiple emails found.");
+						$_SESSION['login_string'] = create_hash($db_password . $user_browser, $_SESSION['salt']); // TODO remove use of password hashing function for session ids. Rename to session id
+
+						// Obtain the id of the current list and store it as a session variable
+						$stmt->close();
+						if (!$init) { // only if the user actually has a list at this point
+							if ($stmt = $this->_mysqli->prepare("SELECT current_list FROM user_data WHERE uid=?")) {
+								$stmt->bind_param("s", $uid);
+								$stmt->execute();
+								$stmt->store_result();
+								if ($stmt->num_rows == 1) {
+									$stmt->bind_result($listid);
+									$stmt->fetch();
+									$_SESSION['list'] = $listid;
+									//error_log("list set: " . $_SESSION['list']);
+
+									// Everthing executed correctly
+									return true;
+								}
+								else {
+									throw new Exception("Multiple or no lists found.");
+								}
+							}
+							else {
+								// Error encountered during prepare
+								throw new Exception("Failed to set current list in session; prepare failed: " . $mysqli->error);
+							}
+						}
+							else {
+							// Password is correct, but this is the user's first log in
+							return "init";
+						}
+					} else {
+						// Password is incorrect
+						return false;
 					}
 				}
 				else {
-					throw new Exception("Prepare failed." . $this->_mysqli->error);
+					throw new Exception("Multiple emails found.");
 				}
+			}
+			else {
+				throw new Exception("Prepare failed." . $this->_mysqli->error);
+			}
 		} catch (Exception $e) {
 			error_log("Login failed. " . $e->getMessage());
 			return false;
 		}
 	}
-
+	
 	/* login_check()
 	 * Verify whether this given user is logged in
 	 * Returns true or false depending on whether the user is presently logged in,

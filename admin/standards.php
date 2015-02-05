@@ -11,8 +11,8 @@
   *	doAthing()
   * Here a thing is done.
   * Functions will always at least return false on failure, and either return
-  * data or true on success.
   * @param $withThisThing this guy changes what this thing does
+  * @returns data or true on success.
   */
  function doAThing($withThisThing) {
 
