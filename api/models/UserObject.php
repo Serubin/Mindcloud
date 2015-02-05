@@ -77,7 +77,7 @@ class UserObject
 			// Return true on success
 			return true;
 
-			// Report any failure
+		// Report any failure
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -112,60 +112,60 @@ class UserObject
 				$stmt->bind_result($uid, $db_password);
 				$stmt->fetch();
 
-				if ($stmt->num_rows == 1) { // if there is not 0 results
-					
-					// TODO Defense against brute-force attacks
-					// Compare the submitted password to the stored password
-					if (validate_password($this->password, $db_password)) {
+				// TODO Defense against brute-force attacks
 
-						// Check if user has been verified
-						$verified  = checkVerified();
-						if (!$verified){
-							return false; // TODO how to specify the need to verify? should we use this guy or the one below
-						}
-						// TODO migrate to database session storage
-
-						// Calculates login length - 2 weeks (unix timestamp)
-						$expire = time() + (60*60*24*7*2);
-						$sid = hash('sha256', $uid . $this->email . time()); 
-						
-						if($stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
-							$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
-							$stmt->execute();
-						} else
-							throw new UserException($this->_mysqli->error, "LOGIN"));
-
-						}
-
-						// Store user id, verified status
-						$this->uid = $uid;
-						$this->verified = $verified;
-					
-						// create session identification
-						if (!setcookie('stoken', $sid, true, true)) {
-							throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
-						}
-
-						$stmt->close();
-						if (!$init) { // only if the user actually has a list at this point
-							//TODO do an unverified action?? or move above
-						} else {
-							// Password is correct, but this is the user's first log in
-							return "init";
-						}
-					} else {
-						// Password is incorrect
-						return false;
-					}
-				} else {
-					throw new Exception("Multiple emails found."); //TODO REVIEW: This should return false, the more lickly outcome is the email doesn't exist in the database rather than multiples, please review
+				if ($stmt->num_rows != 1) {
+					return false; // if there is 0 results
 				}
+				// Compare the submitted password to the stored password
+				if (!validate_password($this->password, $db_password)) {
+					return false; // Password is incorrect
+				}
+				// Check if user has been verified
+				$verified  = checkVerified();
+				if (!$verified){
+					return false; // TODO how to specify the need to verify? should we use this guy or the one below
+				}
+				// TODO migrate to database session storage
+
+				// Calculates login length - 2 weeks (unix timestamp)
+				$expire = time() + (60*60*24*7*2);
+				$sid = hash('sha256', $uid . $this->email . time()); 
+				
+				if($stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
+					$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
+					$stmt->execute();
+				} else
+					throw new UserException($this->_mysqli->error, "LOGIN"));
+
+				}
+
+				// Store user id, verified status
+				$this->uid = $uid;
+				$this->verified = $verified;
+			
+				// create session identification
+				if (!setcookie('stoken', $sid, true, true)) {
+					throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
+				}
+
+				$stmt->close();
+				if (!$verified) { // only if the user actually has a list at this point
+					//TODO do an unverified action?? or move above
+				} else {
+					// Password is correct, but this is the user's first log in
+					return "unverified";
+				}
+
+				// Return true on success
+				return true;
+
+			// Report any failure
 			} else {
-				throw new Exception("Prepare failed." . $this->_mysqli->error);
+				throw new UserException("Prepare failed." . $this->_mysqli->error, "LOGIN");
 			}
 		} catch (Exception $e) {
-			error_log("Login failed. " . $e->getMessage());
-			return false;
+			return $e;
 		}
 	}
 	
