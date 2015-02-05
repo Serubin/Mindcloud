@@ -7,29 +7,41 @@
  * All lines will fit with 80 columns. 
  *****************************************************************************/
 
- /**
-  *	doAthing()
-  * Here a thing is done.
-  * Functions will always at least return false on failure, and either return
-  * @param $withThisThing this guy changes what this thing does
-  * @returns data or true on success.
-  */
- function doAThing($withThisThing) {
 
- 	try {
-
-	 	// underscores for variables names
-	 	$this_variable = "something";
-	 	if (somethingFails()) {
-	 		throw new Exception(0001);
-	 	}
-
-	 	return true;
+class Thing {
 
 
-	 } catch (Exception $e) { 
-	 	return $e;	
-	 }
- }
+	/**
+	*	doAthing()
+	* Here a thing is done. This is the controller for a generic thing.
+	* Functions will always at least return false on failure, and either return
+	* @param $withThisThing this guy changes what this thing does
+	* @return data or true on success.
+	*/
+	function doAThing($withThisThing) {
+
+	try {
+
+		// underscores for variables names
+		$this_variable = "something";
+		$thing = new ThingObject();
+		if (!doAnotherThing()) {
+			throw new Exception(0001);
+		}
+
+		return true;
+
+
+		} catch (Exception $e) { 
+		return $e;	
+		}
+	}
+}
+
+class ThingObject {
+
+
+
+}
 
 // No ? > (minues the space) at the end of any php files 
