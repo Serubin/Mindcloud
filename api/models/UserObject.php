@@ -142,9 +142,12 @@ class UserObject
 			// Store user id, verified status
 			$this->uid = $uid;
 			$this->verified = $verified;
+
+			bool setcookie ( string $name [, string $value [, int $expire = 0 [, string $path 
+				[, string $domain [, bool $secure = false [, bool $httponly = false ]]]]]] )
 		
 			// create session identification
-			if (!setcookie('stoken', $sid, true, true)) {
+			if (!setcookie('stoken', $sid, $expire, "/", "minecloud.io", ,true, true)) {
 				throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
 			}
 
@@ -171,33 +174,32 @@ class UserObject
 	function login_check() {
 
 		try {
-				// Retrieve stoken
-				$sid = $_COOKIE['stoken'];
-				if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `ip` FROM user_sessions WHERE `id` = ? AND `ip` = ? LIMIT 1")) {
-					 throw new UserException("Prepare failed.", "CHECK");
-				}
-				$stmt->bind_param('ss', $sid, $_SERVER['REMOTE_ADDR']);
-				$stmt->execute();
-				$stmt->store_result();
-				
-				// If user exists, retreive credentials
-				if ($stmt->num_rows != 1) {
- 					// Not logged in 
-	           		return false;
-				}
-				// Bind/Fetch results
-				$stmt->bind_result($db_sid, $db_uid, $db_ip);
-				$stmt->fetch();
-				
-				// Save retreived info
-				$this->uid = $db_uid;
-		
-				// If the user hasn't been initalized, do that now
-				if (checkVerified()) 
-					return "unverified";
-				// All checks out
-				return true;
-	        } 
+			// Retrieve stoken
+			$sid = $_COOKIE['stoken'];
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `ip` FROM user_sessions WHERE `id` = ? AND `ip` = ? LIMIT 1")) {
+				 throw new UserException("Prepare failed.", "CHECK");
+			}
+			$stmt->bind_param('ss', $sid, $_SERVER['REMOTE_ADDR']);
+			$stmt->execute();
+			$stmt->store_result();
+			
+			// If user exists, retreive credentials
+			if ($stmt->num_rows != 1) {
+					// Not logged in 
+	       		return false;
+			}
+			// Bind/Fetch results
+			$stmt->bind_result($db_sid, $db_uid, $db_ip);
+			$stmt->fetch();
+			
+			// Save retreived info
+			$this->uid = $db_uid;
+
+			// If the user hasn't been initalized, do that now
+			if (checkVerified()) 
+				return "unverified";
+			// All checks out
+			return true;
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -235,28 +237,26 @@ class UserObject
 		try {
 			// Checks that required vars
 			if (!isset($this->uid)) {
-				throw new UserException("Unsert vars", "LOGIN");
+				throw new UserException("Unsert vars", "VERIFY");
 			}
 
 			// prepared SQL statement
-			if ($stmt = $this->_mysqli->prepare("SELECT id, verified FROM user_meta WHERE `id` = ? LIMIT 1"){
-				$stmt->bind_param('i', $this->uid);
-				$stmt->execute();
-				$stmt->store_results();
-				
-				// stores results from query in variables
-				$stmt->bind_result($db_uid, $verified);
-				$stmt->fetch();
-			
-				if($stmt->num_rows == 1){
-					// Returns true false based on database
-					return ($verified == 1) ? true : false;
-				} else {
-					throw new UserException("More than one row returned", "LOGIN")
-				}
-			} else {
-				throw new UserException($this->_mysqli->error, "LOGIN");
+			if (!$stmt = $this->_mysqli->prepare("SELECT id, verified FROM user_meta WHERE `id` = ? LIMIT 1"){
+				throw new UserException($this->_mysqli->error, "VERIFY");
 			}
+			$stmt->bind_param('i', $this->uid);
+			$stmt->execute();
+			$stmt->store_results();
+			
+			// stores results from query in variables
+			$stmt->bind_result($db_uid, $verified);
+			$stmt->fetch();
+		
+			if($stmt->num_rows != 1){
+				throw new UserException("More than one row returned", "VERIFY")
+			}
+			// Returns true false based on database
+			return ($verified == 1) ? true : false;
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -295,22 +295,9 @@ class UserObject
 	 * destroys the session.
 	 */
 	function logout() {
-	
-		// Reset sessions vars
-		$_SESSION = array();
-		
-		// get session params
-		$params = session_get_cookie_params();
-		
-		// Delete the cookie
-		setcookie(session_name(), 
-			"", time() - 42000, 
-			$params["path"], 
-			$params["domain"],
-			$params["secure"],
-			$params["httponly"]);
 
-		setcookie('ctoken', "", time() - 42000);
+
+		setcookie('stoken', "", time() - 42000);
 		
 		$_COOKIE = array();
 
