@@ -18,7 +18,24 @@ class Solution
 		$this->_mysqli = $mysqli;
 	}
 
+
+	/**
+	 * create()
+	 * Creates a new solution in the db and stores the assocated information.
+	 * @return true on success, exception on fail
+	 */
 	public function create() {
-		
+		// TODO
 	}
+
+	/**
+	 * load()
+	 * Load the associated content with the pre-set project id
+	 * @return true on succcess, indicating this instance has all associated
+	 * content
+	 */
+	public function load() {
+		// TODO
+	}
+
 }
