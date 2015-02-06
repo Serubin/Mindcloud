@@ -131,20 +131,16 @@ class UserObject
 			$expire = time() + (60*60*24*7*2);
 			$sid = hash('sha256', $uid . $this->email . time()); 
 			
-			if($stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
-				$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
-				$stmt->execute();
-			} else
+			if(!$stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
 				throw new UserException($this->_mysqli->error, "LOGIN"));
-
 			}
+
+			$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
+			$stmt->execute();
 
 			// Store user id, verified status
 			$this->uid = $uid;
 			$this->verified = $verified;
-
-			bool setcookie ( string $name [, string $value [, int $expire = 0 [, string $path 
-				[, string $domain [, bool $secure = false [, bool $httponly = false ]]]]]] )
 		
 			// create session identification
 			if (!setcookie('stoken', $sid, $expire, "/", "minecloud.io", ,true, true)) {
@@ -275,8 +271,8 @@ class UserObject
 	public function load() {
 		// TODO should load get all neccessary user info?
 		try {
-			if (!isset($this->uid, $this->current_list)) {
-				throw new Exception("Unset vars. uid: " . $this->uid . "list: " . $this->current_list);
+			if (!isset($this->uid)) {
+				throw new UserException("Unset vars: UID ", "LOAD");
 			}
 
 			// TODO
@@ -284,8 +280,6 @@ class UserObject
 			return $result;
 
 		} catch (Exception $e) {
-			$msg = "Getting user's lists failed. " . $e->getMessage();
-			error_log($msg);
 			return false;
 		}
 	}
@@ -296,13 +290,15 @@ class UserObject
 	 */
 	function logout() {
 
+		// Remove from database
+		if(!$stmt = $this->_mysql->prepared("DELETE FROM `user_sessions` WHERE id = ?")){
+			throw new UserException($this->_mysqli->error, "LOGIN"));
+		}
+		$stmt->bind_param('i', $sid);
+		$stmt->execute();
 
-		setcookie('stoken', "", time() - 42000);
-		
-		$_COOKIE = array();
-
-		// Destroy session
-		session_destroy();
+		// Nullify cookie
+		setcookie('stoken', "", time()-9999999, "/", "minecloud.io", ,true, true)
 		return true;
 	}
 }
