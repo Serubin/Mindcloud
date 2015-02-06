@@ -37,7 +37,7 @@ class UserObject
 		try {
 			// Checks that all required post variables are set
 			if (!isset($this->email, $this->password, $this->name, $this->birthday, $this->join_date)) {
-				throw new Exception("unset vars."); ;
+				throw new UserException("unset vars.", "REGISTER");
 			}
 
 			// Create a random salt, hash passwd
@@ -49,11 +49,11 @@ class UserObject
 			$uid = 0;
 
 			// Submit login information
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_accounts (email, password) VALUES (?, ?)")) {
+			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_accounts` (`email`, `password`) VALUES (?, ?)")) {
 				$stmt->bind_param('ss', $this->email, $password);
 				$stmt->execute();
 			} else
-				throw new Exception($this->_mysqli->error);
+				throw new UserException($this->_mysqli->error, "REGISTER");
 
 			$uid = $this->_mysqli->insert_id;
 
@@ -61,18 +61,18 @@ class UserObject
 			$stmt->close();
 
 			// Submit user data
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_data (id, name, birthday, join_date) VALUES (?, ?, ?, ?)")) {
+			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `name`, `birthday`, `join_date`) VALUES (?, ?, ?, ?)")) {
 				$stmt->bind_param('isss', $uid, $this->name, $this->birthday, $this->join_date);
 				$stmt->execute();
 			} else
-				throw new Exception($this->_mysqli->error);
+				throw new UserException($this->_mysqli->error, "REGISTER");
 			
 			// Submit user data
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO user_meta (id) VALUES (?)")) {
+			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_meta` (`id`) VALUES (?)")) {
 				$stmt->bind_param('i', $uid);
 				$stmt->execute();
 			} else
-				throw new Exception($this->_mysqli->error);
+				throw new UserException($this->_mysqli->error, "REGISTER");
 
 			// Return true on success
 			return true;
@@ -86,11 +86,7 @@ class UserObject
 	/* login() 
 	 * If the user passes the correct credentials, stores a 
 	 * session id and token on the client.
-	 * return an json array of: 
-	 * {
-	 * 		result: true/false (whether user logged in)
-	 *		init: true/false (whether the user has set his/her first list, memberships) 
-	 * }
+	 * @returns true/false/unverified
 	 */
 	public function login() {
 
@@ -103,67 +99,65 @@ class UserObject
 			}
 
 			// prepare SQL statement 
-			if ($stmt = $this->_mysqli->prepare("SELECT id, password, init FROM login WHERE email = ? LIMIT 1")) {
-				$stmt->bind_param('s', $this->email); // puts the email in place of the '?'
-				$stmt->execute();
-				$stmt->store_result();
-				
-				// stores results from query in variables corresponding to statement
-				$stmt->bind_result($uid, $db_password);
-				$stmt->fetch();
-
-				// TODO Defense against brute-force attacks
-
-				if ($stmt->num_rows != 1) {
-					return false; // if there is 0 results
-				}
-				// Compare the submitted password to the stored password
-				if (!validate_password($this->password, $db_password)) {
-					return false; // Password is incorrect
-				}
-				// Check if user has been verified
-				$verified  = checkVerified();
-				if (!$verified){
-					return false; // TODO how to specify the need to verify? should we use this guy or the one below
-				}
-				// TODO migrate to database session storage
-
-				// Calculates login length - 2 weeks (unix timestamp)
-				$expire = time() + (60*60*24*7*2);
-				$sid = hash('sha256', $uid . $this->email . time()); 
-				
-				if($stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
-					$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
-					$stmt->execute();
-				} else
-					throw new UserException($this->_mysqli->error, "LOGIN"));
-
-				}
-
-				// Store user id, verified status
-				$this->uid = $uid;
-				$this->verified = $verified;
-			
-				// create session identification
-				if (!setcookie('stoken', $sid, true, true)) {
-					throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
-				}
-
-				$stmt->close();
-				if (!$verified) { // only if the user actually has a list at this point
-					//TODO do an unverified action?? or move above
-				} else {
-					// Password is correct, but this is the user's first log in
-					return "unverified";
-				}
-
-				// Return true on success
-				return true;
-
-			// Report any failure
-			} else {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `login` WHERE `email` = ? LIMIT 1")) {
+				// SQL Error catch
 				throw new UserException("Prepare failed." . $this->_mysqli->error, "LOGIN");
 			}
+			$stmt->bind_param('s', $this->email); // puts the email in place of the '?'
+			$stmt->execute();
+			$stmt->store_result();
+			
+			// stores results from query in variables corresponding to statement
+			$stmt->bind_result($uid, $db_password);
+			$stmt->fetch();
+
+			// TODO Defense against brute-force attacks
+
+			if ($stmt->num_rows != 1) {
+				return false; // if there is 0 results
+			}
+			// Compare the submitted password to the stored password
+			if (!validate_password($this->password, $db_password)) {
+				return false; // Password is incorrect
+			}
+			// Check if user has been verified
+			$verified  = checkVerified();
+			if (!$verified){
+				return false; // TODO how to specify the need to verify? should we use this guy or the one below
+			}
+			// TODO migrate to database session storage
+
+			// Calculates login length - 2 weeks (unix timestamp)
+			$expire = time() + (60*60*24*7*2);
+			$sid = hash('sha256', $uid . $this->email . time()); 
+			
+			if($stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
+				$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
+				$stmt->execute();
+			} else
+				throw new UserException($this->_mysqli->error, "LOGIN"));
+
+			}
+
+			// Store user id, verified status
+			$this->uid = $uid;
+			$this->verified = $verified;
+		
+			// create session identification
+			if (!setcookie('stoken', $sid, true, true)) {
+				throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
+			}
+
+			$stmt->close();
+			if (!$verified) { // only if the user actually has a list at this point
+				//TODO do an unverified action?? or move above
+			} else {
+				// Password is correct, but this is the user's first log in
+				return "unverified";
+			}
+
+			// Return true on success
+			return true;
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -177,63 +171,35 @@ class UserObject
 	function login_check() {
 
 		try {
-			// Check if all session variables have been set
-			if (isset($_SESSION['email'], $_SESSION['login_string'], $_SESSION['salt'], $_COOKIE['ctoken'])) {
-			
-				//$user_id = $_SESSION['user_id'];
-				$login_string = $_SESSION['login_string'];
-				$email = $_SESSION['email'];
-			
-				// get current user-agent
-				$user_browser = $_SERVER['HTTP_USER_AGENT'];
+				// Retrieve stoken
+				$sid = $_COOKIE['stoken'];
+				if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `ip` FROM user_sessions WHERE `id` = ? AND `ip` = ? LIMIT 1")) {
+					 throw new UserException("Prepare failed.", "CHECK");
+				}
+				$stmt->bind_param('ss', $sid, $_SERVER['REMOTE_ADDR']);
+				$stmt->execute();
+				$stmt->store_result();
 				
-				// get password hash from db
-				if ($stmt = $this->_mysqli->prepare("SELECT password FROM login WHERE email = ? LIMIT 1")) {
-					$stmt->bind_param('s', $email);
-					$stmt->execute();
-					$stmt->store_result();
-					
-					// If user exists, retreive credentials
-					if ($stmt->num_rows == 1) {
-						$stmt->bind_result($password);
-						$stmt->fetch();
-						
-						// re-create login_check
-						$ctoken = create_hash($email . $user_browser, $_SESSION['salt']);
-						$login_check = create_hash($password . $user_browser, $_SESSION['salt']);
-					
-						if (strcmp($ctoken, $_COOKIE['ctoken'] == 0) && strcmp($login_check, $login_string) == 0) {
-
-							// If the user hasn't been initalized, do that now
-							if ($_SESSION['init']) 
-								return "init";
-							else {
-								error_log("Login check was successful");
-								return true;
-							}
-
-		                } else {
-		                    // Not logged in 
-		           			throw new Exception("Session vars wrong or ctoken incorrect.");
-		                }
-		            } else {
-		                // Not logged in 
-		           		throw new Exception("Duplicate or no email found.");
-		            }
-		        } else {
-		            // Not logged in 
-		           throw new Exception("Prepare failed.");
-		        }
-		    } else {
-		        // Not logged in 
-		        //error("UNSET VARS");
-		        error_log("Session: " . json_encode($_SESSION));
-		        error_log("cookies: " . json_encode($_COOKIE));
-		        throw new Exception("Session vars or cookie not set.");
-		    }
+				// If user exists, retreive credentials
+				if ($stmt->num_rows != 1) {
+ 					// Not logged in 
+	           		return false;
+				}
+				// Bind/Fetch results
+				$stmt->bind_result($db_sid, $db_uid, $db_ip);
+				$stmt->fetch();
+				
+				// Save retreived info
+				$this->uid = $db_uid;
+		
+				// If the user hasn't been initalized, do that now
+				if (checkVerified()) 
+					return "unverified";
+				// All checks out
+				return true;
+	        } 
 		} catch (Exception $e) {
-			error_log ("Login check exception: ". $e->getMessage());
-			return false;
+			return $e;
 		}
 	}
 
@@ -263,6 +229,7 @@ class UserObject
 	 * @returns true or false based on databse entry
 	 */
 	public function checkVerified(){
+		// TODO unnestify ifs
 		$result = array();
 		
 		try {
@@ -306,7 +273,7 @@ class UserObject
 	 * }
 	 */
 	public function load() {
-		
+		// TODO should load get all neccessary user info?
 		try {
 			if (!isset($this->uid, $this->current_list)) {
 				throw new Exception("Unset vars. uid: " . $this->uid . "list: " . $this->current_list);
