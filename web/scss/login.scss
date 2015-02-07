@@ -57,6 +57,14 @@
 	position: absolute;
 }
 
+.secondary {
+	background: $secondary-color;
+}
+
+#reg_error_alert {
+	display: none;
+}
+
 // Login forms
 #login-pane {
 
