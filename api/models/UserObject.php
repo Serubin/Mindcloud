@@ -5,7 +5,6 @@
  * ©mindcloud
  * 1 February 2015
  * Model for the object representation of a user.
- * !!! NOT YET ADAPTED !!!! -- Inprogress
  ******************************************************************************/
 
 require_once "/var/www/api/include/PasswordHash.php"; 
@@ -253,6 +252,36 @@ class UserObject
 			}
 			// Returns true false based on database
 			return ($verified == 1) ? true : false;
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	/* checkEmail
+	 * This functions is to verify that the email specificed is not already in the database
+	 *
+	 * @returns true: when no email other email is found or false: when another email is found
+	 */
+	function checkEmail(){
+		try {
+			// Checks that required vars
+			if (!isset($this->email)) {
+				throw new UserException("Unsert vars", "CHECK");
+			}
+			// Check for an existing email
+			if (!$stmt = $this->_mysqli->prepare("SELECT `email` FROM `user_accounts` WHERE `email` = ? LIMIT 1")) {
+				throw new Exception($this->_mysqli->error);
+			}
+
+			$stmt->execute();
+			
+			// if a user already exists with this email
+			if ($stmt->num_rows >= 1) {
+				return false;
+			}
+
+			// No other matching email found
+			return true;
 		} catch (Exception $e) {
 			return $e;
 		}

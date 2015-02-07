@@ -12,45 +12,9 @@
 	require_once "/var/www/api/include/error.php"
 	require_once "/var/www/api/include/utils.php";
 
-	// All CORS -- Security considerations?
-	//header("Access-Control-Allow-Origin: *");
-	//header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-	//header("Access-Control-Allow-Headers: *");
-
-	// Valid application IDs
-	/*$applications = array(
-		"MOBILE_WEB",
-		"MOBILE_ANDROID",
-		"MOBILE_IOS",
-		"DESKTOP");*/
-
-	// Include model classes
-	//require_once "/var/www/api/models/ItemObject.php";
-
-	// Include Shoptimizer class
-	//require_once "/var/www/api/Shoptimizer.php";
-
 	try {
 
-		// Handle on the encrypted data
-		//$enc_request = $_REQUEST['enc_request'];
-
-		// Get the app id of the request
-		//$app_id = $_REQUEST['app_id'];
-
-		// Check that the app id exists in the list of apps
-		//if (!in_array($app_id, $applications)) {
-		//	throw new exception('Application does not exist.');
-		//}
-
-		// Continue to decrypt the data
-		//$params = decryptData($enc_request, file_get_contents("key/mobileweb_private.pem"));
-		//error_log(json_encode("Also got: " . $params));
-
 		$params = $_REQUEST;
-
-		//error_log(json_encode($_REQUEST));
-		//error_log("Https: " . $_SERVER['HTTPS']);
 
 		// Check that the request data is valid
 		if ($params == false || isset($params['controller']) == false || isset($params['action']) == false)
@@ -78,14 +42,10 @@
 			throw new Exception('Invalid action.');
 		}
 
-		// A valid request has been made, so start the user session
-		sec_session_start();
-
 		// execute
 		$result['data'] = $controller->$action();
 
 		if ($result['data'] instanceof Exception) {
-
 			throw new Exception($result['data']);
 		}
 

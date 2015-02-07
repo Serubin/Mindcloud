@@ -8,6 +8,8 @@
  * !!! NOT YET ADAPTED !!!
  ******************************************************************************/
 
+require_once "/var/www/api/models/UserObject.php"
+
 class User
 {
 	private $_params;
@@ -27,66 +29,47 @@ class User
 
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->_params['email'], $this->_params['password'], $this->_params['gender'], 
-				$this->_params['year'], $this->_params['coords'])) {
-				throw new Exception("Unset variables.");
+			if (!isset($this->_params['email'], $this->_params['password'], $this->_params['name'], 
+				$this->_params['birthday'], $this->_params['gender']) {
+				throw new Exception("Unset variables");
 			}
 
+			// Register new user
+			$new_user = new UserObject($this->_mysqli);
+
+			// TODO impletment this
 			// Gender check
 			$gender = $this->_params['gender'];
 			if ($gender !== "M" && $gender !== "F") {
 				throw new Exception("Invalid gender specification.");
 			}
+			$new_user->gender = $gender;
 
-			// Sanitize coordinates
-			$this->_params['coords'] = json_decode($this->_params['coords']);
-			$coords = json_encode(array(
-										"latitude" => filter_var($this->_params['coords']->latitude, FILTER_SANITIZE_NUMBER_FLOAT),
-										"longitude" => filter_var($this->_params['coords']->longitude, FILTER_SANITIZE_NUMBER_FLOAT),
-										));
-			//error_log($this->_params['coords']->latitude);
-			//error_log(filter_var($this->_params['coords']->latitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
-
-			$year = filter_var($this->_params['year'], FILTER_SANITIZE_NUMBER_INT);
-			
+			// validate birthday
+			$birthday = filter_var($this->_params['birthday'], FILTER_SANITIZE_STRING);
+			$new_user->birthday = $birthday;
 			// ensure a valid email
 			$email = filter_var($this->_params['email'], FILTER_VALIDATE_EMAIL);
+
 			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				throw new Exception("Invalid email.");
 			}	
-			
+			$new_user->email = $email;
+
+			if(!$new_user->checkEmail()){
+				throw new Exception("Duplicate email.");
+			}
+
 			// ensure valid password
 			$password = filter_var($this->_params['password'], FILTER_SANITIZE_STRING);
 			if (strlen($password) != 128) {
-				throw new Exception("Invalid password.");
+				throw new Exception("Invalid password - Client Hash Error");
 			}
-
-			// Check for an existing email
-			if ($stmt = $this->_mysqli->prepare("SELECT uid FROM login WHERE email = ? LIMIT 1")) {
-				$stmt->bind_param('s', $email);
-				$stmt->execute();
-				$stmt->store_result();
-				
-				// if a user already exists with this email
-				if ($stmt->num_rows >= 1) {
-					//error_log("Email taken");
-					throw new Exception("Email taken. Already have an account?");
-				}
-			} else {
-				throw new Exception($this->_mysqli->error);
-			}
+			$new_user->password = $password;
 
 			$stmt->close();
 
-			/********** NEED MORE SECURITY CHECKS HERE ****************/
-			
-			// Register new user
-			$new_user = new UserObject($this->_mysqli);
-			$new_user->email = $email;
-			$new_user->gender = $gender;
-			$new_user->password = $password;
-			$new_user->coords = $coords;
-			$new_user->year = $year;
+			// Submits new users
 			return $new_user->register();
 	
 		} catch (Exception $e) {
@@ -94,17 +77,18 @@ class User
 		}
 	}
 
+	/* loginUser()
+	 * Logs users in and sets sessions and cookies
+	 */
 	public function loginUser() {
-
 		if (isset($this->_params['email'], $this->_params['password'])) {
-
-			$user = new UserObject($this->_mysqli);
-			$user->email = $this->_params['email'];
-			$user->password = $this->_params['password'];
-			return $user->login();
+			throw new Exception("Unset variables");
 		}
-		else
-			return "Login failed.";
+
+		$user = new UserObject($this->_mysqli);
+		$user->email = $this->_params['email'];
+		$user->password = $this->_params['password'];
+		return $user->login();
 	}
 
 	/* checkUser()

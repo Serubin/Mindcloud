@@ -17,6 +17,8 @@
  * Test on all browsers
  * set cookie domain in php.ini?
  * be sure regenerate session id to true
+ *
+ * ===== No longer being used ===== 
  */
 function sec_session_start() {
 
