@@ -41,12 +41,37 @@
       <p class="subtitle">welcome to</p>
       <h1 class="title">mindcloud</h1>
     </div>
-
+        
     <div class="row">
       <div class="small-10 medium-4 column small-offset-1 medium-offset-4" id="login-pane">
         <p>Please log in.</p>
-        <input id="login-email" type="text" placeholder="Email">
-        <input id="login-password" type="password" placeholder="Password">
+
+        <div class="alert-box success round" style="display:none">
+          Registration successful! Please log in.
+          <a href="#" class="close">&times;</a>
+        </div>
+        <form id="login_form" data-abide="ajax">
+          <!-- email -->
+          <div class="email-field">
+            <span class="label">EMAIL</span>
+              <input type="email" required id="login_email" name="login_email" placeholder="you@example.com" />
+              <small class="error">Email invalid</small>
+          </div>
+
+          <!-- password -->
+          <div class="password-field">
+            <label><span class="label">PASSWORD</span>
+              <input type="password" id="login_password" name="login_password" required pattern="password" placeholder="password" />
+              </label>
+              <small id="login_pass_err" class="error">Please enter a valid password</small>
+          </div>
+
+      <button type="submit">Log me in</button>
+    </form>
+    <a href="#" id="login_forgot" class="button secondary">Need help?</a>
+
+
+
       </div> <!-- end login pane -->
     </div>
 
@@ -91,11 +116,19 @@
               </select>
           </label>
 
+          <!-- gender -->
+            <div>
+              <label>Choose Your Identified Gender</label>
+              <input type="radio" name="register_gender" value="M" id="register_gender" required><label for="male">Male</label>
+              <input type="radio" name="register_gender" value="F" id="register_gender" required><label for="female">Female</label>
+              <input type="radio" name="register_gender" value="O" id="register_gender" required><label for="other">Other</label>
+            </div>
+
         <br/>
         <button type="submit">Register</button>
         <button class="secondary" id="reg_to_login">Already have an account?</button>
       </form> 
-    </div>
+    </div> <!-- end regiser modal -->
 
     <nav class="top-bar bottom-bar show-for-medium-up" data-topbar role="navigation">
 
@@ -112,6 +145,8 @@
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="js/include/APICaller.js"></script>
+    <script src="js/include/sha512.js"></script>
     <script src="js/login.js"></script>
   </body>
 </html>

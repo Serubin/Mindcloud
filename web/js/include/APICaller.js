@@ -1,6 +1,6 @@
 function APICaller (controller, action) {
 
-	this.API_URL = "https://shoptimizeapp.com/api/";
+	this.API_URL = "https://mindcloud.io/api/";
 	this.cont = controller;
 	this.act = action;
 
@@ -16,7 +16,7 @@ function APICaller (controller, action) {
 					callback(result['data']);
 				}
 				else 
-					alert("Failure: " + result['error']);
+					console.log("Failure: " + result['error']);
 		};
 
 		$.ajax({
