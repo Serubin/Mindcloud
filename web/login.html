@@ -53,22 +53,22 @@
         <form id="login_form" data-abide="ajax">
           <!-- email -->
           <div class="email-field">
-            <span class="label">EMAIL</span>
+            <span class="label">email</span>
               <input type="email" required id="login_email" name="login_email" placeholder="you@example.com" />
-              <small class="error">Email invalid</small>
+              <small class="error">email invalid</small>
           </div>
 
           <!-- password -->
           <div class="password-field">
-            <label><span class="label">PASSWORD</span>
+            <label><span class="label">password</span>
               <input type="password" id="login_password" name="login_password" required pattern="password" placeholder="password" />
               </label>
               <small id="login_pass_err" class="error">Please enter a valid password</small>
           </div>
 
-      <button type="submit">Log me in</button>
+      <button type="submit" class="btn-login">login</button>
+      <button id="login_forgot" class="button btn-login secondary">help</button>
     </form>
-    <a href="#" id="login_forgot" class="button secondary">Need help?</a>
 
 
 
@@ -85,9 +85,26 @@
 
 
       <form id="registration_form" data-abide="ajax">
+
+        <!-- first name -->
+        <div class="name-fields">
+          <label><label for="register_first">first name    <small>required</small></label>
+          <input type="text" required id="register_firstname" name="register_firstname" placeholder="Joshua" />
+          </label>
+          <small class="error">Please provide your first name</small>
+        </div>     
+
+        <!-- last name -->
+        <div class="name-fields">
+          <label><span class="label">last name</span><small>required</small>
+          <input type="text" required id="register_lastname" name="register_lastname" placeholder="Schooner" />
+          </label>
+          <small class="error">Please provide your last name</small>
+        </div>  
+
         <!-- email -->
         <div class="email-field">
-          <label><span class="label">EMAIL</span><small>required</small>
+          <label><span class="label">email</span><small>required</small>
             <input type="email" required id="register_email" name="register_email" placeholder="you@example.com" />
           </label>
           <small class="error">Email invalid</small>
@@ -95,7 +112,7 @@
 
         <!-- password -->
         <div class="password-field">
-          <label><span class="label">PASSWORD</span><small>required</small>
+          <label><span class="label">password</span><small>required</small>
             <input type="password" required id="register_password" name="register_password" pattern="password" placeholder="password" />
             </label>
             <small id="login_pass_err" class="error">Please enter a valid password</small>
@@ -103,29 +120,32 @@
 
         <!-- password confirm -->
         <div class="password-confirmation-field">
-          <label><span class="label">CONFIRM PASSWORD</span><small>required</small>
+          <label><span class="label">confirm password</span><small>required</small>
             <input type="password" required data-equalto="register_password" pattern="password" placeholder="password (again...)">
           </label>
           <small class="error">The password did not match</small>
         </div>
 
         <!-- year of birth -->
-        <label><span class="label">YEAR OF BIRTH</span><small>required</small>
-              <select id="register_year" required>
-                <option val="">Select</option>
-              </select>
+        <div class="birthdate-field">
+          <label><span class="label">year of birth</span><small>required</small>
+            <select id="register_year" required>
+              <option value ="">Select</option>
+            </select>
           </label>
+          <small class="error">please provide your birthday</small>
+        </div>
 
-          <!-- gender -->
-            <div>
-              <label>Choose Your Identified Gender</label>
-              <input type="radio" name="register_gender" value="M" id="register_gender" required><label for="male">Male</label>
-              <input type="radio" name="register_gender" value="F" id="register_gender" required><label for="female">Female</label>
-              <input type="radio" name="register_gender" value="O" id="register_gender" required><label for="other">Other</label>
-            </div>
 
+        <!-- gender -->
+        <div class="gender-field">
+            <label>gender    <small>required</small></label>
+            <input type="radio" name="register_gender" value="M" id="register_gender" required><label for="male">Male</label>
+            <input type="radio" name="register_gender" value="F" id="register_gender" required><label for="female">Female</label>
+            <input type="radio" name="register_gender" value="O" id="register_gender" required><label for="other">Other</label>
+        </div>
         <br/>
-        <button type="submit">Register</button>
+        <button type="submit">register</button>
         <button class="secondary" id="reg_to_login">Already have an account?</button>
       </form> 
     </div> <!-- end regiser modal -->
