@@ -4,9 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Foundation</title>
-    <link rel="stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="assets/css/login.css" />
     <script src="bower_components/modernizr/modernizr.js"></script>
     <script src="bower_components/masonry/dist/masonry.js"></script>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/include/APICaller.js"></script>
+    <script src="assets/js/include/pageLoader.js"></script>
+    <script src="assets/js/include/hashbang.js"></script>
+    <script src="assets/js/include/overrides.js"></script>
   </head>
   <body>
 
@@ -38,7 +47,13 @@
         </section>
       </nav>
     </div><!-- end top bar -->
+    
+    <!-- Content area -->
+    <div id="content">
 
+      <!-- Dynamicly Filled -->
+
+    </div><!-- end content area -->
 
     <!-- bottom bar -->
     <div class="bottom-bar">
@@ -64,9 +79,5 @@
         </section>
       </nav>
     </div><!-- end bottom bar -->
-
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/foundation/js/foundation.min.js"></script>
-    <script src="js/app.js"></script>
   </body>
 </html>
