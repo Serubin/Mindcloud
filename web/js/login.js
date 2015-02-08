@@ -53,8 +53,8 @@ $('#login_form').on('valid.fndtn.abide', function() {
  // Foundation form abide
 $("#registration_form").on('valid.fndtn.abide', function() {
 
-	alert("registration was good");
-	//register();
+	//alert("registration was good");
+	register();
 
 });
 
@@ -68,6 +68,8 @@ function register() {
 	// Prepare the submission parameters
 	var params = 
 		{
+			firstname:$("#register_firstname").val(),
+			lastname:$("#register_lastname").val(),
 			email:$("#register_email").val(),
 			password:hex_sha512($("#register_password").val()),
 			gender:$("#register_gender").val(),

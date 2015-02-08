@@ -4,9 +4,17 @@
  */
 
 // fonts
-@import url(http://openfontlibrary.org/face/unique);
-@import url(http://openfontlibrary.org/face/gen-light);
-$title-font: 'UniqueRegular';
+//@import url(http://openfontlibrary.org/face/unique);
+//@import url(http://openfontlibrary.org/face/gen-light);
+
+@font-face {
+    font-family: 'GenW01Light';
+    	src: url('/web/assets/fonts/GenW-Light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+$title-font: 'GenW01Light';
 $primary-font: 'GenW01Light';
 
 @mixin border-radius($radius) {
