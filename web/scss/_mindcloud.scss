@@ -24,6 +24,20 @@ $primary-font: 'GenW01Light';
           border-radius: $radius;
 }
 
+#main {
+
+  //padding: 3%;
+
+  h1 {
+    color: white;
+  }
+
+  .accordion {
+    padding: 2%;
+  }
+}
+
+
 // light blue/teal
 $color-primary-0: #02F4FF;	/* Main Primary color */
 $color-primary-1: #A4FBFF;
