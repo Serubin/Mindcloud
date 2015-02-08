@@ -20,15 +20,13 @@ $(document)
 var req = new APICaller("user", "check");
 req.send({}, function (result) {
 	if (result)
-		window.location.replace("https://mindcloud.io/");	
+		window.location.replace("https://mindcloud.io/");
 });
 
 /**
  * Login form submission, validation done by Foundation form-abide
  */
 $('#login_form').on('valid.fndtn.abide', function() {
-
-	alert("hi");
 
 	var req = new APICaller('user', 'login');
 	var params = {email: $("#login_email").val(), password:hex_sha512($("#login_password").val())};

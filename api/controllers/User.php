@@ -90,7 +90,7 @@ class User
 	 */
 	public function loginUser() {
 		if (isset($this->_params['email'], $this->_params['password'])) {
-			throw new UserException("Unset variables");
+			throw new UserException("Unset variables", __FUNCTION__);
 		}
 
 		$user = new UserObject($this->_mysqli);

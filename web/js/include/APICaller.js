@@ -1,6 +1,6 @@
 function APICaller (controller, action) {
 
-	this.API_URL = "http://mindcloud.io:8888/api/";
+	this.API_URL = "http://mindcloud.io/api/";
 	this.cont = controller;
 	this.act = action;
 

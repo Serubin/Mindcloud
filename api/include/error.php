@@ -40,7 +40,7 @@ class MindcloudException extends Exception {
 	 * @return a pretty string containing the info of this exception
 	 */
 	public function stringify() {
-		return 	$module_id . $function_id . ": " . $this->getMessage();
+		return 	"In " . $this->module_id . ", " . $this->function_id . ": " . $this->getMessage();
 	}
 
 }
