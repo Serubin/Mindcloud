@@ -28,7 +28,7 @@ class MindcloudException extends Exception {
 	 * @param $function numeric id for theindividual function that failed
 	 */
 	public function __construct($msg, $module, $function) {
-		parent::__construct($msg, (int) ($MODULE_ID . $function));
+		parent::__construct($msg, (int) ($module . $function));
 
 		$this->module_id = $module;
 		$this->function_id = $function;
@@ -51,9 +51,10 @@ class MindcloudException extends Exception {
  */
 class UserException extends MindcloudException {
 
-	$MODULE_ID = '0';
+	private $MODULE_ID = '0';
 
 	// Failure code points for individual function
+	// codes deprecated?
 	private static $codes = array(
 			'REGISTER' => '0',
 			'LOGIN' => '1',
@@ -61,7 +62,7 @@ class UserException extends MindcloudException {
 		);
 
 	public function __construct($msg, $function) {
-		parent::__construct($msg, $MODULE_ID, $function);
+		parent::__construct($msg, "User" , $function);
 	}
 }
 
@@ -71,7 +72,7 @@ class UserException extends MindcloudException {
  */
 class PostException extends MindcloudException {
 
-	$MODULE_ID = '1';
+	private $MODULE_ID = '1';
 
 	// Failure code points for individual function
 	private static $codes = array(
@@ -79,7 +80,7 @@ class PostException extends MindcloudException {
 		);
 
 	public function __construct($msg, $function) {
-		parent::__construct($msg, $MODULE_ID, $function);
+		parent::__construct($msg, $this->MODULE_ID, $function);
 	}
 
 }
@@ -90,7 +91,7 @@ class PostException extends MindcloudException {
  */
 class ProblemException extends MindcloudException {
 
-	$MODULE_ID = '2';
+	private $MODULE_ID = '2';
 
 	// Failure code points for individual function
 	private static $codes = array(
@@ -98,7 +99,7 @@ class ProblemException extends MindcloudException {
 		);
 
 	public function __construct($msg, $function) {
-		parent::__construct($msg, $MODULE_ID, $function);
+		parent::__construct($msg, $this->MODULE_ID, $function);
 	}
 
 }
@@ -109,7 +110,7 @@ class ProblemException extends MindcloudException {
  */
 class SolutionException extends MindcloudException {
 	
-	$MODULE_ID = '3';
+	private $MODULE_ID = '3';
 
 	// Failure code points for individual function
 	private static $codes = array(
@@ -117,7 +118,7 @@ class SolutionException extends MindcloudException {
 		);
 
 	public function __construct($msg, $function) {
-		parent::__construct($msg, $MODULE_ID, $function);
+		parent::__construct($msg, $this->MODULE_ID, $function);
 	}
 
 }
@@ -128,7 +129,7 @@ class SolutionException extends MindcloudException {
  */
 class ThreadException extends MindcloudException {
 
-	$MODULE_ID = '4';
+	private $MODULE_ID = '4';
 
 	// Failure code points for individual function
 	private static $codes = array(
@@ -136,7 +137,7 @@ class ThreadException extends MindcloudException {
 		);
 
 	public function __construct($msg, $function) {
-		parent::__construct($msg, $MODULE_ID, $function);
+		parent::__construct($msg, $this->MODULE_ID, $function);
 	}
 
 }
@@ -147,7 +148,7 @@ class ThreadException extends MindcloudException {
  */
 class ForumException extends MindcloudException {
 
-	$MODULE_ID = '5';
+	private $MODULE_ID = '5';
 
 	// Failure code points for individual function
 	private static $codes = array(
@@ -155,7 +156,7 @@ class ForumException extends MindcloudException {
 		);
 
 	public function __construct($msg, $function) {
-		parent::__construct($msg, $MODULE_ID, $function);
+		parent::__construct($msg, $this->MODULE_ID, $function);
 	}
 
 }

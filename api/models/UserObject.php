@@ -7,7 +7,7 @@
  * Model for the object representation of a user.
  ******************************************************************************/
 
-require_once "/var/www/api/include/PasswordHash.php"; 
+require_once "include/PasswordHash.php"; 
 	
 class UserObject
 {
@@ -16,7 +16,7 @@ class UserObject
 	public $password;
 	public $first_name;
 	public $last_name;
-	public $birthday;
+	public $year;
 	public $join_date;
 	public $verified;
 	private $_mysqli;
@@ -36,8 +36,8 @@ class UserObject
 
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->email, $this->password, $this->first_name, $this->last_name, $this->birthday, $this->join_date)) {
-				throw new UserException("unset vars.", "REGISTER");
+			if (!isset($this->email, $this->password, $this->first_name, $this->last_name, $this->year)) {
+				throw new UserException("unset vars.", __FUNCTION__);
 			}
 
 			// Create a random salt, hash passwd
@@ -61,8 +61,8 @@ class UserObject
 			$stmt->close();
 
 			// Submit user data
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `birthday`, `join_date`) VALUES (?, ?, ?, ?)")) {
-				$stmt->bind_param('isss', $uid, $this->first_name, $this->last_name, $this->birthday, $this->join_date);
+			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `year`, `join_date`) VALUES (?, ?, ?, ?, ?)")) {
+				$stmt->bind_param('issss', $uid, $this->first_name, $this->last_name, $this->year, $date);
 				$stmt->execute();
 			} else
 				throw new UserException($this->_mysqli->error, "REGISTER");
@@ -132,7 +132,7 @@ class UserObject
 			$sid = hash('sha256', $uid . $this->email . time()); 
 			
 			if(!$stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
-				throw new UserException($this->_mysqli->error, "LOGIN"));
+				throw new UserException($this->_mysqli->error, "LOGIN");
 			}
 
 			$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
@@ -143,7 +143,7 @@ class UserObject
 			$this->verified = $verified;
 		
 			// create session identification
-			if (!setcookie('stoken', $sid, $expire, "/", "minecloud.io", ,true, true)) {
+			if (!setcookie('stoken', $sid, $expire, "/", "minecloud.io", true, true)) {
 				throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
 			}
 
@@ -171,6 +171,9 @@ class UserObject
 
 		try {
 			// Retrieve stoken
+			if (!isset($_COOKIE['stoken']))
+				return false;
+
 			$sid = $_COOKIE['stoken'];
 			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `ip` FROM user_sessions WHERE `id` = ? AND `ip` = ? LIMIT 1")) {
 				 throw new UserException("Prepare failed.", "CHECK");
@@ -237,7 +240,7 @@ class UserObject
 			}
 
 			// prepared SQL statement
-			if (!$stmt = $this->_mysqli->prepare("SELECT id, verified FROM user_meta WHERE `id` = ? LIMIT 1"){
+			if (!$stmt = $this->_mysqli->prepare("SELECT id, verified FROM user_meta WHERE `id` = ? LIMIT 1")) {
 				throw new UserException($this->_mysqli->error, "VERIFY");
 			}
 			$stmt->bind_param('i', $this->uid);
@@ -249,7 +252,7 @@ class UserObject
 			$stmt->fetch();
 		
 			if($stmt->num_rows != 1){
-				throw new UserException("More than one row returned", "VERIFY")
+				throw new UserException("More than one row returned", "VERIFY");
 			}
 			// Returns true false based on database
 			return ($verified == 1) ? true : false;
@@ -280,7 +283,7 @@ class UserObject
 			if ($stmt->num_rows >= 1) {
 				return false;
 			}
-
+			$stmt->close();
 			// No other matching email found
 			return true;
 		} catch (Exception $e) {
@@ -321,14 +324,14 @@ class UserObject
 	function logout() {
 
 		// Remove from database
-		if(!$stmt = $this->_mysql->prepared("DELETE FROM `user_sessions` WHERE id = ?")){
-			throw new UserException($this->_mysqli->error, "LOGIN"));
+		if(!$stmt = $this->_mysql->prepared("DELETE FROM `user_sessions` WHERE id = ?")) {
+			throw new UserException($this->_mysqli->error, "LOGIN");
 		}
 		$stmt->bind_param('i', $sid);
 		$stmt->execute();
 
 		// Nullify cookie
-		setcookie('stoken', "", time()-9999999, "/", "minecloud.io", ,true, true)
+		setcookie('stoken', "", time()-9999999, "/", "minecloud.io", true, true);
 		return true;
 	}
 }

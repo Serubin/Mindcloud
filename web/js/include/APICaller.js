@@ -1,14 +1,13 @@
 function APICaller (controller, action) {
 
-	this.API_URL = "https://mindcloud.io/api/";
+	this.API_URL = "http://mindcloud.io:8888/api/";
 	this.cont = controller;
 	this.act = action;
 
 	this.send = function (params, callback) {
 
 		params['controller'] = this.cont;
-		params['action'] = this.act
-
+		params['action'] = this.act;
 
 		var success = function(result) {
 				//alert(JSON.stringify(result));

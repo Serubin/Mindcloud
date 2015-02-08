@@ -53,7 +53,7 @@ $('#login_form').on('valid.fndtn.abide', function() {
  // Foundation form abide
 $("#registration_form").on('valid.fndtn.abide', function() {
 
-	//alert("registration was good");
+	alert("forms look good; registering");
 	register();
 
 });
@@ -68,8 +68,8 @@ function register() {
 	// Prepare the submission parameters
 	var params = 
 		{
-			firstname:$("#register_firstname").val(),
-			lastname:$("#register_lastname").val(),
+			first_name:$("#register_firstname").val(),
+			last_name:$("#register_lastname").val(),
 			email:$("#register_email").val(),
 			password:hex_sha512($("#register_password").val()),
 			gender:$("#register_gender").val(),
@@ -79,6 +79,7 @@ function register() {
 	// React on the response from the server
 	req.send(params, function(result) {
 		if (result == true) {
+			alert("yer good");
 			
 			// Redirect browser page
 			window.location.replace("http://mindcloud.io/web/")
@@ -88,7 +89,8 @@ function register() {
 			$("#reg_error_alert").text(result);
 			$("#reg_error_alert").css("display", "block");
 			//$("#popup_msg").text(result);
-			//$("#err_popup").popup("open");
+			//$("#err_popup").popup("open
+			console.log(result);		
 		}
 	});
 }

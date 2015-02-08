@@ -8,7 +8,8 @@
  * !!! NOT YET ADAPTED !!!
  ******************************************************************************/
 
-require_once "/var/www/api/models/UserObject.php"
+// relative to index.php
+require_once "models/UserObject.php";
 
 class User
 {
@@ -30,51 +31,51 @@ class User
 		try {
 			// Checks that all required post variables are set
 			if (!isset($this->_params['email'], $this->_params['password'], $this->_params['first_name'], 
-				$this->_params['last_name'], $this->_params['birthday'], $this->_params['gender']) {
-				throw new Exception("Unset variables");
+				$this->_params['last_name'], $this->_params['year'], $this->_params['gender'])) {
+				error_log(json_encode($this->_params));
+				throw new UserException("Unset vars", __FUNCTION__);
 			}
 
 			// Register new user
-			$new_user = new UserObject($this->_mysqli);
+			$new_user = new UserObject($this->_mysqli, __FUNCTION__);
 
 			// TODO impletment this
 			// Gender check
 			$gender = $this->_params['gender'];
 			if ($gender !== "M" && $gender !== "F") {
-				throw new Exception("Invalid gender specification.");
+				throw new UserException("Invalid gender specification.", __FUNCTION__);
 			}
 			$new_user->gender = $gender;
 
 			// validate birthday
-			$birthday = filter_var($this->_params['birthday'], FILTER_SANITIZE_STRING);
-			$new_user->birthday = $birthday;
+			$year = filter_var($this->_params['year'], FILTER_SANITIZE_STRING);
+			$new_user->year = $year;
 
 			// ensure a valid email
 			$email = filter_var($this->_params['email'], FILTER_VALIDATE_EMAIL);
 
 			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-				throw new Exception("Invalid email.");
+				throw new UserException("Invalid email.", __FUNCTION__);
 			}	
 			$new_user->email = $email;
 
 			if(!$new_user->checkEmail()){
-				throw new Exception("Duplicate email.");
+				throw new UserException("Duplicate email.", __FUNCTION__);
 			}
 
 			// ensure valid password
 			$password = filter_var($this->_params['password'], FILTER_SANITIZE_STRING);
 			if (strlen($password) != 128) {
-				throw new Exception("Invalid password - Client Hash Error");
+				throw new UserException("Invalid password - Client Hash Error", __FUNCTION__);
 			}
 			$new_user->password = $password;
 
-			$first_name = filter_var($_params['first_name'], FILTER_SANITIZE_STRING);
+			$first_name = filter_var($this->_params['first_name'], FILTER_SANITIZE_STRING);
 			$new_user->first_name = $first_name;
 
-			$last_name = filter_var($_params['last_name'], FILTER_SANITIZE_STRING);
-			$new_user->last_name;
+			$last_name = filter_var($this->_params['last_name'], FILTER_SANITIZE_STRING);
+			$new_user->last_name = $last_name;
 			
-			$stmt->close();
 
 			// Submits new users
 			return $new_user->register();
@@ -89,7 +90,7 @@ class User
 	 */
 	public function loginUser() {
 		if (isset($this->_params['email'], $this->_params['password'])) {
-			throw new Exception("Unset variables");
+			throw new UserException("Unset variables");
 		}
 
 		$user = new UserObject($this->_mysqli);

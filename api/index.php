@@ -8,9 +8,9 @@
  ******************************************************************************/
 
 	// Check that the user is logged in
-	require_once "/var/www/api/include/db_config.php";
-	require_once "/var/www/api/include/error.php"
-	require_once "/var/www/api/include/utils.php";
+	require_once "include/db_config.php";
+	require_once "include/error.php";
+	require_once "include/utils.php";
 
 	try {
 
@@ -28,10 +28,10 @@
 		$action = strtolower($params['action']) . $controller;
 
 		// Check if the controller is valid
-		if (file_exists("/var/www/api/controllers/{$controller}.php")) {
-			include_once("/var/www/api/controllers/{$controller}.php");
+		if (file_exists("controllers/{$controller}.php")) {
+			include_once("controllers/{$controller}.php");
 		} else {
-			throw new Exception('Invalid controller.');
+			throw new Exception('Invalid controller: ' . $controller);
 		}
 
 		// insantiate an instance of the controller;
@@ -39,13 +39,13 @@
 
 		// Check if the action is valid
 		if (method_exists($controller, $action) === false) {
-			throw new Exception('Invalid action.');
+			throw new Exception('Invalid action.' . $action);
 		}
 
 		// execute
 		$result['data'] = $controller->$action();
 
-		if ($result['data'] instanceof Exception) {
+		if ($result['data'] instanceof MindcloudException) {
 			throw new Exception($result['data']);
 		}
 
@@ -53,10 +53,16 @@
 		$result['success'] = true;
 
 	}
-	catch (Exception $e) {
+	catch (MindcloudException $e) {
 		$result = Array();
 		$result['success'] = false;
 		$result['error'] = $e->stringify();
+		error_log($e->stringify());
+	}
+	catch (Exception $e) {
+		$result['success'] = false;
+		$result['error'] = $e->getMessage();
+		error_log($e->getMessage());
 	}
 	
 	// return the result
