@@ -89,8 +89,11 @@ class User
 	 * Logs users in and sets sessions and cookies
 	 */
 	public function loginUser() {
-		if (isset($this->_params['email'], $this->_params['password'])) {
-			throw new UserException("Unset variables", __FUNCTION__);
+		if (!isset($this->_params['email'], $this->_params['password'])) {
+			throw new UserException("Unset variables.\n" .
+				"Email: " . $this->_params['email'] . "\n" .
+				"Password: " . $this->_params['password'],
+				__FUNCTION__);
 		}
 
 		$user = new UserObject($this->_mysqli);

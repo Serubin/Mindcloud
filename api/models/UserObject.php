@@ -99,7 +99,7 @@ class UserObject
 			}
 
 			// prepare SQL statement 
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `login` WHERE `email` = ? LIMIT 1")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `user_accounts` WHERE `email` = ? LIMIT 1")) {
 				// SQL Error catch
 				throw new UserException("Prepare failed." . $this->_mysqli->error, "LOGIN");
 			}
@@ -121,7 +121,7 @@ class UserObject
 				return false; // Password is incorrect
 			}
 			// Check if user has been verified
-			$verified  = checkVerified();
+			$verified  = $this->checkVerified();
 			if (!$verified){
 				return false; // TODO how to specify the need to verify? should we use this guy or the one below
 			}
@@ -130,12 +130,13 @@ class UserObject
 			// Calculates login length - 2 weeks (unix timestamp)
 			$expire = time() + (60*60*24*7*2);
 			$sid = hash('sha256', $uid . $this->email . time()); 
+			$time = time();
 			
-			if(!$stmt = $this->_mysql->prepared("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
+			if(!$stmt = $this->_mysqli->prepare("INSERT INTO `user_sessions`(`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES (?, ?, ?, ?, ?)")){
 				throw new UserException($this->_mysqli->error, "LOGIN");
 			}
 
-			$stmt->bind_param('siiis', $sid, $uid, time(), $expire, $_SERVER['REMOTE_ADDR']);
+			$stmt->bind_param('siiis', $sid, $uid, $time, $expire, $_SERVER['REMOTE_ADDR']);
 			$stmt->execute();
 
 			// Store user id, verified status
@@ -143,17 +144,20 @@ class UserObject
 			$this->verified = $verified;
 		
 			// create session identification
-			if (!setcookie('stoken', $sid, $expire, "/", "minecloud.io", true, true)) {
+			if (!setcookie('stoken', $sid, $expire, "/", "mindcloud.io", true, true)) {
 				throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
 			}
 
 			$stmt->close();
+			/*
 			if (!$verified) { // only if the user actually has a list at this point
 				//TODO do an unverified action?? or move above
 			} else {
 				// Password is correct, but this is the user's first log in
 				return "unverified";
-			}
+			}*/
+
+			return true;
 
 			// Return true on success
 			return true;
@@ -195,7 +199,7 @@ class UserObject
 			$this->uid = $db_uid;
 
 			// If the user hasn't been initalized, do that now
-			if (checkVerified()) 
+			if ($this->checkVerified()) 
 				return "unverified";
 			// All checks out
 			return true;
