@@ -29,8 +29,8 @@ class User
 
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->_params['email'], $this->_params['password'], $this->_params['name'], 
-				$this->_params['birthday'], $this->_params['gender']) {
+			if (!isset($this->_params['email'], $this->_params['password'], $this->_params['first_name'], 
+				$this->_params['last_name'], $this->_params['birthday'], $this->_params['gender']) {
 				throw new Exception("Unset variables");
 			}
 
@@ -48,6 +48,7 @@ class User
 			// validate birthday
 			$birthday = filter_var($this->_params['birthday'], FILTER_SANITIZE_STRING);
 			$new_user->birthday = $birthday;
+
 			// ensure a valid email
 			$email = filter_var($this->_params['email'], FILTER_VALIDATE_EMAIL);
 
@@ -67,6 +68,12 @@ class User
 			}
 			$new_user->password = $password;
 
+			$first_name = filter_var($_params['first_name'], FILTER_SANITIZE_STRING);
+			$new_user->first_name = $first_name;
+
+			$last_name = filter_var($_params['last_name'], FILTER_SANITIZE_STRING);
+			$new_user->last_name;
+			
 			$stmt->close();
 
 			// Submits new users

@@ -14,7 +14,8 @@ class UserObject
 	public $uid;
 	public $email;
 	public $password;
-	public $name;
+	public $first_name;
+	public $last_name;
 	public $birthday;
 	public $join_date;
 	public $verified;
@@ -35,7 +36,7 @@ class UserObject
 
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->email, $this->password, $this->name, $this->birthday, $this->join_date)) {
+			if (!isset($this->email, $this->password, $this->first_name, $this->last_name, $this->birthday, $this->join_date)) {
 				throw new UserException("unset vars.", "REGISTER");
 			}
 
@@ -60,8 +61,8 @@ class UserObject
 			$stmt->close();
 
 			// Submit user data
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `name`, `birthday`, `join_date`) VALUES (?, ?, ?, ?)")) {
-				$stmt->bind_param('isss', $uid, $this->name, $this->birthday, $this->join_date);
+			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `birthday`, `join_date`) VALUES (?, ?, ?, ?)")) {
+				$stmt->bind_param('isss', $uid, $this->first_name, $this->last_name, $this->birthday, $this->join_date);
 				$stmt->execute();
 			} else
 				throw new UserException($this->_mysqli->error, "REGISTER");
