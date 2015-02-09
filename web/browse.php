@@ -39,6 +39,28 @@
       </nav>
     </div><!-- end top bar -->
 
+    <a href="#" class="button success" data-reveal-id="modal-create-problem">pose a problem</a>
+    <a href="#" class="button success">create a solution</a>
+
+    <div id="curator">
+
+
+    </div>
+
+    <!-- pose-a-problem modal -->
+    <div id="modal-create-problem" class="reveal-modal" data-reveal>
+      <h2>Pose a problem</h2>
+      <p class="lead">Your couch.  It is mine.</p>
+      <form data-abide="ajax">
+        <label>problem statement
+          <input type="text" placeholder="Why can't I type with my mind yet?" required/>
+        </label>
+        <label>Description
+          <textarea placeholder="Keyboards have been around since like the 1930s..." required></textarea>
+        </label>
+      </form>
+      <a class="close-reveal-modal">&#215;</a>
+    </div> <!-- end pose-a-problem modal -->
 
     <!-- bottom bar -->
     <div class="bottom-bar">

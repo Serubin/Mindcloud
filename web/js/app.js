@@ -1,1 +1,3 @@
+
+// initalize foundation
 $(document).foundation();
