@@ -31,8 +31,22 @@ class Problem
 	 * @return true on success, exception on fail
 	 */
 	public function create() {
-		// TODO
+		
+		try {
+			if (!isset($_SESSON['uid'], $this->params['statement'], $this->['description']))
+				throw new ProblemException("Unset vars.", __FUNCTION__);
+
+			$problem = new Problem($this->mysqli);
+			$problem->creator = $_SESSION['uid'];
+			$problem->statement = $this->params['statement'];
+			$problem->description = $this->params['description'];
+			return $problem->create();
+
+		} catch (ProblemException $e) {
+			return $e;
+		}
 	}
+
 
 	/**
 	 * activate()

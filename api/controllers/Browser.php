@@ -32,7 +32,21 @@ class Browser {
 	 * @return array of content for initial display
 	 */
 	public load() {
-		
+		// TODO Load preferences to get what's being loaded and in what order
+
+		// if problems are to be loaded
+		// load most recent 10
+		// TODO change constant 10 to be however can fit on screen
+		if (!$stmt = $this->_mysqli->("SELECT (`id`, `statement`) FROM `problems` ORDER BY `creation_data` LIMIT 10")) {
+			$problems = new array();
+			$stmt->execute();
+			$stmt->store_result();
+			$stmt->bind_result($id, $stmt);
+			while ($stmt->fetch) {
+				$problems[] = array($id, $stmt);
+			}
+			return $problems;
+		}
 	}
 
 	/**

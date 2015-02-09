@@ -180,7 +180,7 @@ class UserObject
 
 			$sid = $_COOKIE['stoken'];
 			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `ip` FROM user_sessions WHERE `id` = ? AND `ip` = ? LIMIT 1")) {
-				 throw new UserException("Prepare failed.", "CHECK");
+				 throw new UserException("Prepare failed.", __FUNCTION__);
 			}
 			$stmt->bind_param('ss', $sid, $_SERVER['REMOTE_ADDR']);
 			$stmt->execute();
