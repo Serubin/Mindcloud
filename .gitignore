@@ -2,3 +2,4 @@
 web/assets/css/*
 web/bower_components/*
 web/grunt/node_modules/*
+web/css/*
