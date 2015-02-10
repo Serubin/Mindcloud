@@ -6,16 +6,9 @@
     <title>Foundation</title>
     <link rel="stylesheet" href="assets/css/login.css" />
     <script src="bower_components/modernizr/modernizr.js"></script>
-    <script src="bower_components/masonry/masonry.js"></script>    
+    <!--<script src="bower_components/masonry/masonry.js"></script>-->
 
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/foundation/js/foundation.min.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/login.js"></script>
     <script src="assets/js/include/APICaller.js"></script>
-    <script src="assets/js/include/pageLoader.js"></script>
-    <script src="assets/js/include/hashbang.js"></script>
-    <script src="assets/js/include/overrides.js"></script>
   </head>
   <body>
 
@@ -33,8 +26,6 @@
       <section class="top-bar-section">
           <!-- Right Nav Section -->
           <ul class="right">
-              <li class=""><a href="#" data-reveal-id="login_modal">log in</a></li>
-              <li class=""><a href="#" data-reveal-id="register_modal">sign up</a></li>
               <li class=""><a href="#">what is this?</a></li>
               <li class="has-dropdown">
                 <a href="#">username</a>
@@ -60,29 +51,27 @@
     <div id="modal-create-problem" class="reveal-modal" data-reveal>
       <h2>Pose a problem</h2>
       <p class="lead">Your couch.  It is mine.</p>
-      <form id="submit-problem" data-abide="ajax">
 
-        <div>
+      <form data-abide="ajax" id="submit-problem">
+
+        <div class="statement-field">
           <label>problem statement
             <input id="form_problem_statement" type="text" placeholder="Why can't I type with my mind yet?" required/>
           </label>
           <small class="error">What's your problem?</small>
         </div>
 
-        <div>
+        <div class="description-field">
           <label>description
             <textarea placeholder="Keyboards have been around since like the 1930s..." required></textarea>
           </label>
           <small class="error">Please elaborate on your problem.</small>
         </div>
 
-        <button type="submit">Submit</button>
+        <button id="test" type="submit">Submit</button>
       </form>
       <a class="close-reveal-modal">&#215;</a>
     </div> <!-- end pose-a-problem modal -->
-
-    <div id="curator">
-    </div>
 
     <!-- bottom bar -->
     <div class="bottom-bar">

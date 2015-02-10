@@ -7,7 +7,7 @@
  * Model for the object representation of a solution idea.
  ******************************************************************************/
 
-class Problem
+class Problem 
 {
 	// the parameters of the request
 	private $_params;
@@ -30,10 +30,10 @@ class Problem
 	 * Creates a new problem in the db and stores the assocated information.
 	 * @return true on success, exception on fail
 	 */
-	public function create() {
+	public function createProblem() {
 		
 		try {
-			if (!isset($_SESSON['uid'], $this->params['statement'], $this->['description']))
+			if (!isset($user->id, $this->_params['statement'], $this->_params['description']))
 				throw new ProblemException("Unset vars.", __FUNCTION__);
 
 			$problem = new Problem($this->mysqli);
@@ -53,7 +53,7 @@ class Problem
 	 * Begins the next trial of a problem, presuming it is now inactive.
 	 * @return true on success, exception on fail
 	 */
-	public function activate() {
+	public function activateProblem() {
 		// TODO
 	}
 
@@ -62,10 +62,7 @@ class Problem
 	 * Ends the current trial and marks this problem as inactive.
 	 * @return true on success, exception on fail
 	 */
-	public function deactivate() {
+	public function deactivateProblem() {
 		// TODO
 	}
-
-	/**
-	 * 
 }

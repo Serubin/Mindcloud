@@ -12,6 +12,9 @@
 	require_once "include/error.php";
 	require_once "include/utils.php";
 
+	// include user object
+	require_once "models/UserObject.php";
+
 	try {
 
 		$params = $_REQUEST;
@@ -43,8 +46,8 @@
 		}
 
 		// authenticate requests that aren't for loggin in or registration
-		$user = new User();
-		if (!($controller == "User" && ($action == "create" || $controler == "login" || $action == "check")) {
+		$user = new UserObject();
+		if (!($controller == "User" && ($action == "create" || $controler == "login" || $action == "check"))) {
 			$user = new UserObject($mysqli);
 			if (!$user->login_check())
 				throw new Exception('unauthenticated request');
