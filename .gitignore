@@ -1,0 +1,4 @@
+*.DS_Store
+web/assets/css/*
+web/bower_components/*
+web/grunt/node_modules/*
