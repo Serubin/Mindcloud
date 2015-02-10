@@ -144,7 +144,7 @@ class UserObject
 			$this->verified = $verified;
 		
 			// create session identification
-			if (!setcookie('stoken', $sid, $expire, "/", "mindcloud.io", true, true)) {
+			if (!setcookie('stoken', $sid, $expire, "/", "mindcloud.io", $secure, true)) {
 				throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
 			}
 
@@ -249,7 +249,7 @@ class UserObject
 			}
 			$stmt->bind_param('i', $this->uid);
 			$stmt->execute();
-			$stmt->store_results();
+			$stmt->store_result();
 			
 			// stores results from query in variables
 			$stmt->bind_result($db_uid, $verified);
@@ -335,7 +335,7 @@ class UserObject
 		$stmt->execute();
 
 		// Nullify cookie
-		setcookie('stoken', "", time()-9999999, "/", "minecloud.io", true, true);
+		setcookie('stoken', "", time()-9999999, "/", "minecloud.io", $secure, true);
 		return true;
 	}
 }

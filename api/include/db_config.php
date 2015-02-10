@@ -19,3 +19,6 @@ define ('PASSWORD', '87654321');
 define ('DATABASE', 'dev_greymatters');
 
 $mysqli = new mysqli(HOST, USER, PASSWORD, DATABASE);
+
+// Specify cookie security
+$secure = false;

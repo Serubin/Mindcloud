@@ -33,7 +33,7 @@ class ProblemObject {
 	 * create()
 	 * Submits new problem to the database
 	 */
-	public create() {
+	public function create() {
 		try {
 			if (!isset($this->statement, $this->creator, $this->description)) {
 				throw new ProblemException("Unset instance vars", __FUNCTION__);

@@ -7,6 +7,8 @@
  * Model for the object representation of a solution idea.
  ******************************************************************************/
 
+require_once("models/ProblemObject.php");
+
 class Problem 
 {
 	// the parameters of the request
@@ -33,13 +35,15 @@ class Problem
 	public function createProblem() {
 		
 		try {
-			if (!isset($user->id, $this->_params['statement'], $this->_params['description']))
+			if (!isset($this->_params['uid'], $this->_params['statement'], $this->_params['description'])) {
+				error_log(json_encode($this->_params));
 				throw new ProblemException("Unset vars.", __FUNCTION__);
+			}
 
-			$problem = new Problem($this->mysqli);
-			$problem->creator = $_SESSION['uid'];
-			$problem->statement = $this->params['statement'];
-			$problem->description = $this->params['description'];
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->creator = $this->_params['uid'];
+			$problem->statement = $this->_params['statement'];
+			$problem->description = $this->_params['description'];
 			return $problem->create();
 
 		} catch (ProblemException $e) {

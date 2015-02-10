@@ -16,7 +16,6 @@
 	require_once "models/UserObject.php";
 
 	try {
-
 		$params = $_REQUEST;
 
 		// Check that the request data is valid
@@ -29,6 +28,17 @@
 
 		// Get the action formatted correctly
 		$action = strtolower($params['action']) . $controller;
+
+		// authenticate requests that aren't for loggin in or registration
+		// do it before $controller is still a string
+		$user = new UserObject($mysqli);
+		if (!($controller == "User" && ($params['action'] == "create" || $params['action'] == "login" || $params['action'] == "check"))) {
+			if (!$user->login_check()) {
+				throw new Exception('unauthorized request');
+			}
+
+			$params['uid'] = $user->uid;
+		}
 
 		// Check if the controller is valid
 		if (file_exists("controllers/{$controller}.php")) {
@@ -43,14 +53,6 @@
 		// Check if the action is valid
 		if (method_exists($controller, $action) === false) {
 			throw new Exception('Invalid action.' . $action);
-		}
-
-		// authenticate requests that aren't for loggin in or registration
-		$user = new UserObject();
-		if (!($controller == "User" && ($action == "create" || $controler == "login" || $action == "check"))) {
-			$user = new UserObject($mysqli);
-			if (!$user->login_check())
-				throw new Exception('unauthenticated request');
 		}
 
 		// execute

@@ -63,7 +63,7 @@
 
         <div class="description-field">
           <label>description
-            <textarea placeholder="Keyboards have been around since like the 1930s..." required></textarea>
+            <textarea id="form_problem_desc" placeholder="Keyboards have been around since like the 1930s..." required></textarea>
           </label>
           <small class="error">Please elaborate on your problem.</small>
         </div>
