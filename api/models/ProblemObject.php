@@ -39,15 +39,15 @@ class ProblemObject {
 				throw new ProblemException("Unset instance vars", __FUNCTION__);
 			}
 
-			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `statement`, `description`) VALUES (?, ?, ?))")) {
-				throw new ProblemException("prepare failed");
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `statement`, `description`) VALUES (?, ?, ?)")) {
+				throw new ProblemException($this->_mysqli->error, __FUNCTION__);
 			}
 
 			// sanitize strings
 			$this->statement = filter_var($this->statement, FILTER_SANITIZE_STRING);
 			$this->description = filter_var($this->description, FILTER_SANITIZE_STRING);
 
-			$stmt->bind_param('iss');
+			$stmt->bind_param('iss', $this->creator, $this->statement, $this->description);
 			$stmt->execute();
 
 			// return true on succecss

@@ -6,7 +6,6 @@
     <title>Foundation</title>
     <link rel="stylesheet" href="assets/css/login.css" />
     <script src="bower_components/modernizr/modernizr.js"></script>
-    <!--<script src="bower_components/masonry/masonry.js"></script>-->
 
     <script src="assets/js/include/APICaller.js"></script>
   </head>
@@ -41,10 +40,13 @@
 
     <a href="#" class="button success" data-reveal-id="modal-create-problem">pose a problem</a>
     <a href="#" class="button success">create a solution</a>
+    <button id="more" name="more">MORE</button>
 
-    <div id="curator">
+    <div class="row">
+      <div id="curator" class="small-12 columns">
 
 
+      </div>
     </div>
 
     <!-- pose-a-problem modal -->
@@ -73,33 +75,11 @@
       <a class="close-reveal-modal">&#215;</a>
     </div> <!-- end pose-a-problem modal -->
 
-    <!-- bottom bar -->
-    <div class="bottom-bar">
-      <nav class="top-bar bottom-bar" data-topbar role="navigation">
-        <ul class="title-area">
-          <a href="#" data-options="align:top" data-dropdown="drop" class="button">Link Dropdown &raquo;</a>
-      <ul id="drop" class="[tiny small medium large content]f-dropdown" data-dropdown-content>
-        <li><a href="#">solutions</a></li>
-        <li><a href="#">problems</a></li>
-      </ul>
-          <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
-          <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
-        </ul>
-
-      <section class="top-bar-section">
-          <!-- Right Nav Section -->
-          <ul class="right">
-              <li class=""><a href="#" data-reveal-id="login_modal">log in</a></li>
-              <li class=""><a href="#" data-reveal-id="register_modal">sign up</a></li>
-              <li class=""><a href="#">what is this?</a></li>
-              
-          </ul>
-        </section>
-      </nav>
-    </div><!-- end bottom bar -->
+    
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/foundation/js/foundation.min.js"></script>
+    <script src="assets/js/include/masonry.pkgd.min.js"></script>
     <script src="assets/js/testing.js"></script>
   </body>
 </html>
