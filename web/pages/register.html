@@ -1,0 +1,82 @@
+<!-- Register page -->
+<div id="title">
+  <div id="title"> 
+    <p class="subtitle">welcome to</p>
+    <h1 class="title">mindcloud</h1>
+</div>
+</div>
+<div class="row">
+  <div id="registration-pane" class="column small-10 small-offset-1 medium-8 medium-offset-2 large-6 large-offset-3" data-reveal>
+    
+    <p class="lead">Please fill all of these fields</p>
+    <div data-alert id="reg_error_alert" class="alert-box alert round">
+      <a href="#" class="close">&times;</a>
+    </div>
+
+
+    <form id="registration_form" data-abide="ajax">
+
+      <!-- first name -->
+      <div class="name-fields">
+        <label><label for="register_first">first name    <small>required</small></label>
+        <input type="text" required id="register_firstname" name="register_firstname" placeholder="Joshua" />
+        </label>
+        <small class="error">Please provide your first name</small>
+      </div>     
+
+      <!-- last name -->
+      <div class="name-fields">
+        <label><span class="label">last name</span><small>required</small>
+        <input type="text" required id="register_lastname" name="register_lastname" placeholder="Schooner" />
+        </label>
+        <small class="error">Please provide your last name</small>
+      </div>  
+
+      <!-- email -->
+      <div class="email-field">
+        <label><span class="label">email</span><small>required</small>
+          <input type="email" required id="register_email" name="register_email" placeholder="you@example.com" />
+        </label>
+        <small class="error">Email invalid</small>
+      </div>
+
+      <!-- password -->
+      <div class="password-field">
+        <label><span class="label">password</span><small>required</small>
+          <input type="password" required id="register_password" name="register_password" pattern="password" placeholder="password" />
+          </label>
+          <small id="login_pass_err" class="error">Please enter a valid password</small>
+      </div>
+
+      <!-- password confirm -->
+      <div class="password-confirmation-field">
+        <label><span class="label">confirm password</span><small>required</small>
+          <input type="password" required data-equalto="register_password" pattern="password" placeholder="password (again...)">
+        </label>
+        <small class="error">The password did not match</small>
+      </div>
+
+      <!-- year of birth -->
+      <div class="birthdate-field">
+        <label><span class="label">year of birth</span><small>required</small>
+          <select id="register_year" required>
+            <option value ="">Select</option>
+          </select>
+        </label>
+        <small class="error">please provide your birthday</small>
+      </div>
+
+
+      <!-- gender -->
+      <div class="gender-field">
+          <label>gender    <small>required</small></label>
+          <input type="radio" name="register_gender" value="M" id="register_gender" required><label for="male">Male</label>
+          <input type="radio" name="register_gender" value="F" id="register_gender" required><label for="female">Female</label>
+          <input type="radio" name="register_gender" value="O" id="register_gender" required><label for="other">Other</label>
+      </div>
+      <br/>
+      <button type="submit">register</button>
+      <button class="secondary" id="reg_to_login">Already have an account?</button>
+    </form>
+  </div>
+</div> <!-- end regiser modal -->
