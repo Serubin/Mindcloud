@@ -12,23 +12,26 @@ function pageRequest(page){
 	 * Processes received html data
 	 */
 	var success = function(result) {
+		var $content = $("#content");
 
-		$("#content").html(result); // Changes content
-		if(typeof window[page] != "undefined")
-			window[page](); // calls loader for page
+		$content.fadeOut(500, function(){
+			$content.html(result); // Changes content
+			if(typeof window[page] != "undefined")
+				window[page](); // calls loader for page
 
-		$(document).foundation(); // Updates foundation stuff
-
-		// registers all a links to use js for redirection
-		$("a").unbind("click");
-		$("a").click(function(){
-			return linkHandler( $(this).attr("href") );
+			$(document).foundation(); // Updates foundation stuff
+			// registers all a links to use js for redirection
+			$("a").unbind("click");
+			$("a").click(function(){
+				return linkHandler( $(this).attr("href") );
+			});
+			$content.fadeIn();
 		});
 	};
 
 	// Ajax call
 	$.ajax({
-		url: "pages/" + page + ".html",
+		url: "pages/" + page + ".php",
 		success: success
 	});
 
