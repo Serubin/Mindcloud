@@ -1,8 +1,8 @@
 $(function(){
-	$(document).foundation();
 
-	var params = parseGet();
-	
-	if(Object.size(params) == 1)
-		pageRequest(Object.keys(params)[0]);
+	// loads page
+	pageRequest( parseGet() );
+
+	// registers popstate event
+	$(window).on("popstate", popHandler);
 })
