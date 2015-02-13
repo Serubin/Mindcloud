@@ -1,6 +1,13 @@
-	/**
-	 *  User registration
-	 */
+/******************************************************************************
+ * register.js
+ * @author Michael Shullick, Solomon Rubin
+ * 13 Febuary 2015
+ * Javascript for user registeration page
+ *****************************************************************************/
+
+/**
+ *  User registration
+ */
 function register(){
 	 // Foundation form abide
 	$("#registration_form").on('valid.fndtn.abide', function() {

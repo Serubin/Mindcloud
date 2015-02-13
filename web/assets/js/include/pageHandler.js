@@ -1,9 +1,14 @@
+/******************************************************************************
+ * pageHandler.js
+ * @author Michael Shullick, Solomon Rubin
+ * 13 Febuary 2015
+ * Javascript for async page handling
+ *****************************************************************************/
+
 /**
  * pageRequest()
  * Page requests dynamicly loads in a new content
  * @param page - the pages url (excluding pages/)
- *
- * 
  */
 function pageRequest(page){
 
@@ -37,6 +42,12 @@ function pageRequest(page){
 
 }
 
+/**
+ * linkHandler()
+ * handles a tag clicking. Pushes history state and loads new page dynamicly
+ * @param link - the href url
+ * @returns false - to cancel default action
+ */
 function linkHandler(link){
 	history.pushState({}, '', link);
 
@@ -44,7 +55,11 @@ function linkHandler(link){
 
     return false;
 }
-
+/**
+ * popHandler()
+ * Handles state movement, doesn't set history
+ * @param e - event
+ */
 function popHandler(e) {
 	if (e.originalEvent.state !== null) {
 		var params = parseGet(location.href);

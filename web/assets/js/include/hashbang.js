@@ -1,3 +1,12 @@
+/******************************************************************************
+ * hashbang.js
+ * @author Michael Shullick, Solomon Rubin
+ * 13 Febuary 2015
+ * Javascript for parsing urls
+ *****************************************************************************/
+
+//TODO move to pageHandler
+
 /**
  * parseGet()
  * Parse hash bang parameters from a URL as key value object.

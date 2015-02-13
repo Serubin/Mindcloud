@@ -1,3 +1,9 @@
+/******************************************************************************
+ * testing.js
+ * @author Michael Shullick, Solomon Rubin
+ * 13 Febuary 2015
+ * Javascript for main app
+ *****************************************************************************/
 
 // Login form submission, validation done by Foundation form-abide
 $('#submit-problem').on('valid.fndtn.abide', function() {
