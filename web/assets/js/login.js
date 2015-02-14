@@ -28,7 +28,7 @@ function login(){
 	var req = new APICaller("user", "check");
 	req.send({}, function (result) {
 		if (result)
-			window.location.replace("https://mindcloud.io/");
+			ph.pageRequest("dashboard"); // loads dash
 	});
 
 	/**

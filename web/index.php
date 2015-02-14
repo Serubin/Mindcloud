@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Mindcloud</title>
 		<link rel="stylesheet" href="assets/css/login.css" />
+
 		<script src="bower_components/modernizr/modernizr.js"></script>
 		<script src="bower_components/masonry/dist/masonry.js"></script>
 
@@ -21,11 +22,11 @@
 		<!-- top bar -->
 		<div class="fixed">
 			<nav class="top-bar" id="navigation" data-topbar role="navigation">
-				
+				<!-- Dynamicly filled -->
 			</nav>
 		</div><!-- end top bar -->
 		
-		<!-- Content area -->
+		<!-- content area -->
 		<div id="content">
 
 			<!-- Dynamicly Filled -->

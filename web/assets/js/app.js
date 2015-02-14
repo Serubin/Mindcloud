@@ -5,21 +5,23 @@
  * Javascript for main app
  *****************************************************************************/
 
+var ph; // page handler global variable
+
 $(function(){
+	// Loads page handler
+
+	ph = new pageHandler({"pageLoc": "pages/", "animations": true});
 
 	// Loads navigation bar
-	var success = function(result){
-		$("#navigation").html(result);
-	}
-
-	$.ajax({
-		url: "pages/topbar.php",
-		success: success
+	var navLoader = new pageHandler({
+		"pageLoc": "pages/", 
+		"registerEvents": false, 
+		"contentDiv": "#navigation"
 	});
 
-	// loads page
-	pageRequest( parseGet() );
+	navLoader.pageRequest("topbar");
 
-	// registers popstate event
-	$(window).on("popstate", popHandler);
+	// loads page
+	ph.pageRequest( ph.parseUrl() );
+	
 })
