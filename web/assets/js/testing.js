@@ -1,6 +1,9 @@
-// initalize foundation
-$(document).foundation();
-
+/******************************************************************************
+ * testing.js
+ * @author Michael Shullick, Solomon Rubin
+ * 13 Febuary 2015
+ * Javascript for main app
+ *****************************************************************************/
 $( function() {
 
 	$container = $('#curator');

@@ -37,6 +37,9 @@ $primary-font: 'GenW01Light';
   }
 }
 
+#content{
+  margin: 0 0 100px 0;
+}
 
 // light blue/teal
 $color-primary-0: #02F4FF;	/* Main Primary color */
@@ -51,11 +54,3 @@ $color-complement-1: #FFCEA4;
 $color-complement-2: #FFB270;
 $color-complement-3: #D96400;
 $color-complement-4: #A74D00;
-
-// bottom bar 
-.bottom-bar {
-	margin-bottom: 0;
-	bottom: 0;
-	width: 100%;
-	height: 50px;
-}

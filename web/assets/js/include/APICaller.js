@@ -1,3 +1,10 @@
+/******************************************************************************
+ * APICaller.js
+ * @author Michael Shullick, Solomon Rubin
+ * 13 Febuary 2015
+ * Javascript for api server interaction
+ *****************************************************************************/
+
 function APICaller (controller, action) {
 
 	this.API_URL = "http://mindcloud.io/api/";
