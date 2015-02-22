@@ -40,6 +40,9 @@ class UserObject
 				throw new UserException("unset vars.", __FUNCTION__);
 			}
 
+			// Lowercase email
+			$this->email = strtolower($this->email);
+			
 			// Create a random salt, hash passwd
 			$password = create_hash($this->password);
 
@@ -97,6 +100,9 @@ class UserObject
 			if (!isset($this->email, $this->password)) {
 				throw new Exception("Unset vars.");
 			}
+
+			// Lowercase email
+			$this->email = strtolower($this->email);
 
 			// prepare SQL statement 
 			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `user_accounts` WHERE `email` = ? LIMIT 1")) {
@@ -276,6 +282,10 @@ class UserObject
 			if (!isset($this->email)) {
 				throw new UserException("Unsert vars", "CHECK");
 			}
+
+			// Lowercase email
+			$this->email = strtolower($this->email);
+
 			// Check for an existing email
 			if (!$stmt = $this->_mysqli->prepare("SELECT `email` FROM `user_accounts` WHERE `email` = ? LIMIT 1")) {
 				throw new Exception($this->_mysqli->error);
