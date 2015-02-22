@@ -7,6 +7,8 @@
 /**
  * pageHandler()
  * Page requests dynamicly loads in a new content
+ * 
+ * use .keep-native to avoid pageHandler from eating up links
  * @param args{
  *	pageLoc: 			page fragment locations - required	
  *	registerEvents: 	boolean to register events - default true
