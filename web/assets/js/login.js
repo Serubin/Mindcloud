@@ -23,7 +23,6 @@ function login(){
 
 	/**
 	 * Redirect user to the app if already logged in
-	 * TODO; just change body content?
 	 */
 	var req = new APICaller("user", "check");
 	req.send({}, function (result) {
@@ -41,7 +40,7 @@ function login(){
 		req.send(params, function(result) {
 			switch (result) {
 				case true:
-					window.location.replace("http://mindcloud.io/web/");
+					ph.pageRequest("dashboard");
 					break;
 				default:
 					$("#password").val("");

@@ -5,5 +5,8 @@
  * Javascript for account page
  *****************************************************************************/
 
-// initalize foundation last
-$(document).foundation();
+function account() {
+
+	// initalize foundation last
+	$(document).foundation();
+}
