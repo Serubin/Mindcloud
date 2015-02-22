@@ -12,14 +12,13 @@ function login(){
 	  		Password must consists of at least 8 characters and not more than 25 
 	   		characters.
 	 */
-	$(document)
-		.foundation({
-			abide: {
-				patterns: {
-					password: /^([a-zA-Z0-9@*#&]{8,25})$/
-				}
+	$(document).foundation({
+		abide: {
+			patterns: {
+				password: /^([a-zA-Z0-9@*#&!]{8,25})$/
 			}
-		});
+		}
+	});
 
 	/**
 	 * Redirect user to the app if already logged in
@@ -41,7 +40,7 @@ function login(){
 		req.send(params, function(result) {
 			switch (result) {
 				case true:
-					window.location.replace("http://mindcloud.io/web/");
+					ph.pageRequest("dashboard");
 					break;
 				default:
 					$("#password").val("");

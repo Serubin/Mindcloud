@@ -9,19 +9,33 @@
  *  User registration
  */
 function register(){
+	/**
+	 * Overrides 
+	 * + password: Match all alphanumeric character and predefined wild characters.
+	  		Password must consists of at least 8 characters and not more than 25 
+	   		characters.
+	 */
+	$(document).foundation({
+		abide: {
+			patterns: {
+				password: /^([a-zA-Z0-9@*#&!]{8,25})$/
+			}
+		}
+	});
+
 	 // Foundation form abide
-	$("#registration_form").on('valid.fndtn.abide', function() {
+	$("#registration_form").on('valid', function() {
 
 		alert("forms look good; registering");
-		register();
+		processRegistration();
 
 	});
 
 	/**
-	 * register()
+	 * processRegistration()
 	 * Executes api requests to register user.
 	 */
-	function register() {
+	function processRegistration() {
 		var req = new APICaller("user", "create");
 
 		// Prepare the submission parameters
@@ -37,11 +51,12 @@ function register(){
 
 		// React on the response from the server
 		req.send(params, function(result) {
+			console.log(result);
 			if (result == true) {
 				alert("yer good");
 				
 				// Redirect browser page
-				window.location.replace("http://mindcloud.io/web/")
+				ph.pageRequest("login");
 				
 			}
 			else {
