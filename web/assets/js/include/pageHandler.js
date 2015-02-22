@@ -94,7 +94,7 @@ function pageHandler(args) {
 			// registers all a links to use js for redirection
 			if(registerEvents) {
 				$("a").unbind("click");
-				$("a").click(function() {
+				$("a").not(".keep-native").click(function() {
 					return linkHandler( $(this).attr("href") );
 				});
 			}
@@ -154,7 +154,7 @@ function pageHandler(args) {
 	 * @returns false - to cancel default action
 	 */
 	function linkHandler(link) {
-		_this.pageRequest(_this.parseUrl());
+		_this.pageRequest(link);
 
 	    return false;
 	}
