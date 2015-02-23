@@ -1,3 +1,7 @@
+<!-- Background -->
+<div id="splash-background">
+</div>
+
 <!-- title -->
 <div id="title"> 
 	<p class="subtitle">welcome to</p>

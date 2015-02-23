@@ -1,3 +1,7 @@
+<!-- Background -->
+<div id="splash-background">
+</div>
+
 <!-- Register page -->
 <div id="title">
 	<div id="title"> 
@@ -70,7 +74,7 @@
 			</div>
 			<br/>
 			<button type="submit">register</button>
-			<button class="secondary" id="reg_to_login">Already have an account?</button>
+			<a href="login" class="button secondary" id="reg_to_login">Already have an account?</a>
 		</form>
 	</div>
 </div> <!-- end regiser modal -->

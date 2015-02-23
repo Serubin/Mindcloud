@@ -10,8 +10,7 @@ module.exports = function(grunt) {
 					outputStyle: 'compressed'
 				},
 				files: {
-					'../assets/css/app.css': '../scss/app.scss',
-					'../assets/css/login.css': '../scss/login.scss',
+					'../assets/css/master.css': '../scss/master.scss',
 				}				
 			}
 		},
@@ -20,27 +19,41 @@ module.exports = function(grunt) {
 
 			sass: {
 				files: '../scss/**/*.scss',
-				tasks: ['sass']
+				tasks: ['build']
 			},
 			js: {
-				files: ['../assets/js/**/*.js', '!../assets/js/build/*.js'],
-				tasks: ['clean', 'concat']
+				files: ['../js/**/*.js'],
+				tasks: ['build']
+			},
+			js_framework: {
+				files: ['../bower_components/**/*'],
+				tasks: ['build']
 			}
 		},
 		clean: {
 			js_clean: {
 				options: { force: true },
-				src: [ '../assets/js/build' ]
+				src: [ '../assets/js/' ]
+			},
+			scss_clean: {
+				options: { force: true },
+				src: ['../assets/css/']
 			}
 		},
 		concat: {
 			js_include_concat: {
-				src: ['../assets/js/include/*.js'],
-				dest: '../assets/js/build/include.js'
+				src: ['../js/include/*.js'],
+				dest: '../assets/js/includes.js'
 			},
 			js_app_concat: {
-				src: ['../assets/js/*.js'],
-				dest: '../assets/js/build/apps.js'
+				src: ['../js/*.js'],
+				dest: '../assets/js/apps.js'
+			},
+			js_framework_concat: {
+				src: ['../bower_components/jquery/dist/jquery.js', 
+					  '../bower_components/modernizr/modernizr.js', 
+					  '../bower_components/foundation/js/foundation.js'],
+				dest: '../assets/js/frameworks.js'
 			}
 		}
 	});
@@ -50,6 +63,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 
-	grunt.registerTask('build', ['sass','clean','concat']);
+	grunt.registerTask('build', ['clean','sass','concat']);
 	grunt.registerTask('default', ['build','watch']);
 }

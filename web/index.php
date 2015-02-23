@@ -4,19 +4,14 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Mindcloud</title>
-		<link rel="stylesheet" href="assets/css/login.css" />
-		<link rel="stylesheet" href="assets/css/app.css" />
+		<link rel="stylesheet" href="assets/css/master.css" />
 
-		<script src="bower_components/modernizr/modernizr.js"></script>
-		<script src="bower_components/masonry/dist/masonry.js"></script>
-
-		<script src="bower_components/jquery/dist/jquery.min.js"></script>
-		<script src="bower_components/foundation/js/foundation.min.js"></script>
-
+		
+		<script type="text/javascript" src="assets/js/frameworks.js"></script>
 		<!-- JS app files -->
-		<script src="assets/js/build/apps.js"></script>
+		<script type="text/javascript" src="assets/js/apps.js"></script>
 		<!-- JS includes -->
-		<script src="assets/js/build/include.js"></script>
+		<script type="text/javascript" src="assets/js/includes.js"></script>
 	</head>
 	<body>
 
