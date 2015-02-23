@@ -1,3 +1,4 @@
+<!-- TODO must be updated to match pages -->
 <!doctype html>
 <html class="no-js" lang="en">
 	<head>
