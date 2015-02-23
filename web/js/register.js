@@ -30,7 +30,7 @@ function register(){
 		processRegistration();
 
 	});
-
+	
 	/**
 	 * processRegistration()
 	 * Executes api requests to register user.

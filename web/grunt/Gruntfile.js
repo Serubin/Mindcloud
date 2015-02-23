@@ -19,15 +19,15 @@ module.exports = function(grunt) {
 
 			sass: {
 				files: '../scss/**/*.scss',
-				tasks: ['clean', 'sass']
+				tasks: ['build']
 			},
 			js: {
 				files: ['../js/**/*.js'],
-				tasks: ['clean', 'concat']
+				tasks: ['build']
 			},
 			js_framework: {
 				files: ['../bower_components/**/*'],
-				tasks: ['clean', 'concat']
+				tasks: ['build']
 			}
 		},
 		clean: {

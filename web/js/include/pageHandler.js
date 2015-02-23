@@ -54,7 +54,6 @@ function pageHandler(args) {
 	}
 
 	this.pageRequest = function(page, historypush){
-		console.log(historypush);
 		if(historypush || typeof historypush == "undefined")
 			history.pushState({}, '', page);		
 		pageLoad(page);
