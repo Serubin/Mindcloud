@@ -7,6 +7,8 @@
 /**
  * pageHandler()
  * Page requests dynamicly loads in a new content
+ * 
+ * use .keep-native to avoid pageHandler from eating up links
  * @param args{
  *	pageLoc: 			page fragment locations - required	
  *	registerEvents: 	boolean to register events - default true
@@ -17,6 +19,7 @@
 function pageHandler(args) {
 
 	var _this = this;
+	var history = window.history;
 
 	// public functions
 	var pageRequest;
@@ -49,16 +52,21 @@ function pageHandler(args) {
 			$(window).on("popstate", popHandler);
 		}
 	}
+
+	this.pageRequest = function(page, historypush){
+		console.log(historypush);
+		if(historypush || typeof historypush == "undefined")
+			history.pushState({}, '', page);		
+		pageLoad(page);
+	}
 	/**
-	 * pageRequest()
+	 * pageLoad()
 	 * Page requests dynamicly loads in a new content
 	 * @param page - the pages url (excluding pages/)
 	 */
-	 this.pageRequest = function(page) {
+	function pageLoad(page) {
 
-	 	var $content = $(contentDiv);
-// Animation for loading
-			
+	 	var $content = $(contentDiv);			
 		/*
 		 * success()
 		 * Handles pre-process (animate vs no animate)
@@ -88,7 +96,7 @@ function pageHandler(args) {
 			// registers all a links to use js for redirection
 			if(registerEvents) {
 				$("a").unbind("click");
-				$("a").click(function() {
+				$("a").not(".keep-native").click(function() {
 					return linkHandler( $(this).attr("href") );
 				});
 			}
@@ -148,9 +156,7 @@ function pageHandler(args) {
 	 * @returns false - to cancel default action
 	 */
 	function linkHandler(link) {
-		history.pushState({}, '', link);
-
-		_this.pageRequest(_this.parseUrl());
+		_this.pageRequest(link);
 
 	    return false;
 	}

@@ -19,9 +19,9 @@ $(function(){
 		"contentDiv": "#navigation"
 	});
 
-	navLoader.pageRequest("topbar");
+	navLoader.pageRequest("topbar", false);
 
 	// loads page
-	ph.pageRequest( ph.parseUrl() );
+	ph.pageRequest( ph.parseUrl(), false );
 	
 })

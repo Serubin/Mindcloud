@@ -40,6 +40,9 @@ class UserObject
 				throw new UserException("unset vars.", __FUNCTION__);
 			}
 
+			// Lowercase email
+			$this->email = strtolower($this->email);
+
 			// Create a random salt, hash passwd
 			$password = create_hash($this->password);
 
@@ -97,6 +100,9 @@ class UserObject
 			if (!isset($this->email, $this->password)) {
 				throw new Exception("Unset vars.");
 			}
+
+			// Lowercase email
+			$this->email = strtolower($this->email);
 
 			// prepare SQL statement 
 			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `user_accounts` WHERE `email` = ? LIMIT 1")) {
@@ -171,7 +177,7 @@ class UserObject
 	 * Returns true or false depending on whether the user is presently logged in,
 	 * or init if the user is logged in and needs initialized.
 	 */
-	function login_check() {
+	public function login_check() {
 
 		try {
 			// Retrieve stoken
@@ -214,7 +220,7 @@ class UserObject
 	 * Takes care of the following tasks:
 	 * + TODO
 	 */
-	function init() {
+	public function init() {
 		try {
 			// TODO
 
@@ -270,19 +276,24 @@ class UserObject
 	 *
 	 * @returns true: when no email other email is found or false: when another email is found
 	 */
-	function checkEmail(){
+	public function checkEmail(){
 		try {
 			// Checks that required vars
 			if (!isset($this->email)) {
 				throw new UserException("Unsert vars", "CHECK");
 			}
+
+			// Lowercase email
+			$this->email = strtolower($this->email);
+
 			// Check for an existing email
-			if (!$stmt = $this->_mysqli->prepare("SELECT `email` FROM `user_accounts` WHERE `email` = ? LIMIT 1")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `email` FROM user_accounts WHERE `email` = ? LIMIT 1")) {
 				throw new Exception($this->_mysqli->error);
 			}
-
+			$stmt->bind_param('s', $this->email);
 			$stmt->execute();
-			
+			$stmt->store_result(); // DO THIS FUCKER.
+
 			// if a user already exists with this email
 			if ($stmt->num_rows >= 1) {
 				return false;
@@ -325,7 +336,7 @@ class UserObject
 	 * Deletes the session and cookie arrays, the cookies, and 
 	 * destroys the session.
 	 */
-	function logout() {
+	public function logout() {
 
 		// Remove from database
 		if(!$stmt = $this->_mysql->prepared("DELETE FROM `user_sessions` WHERE id = ?")) {
