@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Mindcloud</title>
 		<link rel="stylesheet" href="assets/css/login.css" />
+		<link rel="stylesheet" href="assets/css/app.css" />
 
 		<script src="bower_components/modernizr/modernizr.js"></script>
 		<script src="bower_components/masonry/dist/masonry.js"></script>
