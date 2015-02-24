@@ -39,13 +39,13 @@ class Dashboard {
 			// if problems are to be loaded
 			// load most recent 10
 			// TODO change constant 10 to be however can fit on screen
-			if ($stmt = $this->_mysqli->prepare("SELECT `id`, `statement` FROM `problems` ORDER BY `created` LIMIT 10")) {
+			if ($stmt = $this->_mysqli->prepare("SELECT `id`, `statement`, `created` FROM `problems` ORDER BY `created` LIMIT 10")) {
 				$stmt->execute();
 				$stmt->store_result();
 				$problems = array();
-				$stmt->bind_result($id, $pr_stmt);
+				$stmt->bind_result($id, $pr_stmt, $date);
 				while ($stmt->fetch()) {
-					$problems[] = array($id, $pr_stmt);
+					$problems[] = array($id, $pr_stmt, $date);
 					error_log(html_entity_decode($pr_stmt));	
 				}
 				return $problems;
