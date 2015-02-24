@@ -40,10 +40,26 @@
 //   "foundation/components/offcanvas",
 //   "foundation/components/visibility";
 
+#container {
+  margin: 15px;
+}
+
+.problem-stmt {
+  display: inline-block;
+  vertical-align: bottom;
+  line-height: 14px; /* <-- adjust this */
+  padding: 5px;
+}
+
 /**** Isotope Filtering ****/
 
 .isotope-item {
   z-index: 2;
+  background-color: $secondary-color;
+  color: white;
+  height: 80px;
+  line-height: 80px;
+  margin-bottom: 5px;
 }
 
 .isotope-hidden.isotope-item {
@@ -94,3 +110,5 @@
   border-bottom: 2px solid $primary-color;
 
 }
+
+

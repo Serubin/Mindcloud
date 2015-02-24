@@ -31,6 +31,6 @@
   <button class="close-reveal-modal">&#215;</button>
 </div> <!-- end pose-a-problem modal -->
 
-<ul id="container" class="tiles-wrap animated">
+<div id="container" class="text-center">
 
-</ul>
+<div>
