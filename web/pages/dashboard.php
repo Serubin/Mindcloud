@@ -31,6 +31,6 @@
   <button class="close-reveal-modal">&#215;</button>
 </div> <!-- end pose-a-problem modal -->
 
-<div id="container" class="text-center">
+<div id="container">
 
 <div>
