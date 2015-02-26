@@ -8,7 +8,7 @@
  *****************************************************************************/
 
 
-class SolutionObject{
+class SolutionObject {
 
 	private $_mysqli;
 
@@ -46,8 +46,9 @@ class SolutionObject{
 			$this->shorthand = strtolower($this->shorthand);
 
 			// Submits solution information
-			if (!$stmt = $this->_mysqli->prepare("INSERT INTO solutions (`pid`, `shorthand`, `title`, `description`, `creator`) VALUES (?,?,?,?,?)"))
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO solutions (`pid`, `shorthand`, `title`, `description`, `creator`) VALUES (?,?,?,?,?)")) {
 				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+			}
 
 			$stmt->bind_param('isssi', $this->problemId, $this->shorthand, $this->title, $this->description, $this->creator);
 			$stmt->execute();
@@ -70,8 +71,9 @@ class SolutionObject{
 				throw new SolutionException("unset vars.", __FUNCTION__);
 			}
 			// fetches all data for solutions
-			if (!$stmt = $this->_mysqli->prepare("SELECT * FROM solutions WHERE `id` = ?"))
+			if (!$stmt = $this->_mysqli->prepare("SELECT * FROM solutions WHERE `id` = ?")) {
 				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+			}
 
 			$stmt->bind_param("i", $this->id);
 			$stmt->execute();
@@ -99,8 +101,9 @@ class SolutionObject{
 			// Prepares variables
 			$this->shorthand = strtolower($this->shorthand);
 
-			if ($stmt = $this->_mysqli->prepare("UPDATE solutions SET `shorthand`=?,`title`=?,`description`=?,`status`=? WHERE `id` = ?"))
+			if ($stmt = $this->_mysqli->prepare("UPDATE solutions SET `shorthand`=?,`title`=?,`description`=?,`status`=? WHERE `id` = ?")) {
 				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+			}
 
 			$stmt->bind_param("sssii", $this->shorthand, $this->title, $this->description, $this->status,$this->id);
 			$stmt->execute();
@@ -123,8 +126,9 @@ class SolutionObject{
 			// Prepares variables
 			$this->shorthand = strtolower($this->shorthand);
 
-			if ($stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM solutions WHERE `shorthand` = ?"))
+			if ($stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM solutions WHERE `shorthand` = ?")) {
 				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+			}
 
 			$stmt->bind_param("s", $this->shorthand);
 			$stmt->execute();
@@ -155,8 +159,9 @@ class SolutionObject{
 			// Prepares variables
 			$this->shorthand = strtolower($this->shorthand);
 
-			if ($stmt = $this->_mysqli->prepare("SELECT `shorthand` FROM solutions WHERE `shorthand` = ?"))
+			if ($stmt = $this->_mysqli->prepare("SELECT `shorthand` FROM solutions WHERE `shorthand` = ?")) {
 				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+			}
 
 			$stmt->bind_param("s", $this->shorthand);
 			$stmt->execute();

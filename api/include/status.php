@@ -8,7 +8,7 @@
  *****************************************************************************/
 
 
-class Status{
+class Status {
 
 	private $_mysqli;
 
@@ -27,8 +27,9 @@ class Status{
 	 * @param $name status string
 	 */
 	public function fetchId( $name ){
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `value` FROM status WHERE `name` = ?"))
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `value` FROM status WHERE `name` = ?")) {
 			throw new MindcloudException($this->_mysqli->error, "status", __FUNCTION__);
+		}
 
 		$stmt->bind_param("s", $name);
 		$stmt->execute();
@@ -52,8 +53,9 @@ class Status{
 	 * @param $id status id
 	 */
 	public function fetchName( $id ){
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `value` FROM status WHERE `id` = ?"))
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `value` FROM status WHERE `id` = ?")) {
 			throw new MindcloudException($this->_mysqli->error, "status", __FUNCTION__);
+		}
 
 		$stmt->bind_param("i", $value);
 		$stmt->execute();

@@ -9,8 +9,7 @@
 
 require_once "include/PasswordHash.php"; 
 	
-class UserObject
-{
+class UserObject {
 	public $uid;
 	public $email;
 	public $password;
