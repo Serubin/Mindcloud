@@ -53,10 +53,11 @@ class UserObject
 
 			// Submit login information
 			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_accounts` (`email`, `password`) VALUES (?, ?)")) {
-				$stmt->bind_param('ss', $this->email, $password);
-				$stmt->execute();
-			} else
 				throw new UserException($this->_mysqli->error, "REGISTER");
+			}
+
+			$stmt->bind_param('ss', $this->email, $password);
+			$stmt->execute();
 
 			$uid = $this->_mysqli->insert_id;
 
@@ -65,17 +66,19 @@ class UserObject
 
 			// Submit user data
 			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `year`, `join_date`) VALUES (?, ?, ?, ?, ?)")) {
-				$stmt->bind_param('issss', $uid, $this->first_name, $this->last_name, $this->year, $date);
-				$stmt->execute();
-			} else
 				throw new UserException($this->_mysqli->error, "REGISTER");
+			}
+
+			$stmt->bind_param('issss', $uid, $this->first_name, $this->last_name, $this->year, $date);
+			$stmt->execute();
 			
 			// Submit user data
 			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_meta` (`id`) VALUES (?)")) {
-				$stmt->bind_param('i', $uid);
-				$stmt->execute();
-			} else
 				throw new UserException($this->_mysqli->error, "REGISTER");
+			}
+
+			$stmt->bind_param('i', $uid);
+			$stmt->execute();
 
 			// Return true on success
 			return true;
@@ -106,9 +109,9 @@ class UserObject
 
 			// prepare SQL statement 
 			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `user_accounts` WHERE `email` = ? LIMIT 1")) {
-				// SQL Error catch
 				throw new UserException("Prepare failed." . $this->_mysqli->error, "LOGIN");
 			}
+			
 			$stmt->bind_param('s', $this->email); // puts the email in place of the '?'
 			$stmt->execute();
 			$stmt->store_result();
@@ -188,6 +191,7 @@ class UserObject
 			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `ip` FROM user_sessions WHERE `id` = ? AND `ip` = ? LIMIT 1")) {
 				 throw new UserException("Prepare failed.", __FUNCTION__);
 			}
+
 			$stmt->bind_param('ss', $sid, $_SERVER['REMOTE_ADDR']);
 			$stmt->execute();
 			$stmt->store_result();
@@ -253,6 +257,7 @@ class UserObject
 			if (!$stmt = $this->_mysqli->prepare("SELECT id, verified FROM user_meta WHERE `id` = ? LIMIT 1")) {
 				throw new UserException($this->_mysqli->error, "VERIFY");
 			}
+
 			$stmt->bind_param('i', $this->uid);
 			$stmt->execute();
 			$stmt->store_result();
@@ -290,6 +295,7 @@ class UserObject
 			if (!$stmt = $this->_mysqli->prepare("SELECT `email` FROM user_accounts WHERE `email` = ? LIMIT 1")) {
 				throw new Exception($this->_mysqli->error);
 			}
+
 			$stmt->bind_param('s', $this->email);
 			$stmt->execute();
 			$stmt->store_result(); // DO THIS FUCKER.
@@ -342,6 +348,7 @@ class UserObject
 		if(!$stmt = $this->_mysql->prepared("DELETE FROM `user_sessions` WHERE id = ?")) {
 			throw new UserException($this->_mysqli->error, "LOGIN");
 		}
+		
 		$stmt->bind_param('i', $sid);
 		$stmt->execute();
 
