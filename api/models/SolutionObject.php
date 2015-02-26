@@ -8,18 +8,6 @@
  *****************************************************************************/
 
 
-/*
-CREATE TABLE `solutions` (
-  `id` int(11) unsigned NOT NULL,
-  `pid` int(11) unsigned NOT NULL,
-  `shorthand` varchar(40) NOT NULL,
-  `title` varchar(160) NOT NULL,
-  `description` text NOT NULL,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `creator` int(11) unsigned NOT NULL,
-  `status` tinyint(2) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-*/
 class SolutionObject{
 
 	private $_mysqli;
@@ -46,4 +34,147 @@ class SolutionObject{
 	public function __construct($mysqli) {
 		$this->_mysqli = $mysqli;
 	}
+
+	public function create() {
+		try {
+			// Checks that all required post variables are set
+			if (!isset($this->problemId, $this->shorthand, $this->title, $this->description, $this->creator)) {
+				throw new SolutionException("unset vars.", __FUNCTION__);
+			}
+
+			// Prepares variables
+			$this->shorthand = strtolower($this->shorthand);
+
+			// Submits solution information
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO solutions (`pid`, `shorthand`, `title`, `description`, `creator`) VALUES (?,?,?,?,?)"))
+				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+
+			$stmt->bind_param('isssi', $this->problemId, $this->shorthand, $this->title, $this->description, $this->creator);
+			$stmt->execute();
+				
+			$stmt->close();
+
+			$this->id = $this->_mysqli->insert_id;
+
+			return true;
+			// Report any failure
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	public function load() {
+		try {
+			// Checks that all required post variables are set
+			if (!isset($this->id)) {
+				throw new SolutionException("unset vars.", __FUNCTION__);
+			}
+			// fetches all data for solutions
+			if (!$stmt = $this->_mysqli->prepare("SELECT * FROM solutions WHERE `id` = ?"))
+				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+
+			$stmt->bind_param("i", $this->id);
+			$stmt->execute();
+			$stmt->store_results();
+
+			// stores results from query in variables corresponding to statement
+			$stmt->bind_result($db_id, $this->problemId, $this->shorthand, $this->title, $this->description, $this->created, $this->creator, $this->status);
+			$stmt->fetch();
+
+			$stmt->close();
+
+			return true;
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	public function update() {
+		try{
+			// Checks that all required post variables are set
+			if (!isset($this->id, $this->shorthand, $this->title, $this->description, $this->status)) {
+				throw new SolutionException("unset vars.", __FUNCTION__);
+			}
+
+			// Prepares variables
+			$this->shorthand = strtolower($this->shorthand);
+
+			if ($stmt = $this->_mysqli->prepare("UPDATE solutions SET `shorthand`=?,`title`=?,`description`=?,`status`=? WHERE `id` = ?"))
+				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+
+			$stmt->bind_param("sssii", $this->shorthand, $this->title, $this->description, $this->status,$this->id);
+			$stmt->execute();
+
+			$stmt->close();
+
+			return true;
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	public function getId(){
+		try {
+			// Checks that all required post variables are set
+			if (!isset($this->shorthand)) {
+				throw new SolutionException("unset vars.", __FUNCTION__);
+			}
+
+			// Prepares variables
+			$this->shorthand = strtolower($this->shorthand);
+
+			if ($stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM solutions WHERE `shorthand` = ?"))
+				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+
+			$stmt->bind_param("s", $this->shorthand);
+			$stmt->execute();
+			$stmt->store_results();
+
+			$stmt->bind_param($db_id, $db_shorthand);
+			$stmt->fetch();
+
+			if($stmt->num_rows < 1)
+				return false;
+
+			// saves data
+			$this->id = $db_id;
+
+			return true
+		} catch(Exception $e) {
+			return $e;
+		}
+	}
+
+	public function validateShorthand(){
+		try {
+			// Checks that all required post variables are set
+			if (!isset($this->shorthand)) {
+				throw new SolutionException("unset vars.", __FUNCTION__);
+			}
+
+			// Prepares variables
+			$this->shorthand = strtolower($this->shorthand);
+
+			if ($stmt = $this->_mysqli->prepare("SELECT `shorthand` FROM solutions WHERE `shorthand` = ?"))
+				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+
+			$stmt->bind_param("s", $this->shorthand);
+			$stmt->execute();
+			$stmt->store_results();
+
+			$stmt->bind_param($db_shorthand);
+			$stmt->fetch();
+
+			if($stmt->num_rows >= 1)
+				return false;
+
+			return true
+		} catch(Exception $e) {
+			return $e;
+		}
+	}
+
 }
+
+
+
