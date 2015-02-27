@@ -99,6 +99,7 @@ class User
 		$user = new UserObject($this->_mysqli);
 		$user->email = $this->_params['email'];
 		$user->password = $this->_params['password'];
+
 		return $user->login();
 	}
 
@@ -107,10 +108,13 @@ class User
 	 */
 	public function checkUser() {
 		$user = new UserObject($this->_mysqli);
+		// TODO add session vars
 		return $user->login_check();
 	}
 
-
+	private function setSession(){
+		// sets session variables
+	}
 	/*
 	 * initUser()
 	 * Only called once immediately following a user's registration.

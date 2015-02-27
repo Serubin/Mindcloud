@@ -91,6 +91,16 @@ class Solution
 		}
 	}
 
+	public function voteSolution(){
+		try {
+			// Checks that all required post variables are set
+			if (!isset($this->_params['id'], $this->_params['vote'],$_SESSION['uid'])) {
+				error_log(json_encode($this->_params));
+				throw new SolutionException("Unset vars", __FUNCTION__);
+			}
+
+			//TODO finish dis shit
+	}
 	/**
 	 * load()
 	 * Load the associated content with the pre-set project id

@@ -165,8 +165,6 @@ class UserObject {
 				return "unverified";
 			}*/
 
-			return true;
-
 			// Return true on success
 			return true;
 		} catch (Exception $e) {
