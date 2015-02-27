@@ -21,6 +21,8 @@ class SolutionObject {
 	public $created;
 	public $creator;
 	public $status;
+
+	public $userVote;
 	// TODO
 	// TODO: content handlers
 	// TODO: activity
@@ -116,6 +118,14 @@ class SolutionObject {
 		}
 	}
 
+	public function voteUp(){
+		try{
+			// Checks that all required post variables are set
+			if (!isset($this->id)) {
+				throw new SolutionException("unset vars.", __FUNCTION__);
+			}
+
+	}
 	public function getId(){
 		try {
 			// Checks that all required post variables are set
@@ -134,10 +144,15 @@ class SolutionObject {
 			$stmt->execute();
 			$stmt->store_results();
 
-			$stmt->bind_param($db_id, $db_shorthand);
+			// stores results from query in variables corresponding to statement
+			$stmt->bind_result($db_id, $db_shorthand);
 			$stmt->fetch();
 
-			if($stmt->num_rows < 1)
+			$rows = $stmt->num_rows;
+
+			$stmt->close();
+
+			if($rows < 1)
 				return false;
 
 			// saves data
@@ -167,10 +182,14 @@ class SolutionObject {
 			$stmt->execute();
 			$stmt->store_results();
 
-			$stmt->bind_param($db_shorthand);
+			$stmt->bind_result($db_shorthand);
 			$stmt->fetch();
 
-			if($stmt->num_rows >= 1)
+			$rows = $stmt->num_rows;
+
+			$stmt->close();
+
+			if($rows >= 1)
 				return false;
 
 			return true

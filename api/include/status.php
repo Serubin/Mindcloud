@@ -10,25 +10,15 @@
 
 class Status {
 
-	private $_mysqli;
-
-	/**
-	 * Constructor
-	 * Constructor will only ever require db handler (optional but likely)
-	 * @param $mysqli db handler
-	 */
-	public function __construct($mysqli) {
-		$this->_mysqli = $mysqli;
-	}
-
 	/**
 	 * fetchId()
 	 * Provides id from name
+	 * @param $_mysqli mysqli object
 	 * @param $name status string
 	 */
-	public function fetchId( $name ){
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `value` FROM status WHERE `name` = ?")) {
-			throw new MindcloudException($this->_mysqli->error, "status", __FUNCTION__);
+	public function fetchId($_mysqli, $name ){
+		if (!$stmt = $_mysqli->prepare("SELECT `id`, `value` FROM status WHERE `name` = ?")) {
+			throw new MindcloudException($_mysqli->error, "status", __FUNCTION__);
 		}
 
 		$stmt->bind_param("s", $name);
@@ -50,11 +40,12 @@ class Status {
 	/**
 	 * fetchName()
 	 * Provides name from id
+	 * @param $_mysqli mysqli object
 	 * @param $id status id
 	 */
-	public function fetchName( $id ){
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `value` FROM status WHERE `id` = ?")) {
-			throw new MindcloudException($this->_mysqli->error, "status", __FUNCTION__);
+	public function fetchName($_mysqli, $id ){
+		if (!$stmt = $_mysqli->prepare("SELECT `id`, `value` FROM status WHERE `id` = ?")) {
+			throw new MindcloudException($_mysqli->error, "status", __FUNCTION__);
 		}
 
 		$stmt->bind_param("i", $value);
