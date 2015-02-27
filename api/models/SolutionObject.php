@@ -14,7 +14,7 @@ class SolutionObject {
 
 	// member vars
 	public $id;
-	public $problemId;
+	public $problem_id;
 	public $shorthand; // Short hand title/url
 	public $title;
 	public $description; // TODO strip tags on submit to filter out html
@@ -40,7 +40,7 @@ class SolutionObject {
 	public function create() {
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->problemId, $this->shorthand, $this->title, $this->description, $this->creator)) {
+			if (!isset($this->problem_id, $this->shorthand, $this->title, $this->description, $this->creator)) {
 				throw new SolutionException("unset vars.", __FUNCTION__);
 			}
 
@@ -52,7 +52,7 @@ class SolutionObject {
 				throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 			}
 
-			$stmt->bind_param('isssi', $this->problemId, $this->shorthand, $this->title, $this->description, $this->creator);
+			$stmt->bind_param('isssi', $this->problem_id, $this->shorthand, $this->title, $this->description, $this->creator);
 			$stmt->execute();
 				
 			$stmt->close();
@@ -82,7 +82,7 @@ class SolutionObject {
 			$stmt->store_results();
 
 			// stores results from query in variables corresponding to statement
-			$stmt->bind_result($db_id, $this->problemId, $this->shorthand, $this->title, $this->description, $this->created, $this->creator, $this->status);
+			$stmt->bind_result($db_id, $this->problem_id, $this->shorthand, $this->title, $this->description, $this->created, $this->creator, $this->status);
 			$stmt->fetch();
 
 			$stmt->close();

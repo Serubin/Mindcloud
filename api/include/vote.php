@@ -2,7 +2,7 @@
 /******************************************************************************
  * Vote.php
  * @author Michael Shullick, Solomon Rubin
- * 20 Febuary 2015
+ * 27 Febuary 2015
  * Adds and returns votes
  * All lines will fit with 80 columns. 
  *****************************************************************************/
@@ -21,6 +21,7 @@ class Status {
 	 * }
 	 * @param $cid content id
 	 * @param $vote vote -1 or 1 (down, up)
+	 * @return true on success
 	 */
 	public function addVote( $_mysqli, $ctype, $cid, $uid, $vote ){
 		if (!$stmt = $this->_mysqli->prepare("INSERT INTO votes (`ctype`, `cid`, `uid`, `vote`) VALUES (?,?,?,?)")) {
@@ -34,7 +35,19 @@ class Status {
 
 		return true;
 	}
-
+	/**
+	 * fetchVote()
+	 * Fetches vote user casted
+	 * @param $_mysqli mysqli object
+	 * @param $ctype type string
+	 * {
+	 * 	"problem",
+	 * 	"solution"
+	 * }
+	 * @param $cid content id
+	 * @param $uid 
+	 * @return vote or false
+	 */
 	public function fetchVote( $_mysqli, $ctype, $cid, $uid ){
 		if (!$stmt = $this->_mysqli->prepare("SELECT `ctype`, `cid`, `uid`, `vote` FROM votes WHERE `ctype`= ? AND `cid` = ? AND`uid` = ?")) {
 			throw new MindcloudException($this->_mysqli->error, "vote", __FUNCTION__);
@@ -60,9 +73,24 @@ class Status {
 
 		return $db_vote;
 	}
-
+	/**
+	 * fetchScore()
+	 * Provides score from up votes and down votes
+	 * @param $_mysqli mysqli object
+	 * @param $ctype type string
+	 * {
+	 * 	"problem",
+	 * 	"solution"
+	 * }
+	 * @param $cid content id
+	 * @return $score - score of content
+	 */
 	public function fetchScore( $_mysqli, $ctype, $cid ){
+		$up = $this->fetchVoteTotal( $_mysqli, $ctype, $cid, 1 );
 
+		$down = $this->fetchVoteTotal( $_mysqli, $ctype, $cid, -1 );
+
+		return $up - $down;
 	}
 
 
@@ -77,6 +105,7 @@ class Status {
 	 * }
 	 * @param $cid content id
 	 * @param $vote vote -1 or 1 (down, up)
+	 * @return $votes - votes of content;
 	 */
 	private function fetchVoteTotal( $_mysqli, $ctype, $cid, $vote ){
 		if (!$stmt = $this->_mysqli->prepare("SELECT `ctype`, `cid`, `vote` FROM votes WHERE `ctype`= ? AND `cid` = ? AND`vote` = ?")) {

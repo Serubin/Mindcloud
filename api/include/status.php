@@ -2,7 +2,7 @@
 /******************************************************************************
 * Status.php
  * @author Michael Shullick, Solomon Rubin
- * 20 Febuary 2015
+ * 27 Febuary 2015
  * Fetches id <-> english
  * All lines will fit with 80 columns. 
  *****************************************************************************/
