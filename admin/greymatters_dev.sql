@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Feb 25, 2015 at 04:28 PM
+-- Generation Time: Feb 28, 2015 at 05:58 PM
 -- Server version: 5.5.38
 -- PHP Version: 5.6.2
 
@@ -13,8 +13,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `dev_greymatters`
 --
-CREATE DATABASE IF NOT EXISTS `dev_greymatters` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `dev_greymatters`;
 
 -- --------------------------------------------------------
 
@@ -113,13 +111,6 @@ CREATE TABLE `user_accounts` (
   `password` varchar(77) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `user_accounts`
---
-
-INSERT INTO `user_accounts` (`id`, `email`, `password`) VALUES
-(1, 'serubin@serubin.net', 'sha256:1000:UqFZ31dW45EyLAJ3xzNppMnRwC6CBit/:2e0C5q6rgAJckdzx8zUYm3aWKqHgtgU/');
-
 -- --------------------------------------------------------
 
 --
@@ -132,15 +123,9 @@ CREATE TABLE `user_data` (
   `last_name` varchar(255) NOT NULL,
   `gender` varchar(1) NOT NULL DEFAULT 'O',
   `year` int(4) NOT NULL,
-  `join_date` date NOT NULL
+  `join_date` date NOT NULL,
+  `permission` tinyint(1) NOT NULL DEFAULT '2'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `user_data`
---
-
-INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `gender`, `year`, `join_date`) VALUES
-(1, 'Solomon', 'Rubin', 'O', 1996, '2015-02-23');
 
 -- --------------------------------------------------------
 
@@ -152,13 +137,6 @@ CREATE TABLE `user_meta` (
   `id` int(11) unsigned NOT NULL,
   `verified` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `user_meta`
---
-
-INSERT INTO `user_meta` (`id`, `verified`) VALUES
-(1, 0);
 
 -- --------------------------------------------------------
 
@@ -174,14 +152,6 @@ CREATE TABLE `user_sessions` (
   `ip` varchar(16) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `user_sessions`
---
-
-INSERT INTO `user_sessions` (`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES
-('14a63e6e55704a16bce81166d14b8c946c0a207592c6c929945c26adb6482f9e', 1, 1424744247, 1425953847, '127.0.0.1'),
-('217fd3ebe8e170430e7fb9c11cce86c218440cd7f520bfeafcce00ece341d6e0', 1, 1424743843, 1425953443, '127.0.0.1');
-
 -- --------------------------------------------------------
 
 --
@@ -191,7 +161,9 @@ INSERT INTO `user_sessions` (`id`, `uid`, `timestamp`, `expire`, `ip`) VALUES
 CREATE TABLE `votes` (
   `id` int(11) unsigned NOT NULL,
   `ctype` enum('problem','solution','thread','post') NOT NULL,
-  `uid` int(11) unsigned NOT NULL
+  `cid` int(11) unsigned NOT NULL,
+  `uid` int(11) unsigned NOT NULL,
+  `vote` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

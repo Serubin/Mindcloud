@@ -18,6 +18,7 @@ class UserObject
 	public $last_name;
 	public $year;
 	public $join_date;
+	public $permission;
 	public $verified;
 	private $_mysqli;
 
@@ -384,7 +385,7 @@ class UserObject
 			if($stmt->num_rows < 1)
 				throw new UserException("User not found", __FUNCTION__);
 
-			$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_id, $db_verified);
+			$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_permission, $db_id, $db_verified);
 			$stmt->fetch();
 
 			$this->email = $db_email;
@@ -392,6 +393,7 @@ class UserObject
 			$this->last_name = $db_last_name;
 			$this->year = $db_year;
 			$this->join_date = $db_join_date;
+			$this->permission = $db_permission;
 			$this->verified = $db_verfied;
 
 			return true;

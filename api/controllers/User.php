@@ -160,6 +160,7 @@ class User
 				"last_name" => $this->last_name,
 				"year" => $this->year,
 				"join_date" => $this->join_date,
+				"permission" => $this->permission,
 				"verified" => $this->verified
 			);
 		} catch (Exception $e) {
