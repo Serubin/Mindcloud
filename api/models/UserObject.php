@@ -242,6 +242,31 @@ class UserObject
 		}
 	}
 
+	/**
+	 * updateVerify()
+	 * updates verify in meta db
+	 */
+	public function updateVerify(){
+		try { 
+
+			if(!isset($this->uid, $this->verified)) {
+				throw new UserException("Unset vars", __FUNCTION__);
+			}
+
+			if(!$stmt = $this->_mysqli->prepare("UPDATE user_meta SET `verfied`=? WHERE `id` = ?")) {
+				throw new Exception("Error Processing Request", __FUNCTION__);
+			}
+
+			$stmt->bind_param( "ii", $this->verified ? 1 : 0, $this->uid );
+			$stmt->execute();
+
+			return true;
+
+		} catch (Exception $e){
+			return $e
+		}
+	}
+
 	/* checkVerified()
 	 * Checks database to verify that the user has verified their email
 	 *

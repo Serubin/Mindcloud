@@ -79,6 +79,9 @@ class User
 
 			// Submits new users
 			return $new_user->register();
+
+			// submit email
+			//TODO :)
 	
 		} catch (Exception $e) {
 			return $e;
@@ -138,6 +141,25 @@ class User
 		}
 	}
 
+	public function verifyUser(){
+		try{
+			if(!isset($this->_params['uid'], $this->_params['hash'])){
+				$user = new UserObject();
+				$user->id = filter_var($this->_params['uid'], FILTER_SANITIZE_STRING);
+				$user->load();
+
+				$local_hash = hash(‘sha512’, $user->uid . $user->first_name . $user->last_name . $user->email);
+
+				if($local_hash == $this->_params) {
+					$user->verified = true;
+					return $user->updateVerified();
+				}
+			}
+		} catch (Exception $e){
+			return $e;
+		}
+	}
+
 	/*
 	 * loadUser()
 	 * Sends to the client a json array of the current list name and contents,
@@ -168,7 +190,7 @@ class User
 		}
 	}
 
-	public updateUser(){
+	public function updateUser(){
 		try {
 			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'])) {
 				return $this->updateInfo();
@@ -189,9 +211,9 @@ class User
 		$user = new UserObject();
 
 		$user->uid = $_SESSION['uid'];
-		$user->first_name = $this->_params['first_name'];
-		$user->last_name = $this->_params['last_name'];
-		$user->gender = $this->_params['gender'];
+		$user->first_name = filter_var($this->_params['first_name'], FILTER_SANITIZE_STRING);
+		$user->last_name = filter_var($this->_params['last_name'], FILTER_SANITIZE_STRING);
+		$user->gender = filter_var($this->_params['gender'], FILTER_SANITIZE_STRING);
 
 		return $user->updateInfo();
 	}
