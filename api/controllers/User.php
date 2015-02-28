@@ -78,10 +78,25 @@ class User
 			
 
 			// Submits new users
-			return $new_user->register();
+			$success = $new_user->register();
+			// returns if not true, wont send email
+			if($success != true) {
+				return $success;
+			}
 
 			// submit email
-			//TODO :)
+			$emailBody = "<h2>Welcome to mindcloud!</h2>
+					  <p>Hi $first_name $last_name, <br />
+					  We've noticed that you created an account! We're very excited to have you! All you have left todo is verify your account by clicking the link below! <br/>
+					  See you on the other side!<br />
+
+					  <a href='http://mindcloud.io/validate/" . hash(‘sha512’, $user->uid . $user->first_name . $user->last_name . $user->email) . "'>Validate your account!</a> < br/>
+
+					  -- The Mindcloud team! </p>";
+
+			send($email, "Welcome to Mindcloud, this is it!", $emailBody);
+
+			return $success;
 	
 		} catch (Exception $e) {
 			return $e;
@@ -114,31 +129,7 @@ class User
 	 */
 	public function checkUser() {
 		$user = new UserObject($this->_mysqli);
-		return $user->login_check();
-	}
-
-
-	/*
-	 * initUser()
-	 * Only called once immediately following a user's registration.
-	 * Takes care of the following tasks:
-	 * + TODO
-	 */
-	public function initUser() {
-		// Verify the user is logged in
-		$user = new UserObject($this->_mysqli);
-		if ($user->login_check() == 'init') {
-
-			
-
-			// Do user init
-			$user->uid = $_SESSION['uid'];
-			if (!$user->init())
-				return false;
-
-			$_SESSION['init'] = false;
-			return true;
-		}
+		return $user->loginCheck();
 	}
 
 	public function verifyUser(){
@@ -229,7 +220,7 @@ class User
 
 	public function logoutUser() {
 		$user = new UserObject($this->_mysqli);
-		if ($user->login_check() == true) {
+		if ($user->loginCheck() == true) {
 			return $user->logout();
 		}
 	}

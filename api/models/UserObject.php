@@ -133,9 +133,8 @@ class UserObject
 			// Check if user has been verified
 			$verified  = $this->checkVerified();
 			if (!$verified){
-				return false; // TODO how to specify the need to verify? should we use this guy or the one below
+				return "unverified"; // TODO how to specify the need to verify? should we use this guy or the one below
 			}
-			// TODO migrate to database session storage
 
 			// Calculates login length - 2 weeks (unix timestamp)
 			$expire = time() + (60*60*24*7*2);
@@ -176,12 +175,12 @@ class UserObject
 		}
 	}
 	
-	/* login_check()
+	/* loginCheck()
 	 * Verify whether this given user is logged in
 	 * Returns true or false depending on whether the user is presently logged in,
 	 * or init if the user is logged in and needs initialized.
 	 */
-	public function login_check() {
+	public function loginCheck() {
 
 		try {
 			// Retrieve stoken
