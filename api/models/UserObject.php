@@ -208,6 +208,9 @@ class UserObject
 			// Save retreived info
 			$this->uid = $db_uid;
 
+			// Save in session
+			$_SESSION['uid'] = $this->uid;
+
 			// If the user hasn't been initalized, do that now
 			if ($this->checkVerified()) 
 				return "unverified";
@@ -227,7 +230,7 @@ class UserObject
 	public function init() {
 		try {
 			// TODO
-
+	
 			// All was successful
 			return true;
 
@@ -312,29 +315,89 @@ class UserObject
 		}
 	}
 
+	/**
+	* update()
+	* Updates specific values within user: first and last name, and gender
+	*/
+	public function update(){
+		try{
+			if(!isset($this->uid, $this->first_name, $this->last_name, $this->gender)){
+				throw new UserException("Unset vars", __FUNCTION__);
+			}
+
+			if(!$stmt = $this->_mysqli->prepare("UPDATE user_data SET `first_name`=?, `last_name`=?, `gender`=? WHERE `id` = ?")){
+				throw new UserException($this->_mysqli->error, __FUNCTION__);
+			}
+
+			$stmt->bind_param("sssi", $this->first_name, $this->last_name, $this->gender, $this->uid);
+			$stmt->execute();
+
+			return true;
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	/**
+	 * updatePassword()
+	 * Updates password
+	 */
+	public function updatePassword(){
+		try{
+			if(!isset($this->uid, $this->password)){
+				throw new UserException("Unset vars", __FUNCTION__);
+			}
+
+			if(!$stmt = $this->_mysqli->prepare("UPDATE user_accounts SET `password` = ? WHERE `id` = ?")){
+				throw new UserException($this->_mysqli->error, __FUNCTION__);
+			}
+
+			$this->password = create_hash($this->password);
+
+			$stmt->bind_param("si", $this->password, $this->uid);
+			$stmt->execute();
+
+			return true;
+		} catch (Exception $e){
+			return $e;
+		}
+	}
+
 	/* loadUser()
-	 * This function returns to the client the following json array:
-	 * {
-	 *		current_id: current list id
-	 *		current_contents: [
-	 *							array of list items
-	 *							]
-	 *		lists: array of list names and ids
-	 * }
+	 * This function loads user data into memory.
 	 */
 	public function load() {
 		// TODO should load get all neccessary user info?
 		try {
 			if (!isset($this->uid)) {
-				throw new UserException("Unset vars: UID ", "LOAD");
+				throw new UserException("Unset vars", __FUNCTION__);
 			}
 
-			// TODO
+			if(!$stmt = $this->_mysqli->prepare("SELECT * FROM user_accounts INNER JOIN user_data ON user_accounts.id = user_data.id INNER JOIN `user_meta` ON user_data.id=user_meta.id WHERE user_accounts.id = ?")){
+				throw new UserException($this->_mysqli->error, __FUNCTION__);
+			}
 
-			return $result;
+			$stmt->bind_param("i", $uid);
+			$stmt->execute();
+			$stmt->store_result();
+			
+			if($stmt->num_rows < 1)
+				throw new UserException("User not found", __FUNCTION__);
+
+			$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_id, $db_verified);
+			$stmt->fetch();
+
+			$this->email = $db_email;
+			$this->first_name = $db_first_name;
+			$this->last_name = $db_last_name;
+			$this->year = $db_year;
+			$this->join_date = $db_join_date;
+			$this->verified = $db_verfied;
+
+			return true;
 
 		} catch (Exception $e) {
-			return false;
+			return $e;
 		}
 	}
 
@@ -343,17 +406,25 @@ class UserObject
 	 * destroys the session.
 	 */
 	public function logout() {
+		try{
+			if(!isset($_COOKIE['sid'])){
+				throw new UserException("Unset vars", __FUNCTION__);
+			}
+			// Remove from database
+			if(!$stmt = $this->_mysqli->prepared("DELETE FROM `user_sessions` WHERE id = ?")) {
+				throw new UserException($this->_mysqli->error, "LOGIN");
+			}
+			
+			$stmt->bind_param('i', $sid);
+			$stmt->execute();
 
-		// Remove from database
-		if(!$stmt = $this->_mysql->prepared("DELETE FROM `user_sessions` WHERE id = ?")) {
-			throw new UserException($this->_mysqli->error, "LOGIN");
+			// Nullify cookie
+			setcookie('stoken', "", time()-9999999, "/", "minecloud.io", $secure, true);
+
+			return true;
+
+		} catch (Exception $e){
+			return $e;
 		}
-		
-		$stmt->bind_param('i', $sid);
-		$stmt->execute();
-
-		// Nullify cookie
-		setcookie('stoken', "", time()-9999999, "/", "minecloud.io", $secure, true);
-		return true;
 	}
 }
