@@ -8,6 +8,7 @@
  ******************************************************************************/
 
 require_once("models/ProblemObject.php");
+require_once("include/vote.php");
 
 class Problem 
 {
@@ -67,13 +68,41 @@ class Problem
 
 			// inflate the problem with its own information
 			$problem = new ProblemObject($this->_mysqli);
-			$problem->load();
+			$problem->loadFull();
 			return $problem;
 
 		} catch (ProblemException $e) {
 			return $e;
 		}
 
+	}
+
+	/** 
+	 * upvoteProblem() 
+	 * Give the specified problem an upvote
+	 */
+	public function voteProblem() {
+
+		try {
+			// check that we have the appropriate data
+			if (!isset($this->_params['problem_id']), $this->_params['vote'], $_SESSON['uid']) {
+				throw new Exception("No problem id given", __FUNCTION__);
+			}
+
+			// validate vote value by taking absolute value
+			if (abs($this->_params['vote']) != UPVOTE) {
+				throw new Exception("Invalid vote passed", __FUNCTION__);
+			}
+
+			// submit vote
+			$problem = new ProblemObject($_mysqli);
+			$problem->id = $this->_params['problem_id'];
+			$problem->creator = $_SESSION['uid'];
+			$problem->vote(UPVOTE);
+
+		} catch (ProblemException $e) {
+			return $e;
+		}
 	}
 
 	/**

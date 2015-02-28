@@ -19,6 +19,7 @@ class ProblemObject {
 	public $creation_datetime;
 	public $tags;
 	public $trial_no;
+	public $score;
 	// TODO: activity
 	// TODO: forum/thread/posts
 
@@ -84,7 +85,7 @@ class ProblemObject {
 	 * load()
 	 * Loads all of the necessary problem data for displaying on a problem page.
 	 */
-	public function load()
+	public function loadFull()
 	{
 		try {
 			// ensure we have the necessary data
@@ -120,6 +121,8 @@ class ProblemObject {
 			$this->creator->id = $creator_id;
 			$this->creator->load();
 
+			// set score
+			$this->getScore();
 
 		} catch (ProblemException $e) {
 			return $e;
@@ -130,15 +133,78 @@ class ProblemObject {
 	 * upvote
 	 * Enter an upvote for a problem
 	 */
-	public function upvote() {
+	public function vote($val) {
 		try {
-			if (!isset($this->id))
-				throw new ProblemException("Id not set", __FUNCTION__);
+			if (!isset($this->id, $this->creator))
+				throw new ProblemException("Id or creator not set", __FUNCTION__);
+
+			// submit vote
+			return Vote::addVote($this->_mysqli, "PROBLEM", $this->id, $this->creator, $val);
+
+		} catch (ProblemException $e) {
+			return $e;
+		}
+	}
+
+	/**
+	 * getScore()
+	 * Get the difference between upvotes and downvotes.
+	 */
+	public function getScore() {
+		try {
+
+			// check that we have the problem id
+			if (!isset($this->id)) {
+				throw new Exception("Unset id", __FUNCTION__);
+			}
+
+			// get score
+			$this->score = Vote::fetchScore($this->_mysqli, "PROBLEM" , $this->id);
+			return $this->score;
+
+		} catch (ProblemException $e) {
+			return $e;
+		}
+	}
+
+	/**
+	 * getPreview()
+	 * For obtaining less innformation to display on dashboard.
+	 */
+	public function loadPreview() {
+
+		try {
+			if (isset($this->id)) {
+				throw new ProblemException("Could not load preview: id not set.", __FUNCTION__)
+			}
+
+			// fetch from the db the information about this problem
+			if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial` FROM `problem` WHERE `id` = ? LIMIT 1")) {
+				throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+			}
+
+			$stmt->bind_param("i", $this->id);
+			$stmt->execute();
+			$stmt->bind_result();
+			if ($stmt->num_rows != 1) {
+				throw new Exception("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
+			}
+
+			$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $current_trial);
+			$stmt->fetch();
+
+			// Set this object's member vars
+			$this->shorthand = $shorthand;
+			$this->statement = $title;
+			$this->description = $description;
+			$this->created = $creation_datetime;
+			$this->trial_no = $current_trial;
 
 			
 
-		} catch (ProblemException $e) {
 
+		} catch (ProblemException $e) {
+			return $e;
 		}
 	}
 
