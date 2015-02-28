@@ -139,7 +139,7 @@ class Solution
 	 * @return true on succcess, indicating this instance has all associated
 	 * content
 	 */
-	public function load() {
+	public function loadSolution() {
 		if(!isset($this->_params['id']) || !isset($this->_params['shorthand'])) {
 			error_log(json_encode($this->_params));
 			throw new Exception("Unset vars", __FUNCTION__);
