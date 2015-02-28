@@ -9,8 +9,7 @@
 
 require_once "include/PasswordHash.php"; 
 	
-class UserObject
-{
+class UserObject {
 	public $uid;
 	public $email;
 	public $password;
@@ -166,8 +165,6 @@ class UserObject
 				// Password is correct, but this is the user's first log in
 				return "unverified";
 			}*/
-
-			return true;
 
 			// Return true on success
 			return true;

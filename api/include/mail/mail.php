@@ -38,7 +38,7 @@ define('master', '
 
 class mail{
 	 
-	function mailer($to, $from, $from_name, $subject, $body, $master) { 
+	private function mailer($to, $from, $from_name, $subject, $body, $master) { 
 		global $error;
 		$mail = new PHPMailer();  // create a new object
 		$mail->IsSMTP(); // enable SMTP
@@ -61,7 +61,7 @@ class mail{
 		}
 	}
 
-	function send($email, $subject, $body){
+	public function send($email, $subject, $body){
 		return mailer($email,"noreply@serubin.net","Mindcould - No Reply", $subject, $body, master);		
 	}
 }
