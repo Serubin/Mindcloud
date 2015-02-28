@@ -35,7 +35,7 @@ class Problem
 	public function createProblem() {
 		
 		try {
-			if (!isset($this->_params['uid'], $this->_params['statement'], $this->_params['description'])) {
+			if (!isset($this->_params['uid'], $this->_params['statement'], $this->_params['description'], $this->_params['tags'])) {
 				error_log(json_encode($this->_params));
 				throw new ProblemException("Unset vars.", __FUNCTION__);
 			}
@@ -44,6 +44,8 @@ class Problem
 			$problem->creator = $this->_params['uid'];
 			$problem->statement = $this->_params['statement'];
 			$problem->description = $this->_params['description'];
+			// only set the shorthand if given
+			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
 			return $problem->create();
 
 		} catch (ProblemException $e) {
@@ -51,6 +53,28 @@ class Problem
 		}
 	}
 
+	/**
+	 * loadProblem()
+	 * Function for loading content of problem page.
+	 */
+	public function loadProblem() {
+
+		try {
+
+			if (!isset($_params['id'])) {
+				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
+			}
+
+			// inflate the problem with its own information
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->load();
+			return $problem;
+
+		} catch (ProblemException $e) {
+			return $e;
+		}
+
+	}
 
 	/**
 	 * activate()

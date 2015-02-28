@@ -160,3 +160,22 @@ class ForumException extends MindcloudException {
 	}
 
 }
+
+/*
+ * Class for exceptions in Tag handlers
+ * Module ID: 6
+ */
+class TagException extends MindcloudException {
+
+	private $MODULE_ID = '6';
+
+	// Failure code points for individual function
+	private static $codes = array(
+
+		);
+
+	public function __construct($msg, $function) {
+		parent::__construct($msg, $this->MODULE_ID, $function);
+	}
+
+}
