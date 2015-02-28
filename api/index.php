@@ -61,7 +61,6 @@
 		if ($result['data'] instanceof MindcloudException) {
 			throw new Exception($result['data']);
 		}
-
 		// The request itself was valid
 		$result['success'] = true;
 
