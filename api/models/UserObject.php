@@ -316,10 +316,10 @@ class UserObject
 	}
 
 	/**
-	* update()
+	* updateInfo()
 	* Updates specific values within user: first and last name, and gender
 	*/
-	public function update(){
+	public function updateInfo(){
 		try{
 			if(!isset($this->uid, $this->first_name, $this->last_name, $this->gender)){
 				throw new UserException("Unset vars", __FUNCTION__);
