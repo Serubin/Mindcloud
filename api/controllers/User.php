@@ -79,9 +79,12 @@ class User
 
 			// Submits new users
 			return $new_user->register();
+
+			// submit email
+			//TODO :)
 	
 		} catch (Exception $e) {
-			return $e->getMessage();
+			return $e;
 		}
 	}
 
@@ -89,17 +92,21 @@ class User
 	 * Logs users in and sets sessions and cookies
 	 */
 	public function loginUser() {
-		if (!isset($this->_params['email'], $this->_params['password'])) {
-			throw new UserException("Unset variables.\n" .
-				"Email: " . $this->_params['email'] . "\n" .
-				"Password: " . $this->_params['password'],
-				__FUNCTION__);
-		}
+		try{
+			if (!isset($this->_params['email'], $this->_params['password'])) {
+				throw new UserException("Unset variables.\n" .
+					"Email: " . $this->_params['email'] . "\n" .
+					"Password: " . $this->_params['password'],
+					__FUNCTION__);
+			}
 
-		$user = new UserObject($this->_mysqli);
-		$user->email = $this->_params['email'];
-		$user->password = $this->_params['password'];
-		return $user->login();
+			$user = new UserObject($this->_mysqli);
+			$user->email = $this->_params['email'];
+			$user->password = $this->_params['password'];
+			return $user->login();
+		} catch (Exception $e){
+			return $e;
+		}
 	}
 
 	/* checkUser()
@@ -134,21 +141,91 @@ class User
 		}
 	}
 
+	public function verifyUser(){
+		try{
+			if(!isset($this->_params['uid'], $this->_params['hash'])){
+				$user = new UserObject();
+				$user->id = filter_var($this->_params['uid'], FILTER_SANITIZE_STRING);
+				$user->load();
+
+				$local_hash = hash(‘sha512’, $user->uid . $user->first_name . $user->last_name . $user->email);
+
+				if($local_hash == $this->_params) {
+					$user->verified = true;
+					return $user->updateVerified();
+				}
+			}
+		} catch (Exception $e){
+			return $e;
+		}
+	}
+
 	/*
 	 * loadUser()
 	 * Sends to the client a json array of the current list name and contents,
 	 * as well as the user's other lists.
 	 */
 	public function loadUser() {
-		// Veryify that the user is logged in
-		$user = new UserObject($this->_mysqli);
-		if ($user->login_check() == true) {
-			//error_log("Login check in load_user was sucessful");
-			
-			// TODO
+		try {
+
+			if(!isset($this->_params['uid'])) {
+				throw new UserException("Unset vars", __FUNCTION__);
+			}
+
+			$user = new UserObject($this->_mysqli);
+			$user->uid = $this->_params['uid'];
+			$user->load();
+
+			return Array ( 
+				"email" =>,$this->email,
+				"first_name" => $this->first_name,
+				"last_name" => $this->last_name,
+				"year" => $this->year,
+				"join_date" => $this->join_date,
+				"permission" => $this->permission,
+				"verified" => $this->verified
+			);
+		} catch (Exception $e) {
+			return $e;
 		}
 	}
 
+	public function updateUser(){
+		try {
+			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'])) {
+				return $this->updateInfo();
+			}
+
+			if(isset($_SESSION['uid'], $this->_params['password'])){
+				return $this->updatePassword();
+			}
+
+			throw new UserException("Unset vars", __FUNCTION__);
+
+		} catch(Exception $e) {
+			return $e;
+		}
+	}
+
+	private function updateInfo(){
+		$user = new UserObject();
+
+		$user->uid = $_SESSION['uid'];
+		$user->first_name = filter_var($this->_params['first_name'], FILTER_SANITIZE_STRING);
+		$user->last_name = filter_var($this->_params['last_name'], FILTER_SANITIZE_STRING);
+		$user->gender = filter_var($this->_params['gender'], FILTER_SANITIZE_STRING);
+
+		return $user->updateInfo();
+	}
+
+	private function updatePassword(){
+		$user = new UserObject();
+
+		$user->uid = $_SESSION['uid'];
+		$user->password = $this->_params['password'];
+
+		return $user->updatePassword();
+	}
 
 	public function logoutUser() {
 		$user = new UserObject($this->_mysqli);
