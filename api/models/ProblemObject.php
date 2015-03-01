@@ -175,7 +175,7 @@ class ProblemObject {
 
 		try {
 			if (isset($this->id)) {
-				throw new ProblemException("Could not load preview: id not set.", __FUNCTION__)
+				throw new ProblemException("Could not load preview: id not set.", __FUNCTION__);
 			}
 
 			// fetch from the db the information about this problem

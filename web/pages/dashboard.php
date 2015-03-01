@@ -26,6 +26,25 @@
 	     	<small class="error">Please elaborate on your problem.</small>
 	    </div>
 
+		<!-- tags -->
+		<div id="tag-container" class="row">
+			<div class="medium-6 columns">
+				<input id="tag_field" type="text" placeholder="tag your problem"/>
+
+			</div>
+			<div class="medium-6 column">
+				<ul class="inline-list">
+					<li><a class="tag" href="#">Walt Disney's fucking shitface</a></li>
+					<li><a class="tag" href="#">Onomatopoeia</a></li>
+					<li><a class="tag" href="#">Link 3</a></li>
+					<li><a class="tag" href="#">Link 4</a></li>
+					<li><a class="tag" href="#">Link 5</a></li>
+				</ul>
+
+			</div>
+		</div>
+		<!-- end tags -->
+
 	   	<button id="test" type="submit">Submit</button>
 	</form>
   <button class="close-reveal-modal">&#215;</button>

@@ -52,7 +52,7 @@ class UserObject {
 			$uid = 0;
 
 			// Submit login information
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_accounts` (`email`, `password`) VALUES (?, ?)")) {
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_accounts` (`email`, `password`) VALUES (?, ?)")) {
 				throw new UserException($this->_mysqli->error, "REGISTER");
 			}
 
@@ -65,7 +65,7 @@ class UserObject {
 			$stmt->close();
 
 			// Submit user data
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `year`, `join_date`) VALUES (?, ?, ?, ?, ?)")) {
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `year`, `join_date`) VALUES (?, ?, ?, ?, ?)")) {
 				throw new UserException($this->_mysqli->error, "REGISTER");
 			}
 
@@ -153,8 +153,8 @@ class UserObject {
 			$this->verified = $verified;
 		
 			// create session identification
-			if (!setcookie('stoken', $sid, $expire, "/", "mindcloud.io", $secure, true)) {
-				throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
+			if (!setcookie('stoken', $sid, $expire, "/", "mindcloud.io", SECURE, true)) {
+				throw new UserException ("Failed to set ctoken cookie.", __FUNCTION__);
 			}
 
 			$stmt->close();
@@ -251,7 +251,7 @@ class UserObject {
 			}
 
 			if(!$stmt = $this->_mysqli->prepare("UPDATE user_meta SET `verfied`=? WHERE `id` = ?")) {
-				throw new Exception("Error Processing Request", __FUNCTION__);
+				throw new UserException("Error Processing Request", __FUNCTION__);
 			}
 
 			$stmt->bind_param( "ii", $this->verified ? 1 : 0, $this->uid );
@@ -259,8 +259,8 @@ class UserObject {
 
 			return true;
 
-		} catch (Exception $e){
-			return $e
+		} catch (UserException $e){
+			return $e;
 		}
 	}
 

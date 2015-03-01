@@ -7,11 +7,11 @@
  * All lines will fit with 80 columns. 
  *****************************************************************************/
 
+define("UPVOTE", 1);
+define("DOWNVOTE", -1);
 
 class Vote {
 
-	define("UPVOTE", 1);
-	define("DOWNVOTE", -1);
 
 	/**
 	 * addVote()
