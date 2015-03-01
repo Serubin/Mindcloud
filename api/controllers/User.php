@@ -10,6 +10,7 @@
 
 // relative to index.php
 require_once "models/UserObject.php";
+require_once "include/mail/mail.php";
 
 class User
 {
@@ -80,21 +81,22 @@ class User
 			// Submits new users
 			$success = $new_user->register();
 			// returns if not true, wont send email
-			if($success != true) {
+
+			if($success !== true) {
 				return $success;
 			}
-
+			
 			// submit email
 			$emailBody = "<h2>Welcome to mindcloud!</h2>
 					  <p>Hi $first_name $last_name, <br />
 					  We've noticed that you created an account! We're very excited to have you! All you have left todo is verify your account by clicking the link below! <br/>
 					  See you on the other side!<br />
 
-					  <a href='http://mindcloud.io/validate/" . hash(‘sha512’, $user->uid . $user->first_name . $user->last_name . $user->email) . "'>Validate your account!</a> < br/>
+					  <a href='http://mindcloud.io/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "'>Validate your account!</a> <br/>
 
 					  -- The Mindcloud team! </p>";
 
-			send($email, "Welcome to Mindcloud, this is it!", $emailBody);
+			Mail::send($email, "Welcome to Mindcloud, this is it!", $emailBody);
 
 			return $success;
 	
@@ -168,7 +170,7 @@ class User
 			$user->load();
 
 			return Array ( 
-				"email" =>,$this->email,
+				"email" => $this->email,
 				"first_name" => $this->first_name,
 				"last_name" => $this->last_name,
 				"year" => $this->year,

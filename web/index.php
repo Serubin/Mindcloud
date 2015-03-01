@@ -14,7 +14,6 @@
 		<script type="text/javascript" src="assets/js/includes.js"></script>
 	</head>
 	<body>
-
 		<!-- top bar -->
 		<div class="fixed">
 			<nav class="top-bar" id="navigation" data-topbar role="navigation">
@@ -22,6 +21,10 @@
 			</nav>
 		</div><!-- end top bar -->
 		
+		<!-- utility classes -->
+		<div id="alert-wrapper">
+		</div> <!-- end utility classes-->
+
 		<!-- content area -->
 		<div id="content">
 

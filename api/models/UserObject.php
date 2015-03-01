@@ -53,7 +53,7 @@ class UserObject
 			$uid = 0;
 
 			// Submit login information
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_accounts` (`email`, `password`) VALUES (?, ?)")) {
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_accounts` (`email`, `password`) VALUES (?, ?)")) {
 				throw new UserException($this->_mysqli->error, "REGISTER");
 			}
 
@@ -66,7 +66,7 @@ class UserObject
 			$stmt->close();
 
 			// Submit user data
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `year`, `join_date`) VALUES (?, ?, ?, ?, ?)")) {
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `year`, `join_date`) VALUES (?, ?, ?, ?, ?)")) {
 				throw new UserException($this->_mysqli->error, "REGISTER");
 			}
 
@@ -74,7 +74,7 @@ class UserObject
 			$stmt->execute();
 			
 			// Submit user data
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `user_meta` (`id`) VALUES (?)")) {
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_meta` (`id`) VALUES (?)")) {
 				throw new UserException($this->_mysqli->error, "REGISTER");
 			}
 
@@ -109,7 +109,7 @@ class UserObject
 			$this->email = strtolower($this->email);
 
 			// prepare SQL statement 
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `user_accounts` WHERE `email` = ? LIMIT 1")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `user_accounts`.`id`, `user_accounts`.`password`, `user_accounts`.`email`, `user_meta`.`id`, `user_meta`.`verified` FROM `user_accounts` INNER JOIN `user_meta` ON `user_accounts`.`id`=`user_meta`.`id` WHERE `email` = ? LIMIT 1")) {
 				throw new UserException("Prepare failed." . $this->_mysqli->error, "LOGIN");
 			}
 			
@@ -118,7 +118,7 @@ class UserObject
 			$stmt->store_result();
 			
 			// stores results from query in variables corresponding to statement
-			$stmt->bind_result($uid, $db_password);
+			$stmt->bind_result($uid, $db_password, $db_email, $uid, $db_verified);
 			$stmt->fetch();
 
 			// TODO Defense against brute-force attacks
@@ -131,7 +131,7 @@ class UserObject
 				return false; // Password is incorrect
 			}
 			// Check if user has been verified
-			$verified  = $this->checkVerified();
+			$verified  = ($this->checkVerified() === 1 ? true : false);
 			if (!$verified){
 				return "unverified"; // TODO how to specify the need to verify? should we use this guy or the one below
 			}
@@ -165,8 +165,6 @@ class UserObject
 				// Password is correct, but this is the user's first log in
 				return "unverified";
 			}*/
-
-			return true;
 
 			// Return true on success
 			return true;
@@ -262,7 +260,7 @@ class UserObject
 			return true;
 
 		} catch (Exception $e){
-			return $e
+			return $e;
 		}
 	}
 
@@ -293,12 +291,12 @@ class UserObject
 			// stores results from query in variables
 			$stmt->bind_result($db_uid, $verified);
 			$stmt->fetch();
-		
+
 			if($stmt->num_rows != 1){
 				throw new UserException("More than one row returned", "VERIFY");
 			}
 			// Returns true false based on database
-			return ($verified == 1) ? true : false;
+			return ($verified === 1) ? true : false;
 		} catch (Exception $e) {
 			return $e;
 		}

@@ -91,10 +91,10 @@ function pageHandler(args) {
 			if(typeof window[page] != "undefined")
 				window[page](); // calls loader for page
 
-			$(document).foundation(); // Updates foundation stuff
+			$(document).foundation('reflow'); // Updates foundation stuff
 			// registers all a links to use js for redirection
 			if(registerEvents) {
-				$("a").unbind("click");
+				$("a").not(".keep-native").unbind("click");
 				$("a").not(".keep-native").click(function() {
 					return linkHandler( $(this).attr("href") );
 				});
@@ -123,7 +123,11 @@ function pageHandler(args) {
 		
 		var vars = {};
 		// CHANGE BEFORE MOVING TO PROD
-		var sHashes = aURL.slice(aURL.indexOf('web/') + 4).split("/");
+
+		// remove prefix and suffix
+		aURL = aURL.slice(aURL.indexOf('web/') + 4)
+		aURL = aURL.substr(0, aURL.lastIndexOf("#"));
+		var sHashes = aURL.split("/");
 		
 		var hashes = [];
 		for (var i = 0; i < sHashes.length; i += 2) {
@@ -141,6 +145,7 @@ function pageHandler(args) {
 			}			
 		}
 		
+		console.log(vars);
 		// Returns single string if only one element
 		if(Object.size(vars) == 1)
 			return Object.keys(vars)[0];
