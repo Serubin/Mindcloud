@@ -10,14 +10,16 @@ var ph; // page handler global variable
 $(function(){
 	// Loads page handler
 
-	ph = new pageHandler({"pageLoc": "pages/", "animations": true});
+	ph = new pageHandler({"pageLoc": "/web/pages/", "animations": true});
 
 	// Loads navigation bar
 	var navLoader = new pageHandler({
-		"pageLoc": "pages/", 
+		"pageLoc": "/web/pages/", 
 		"registerEvents": false, 
 		"contentDiv": "#navigation"
 	});
+	
+	console.log(ph.parseUrl())
 
 	navLoader.pageRequest("topbar", false);
 

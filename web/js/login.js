@@ -27,7 +27,7 @@ function login(){
 	var req = new APICaller("user", "check");
 	req.send({}, function (result) {
 		if (result)
-			ph.pageRequest("dashboard"); // loads dash
+			ph.pageRequest("/web/dashboard"); // loads dash
 	});
 
 	/**
@@ -44,7 +44,7 @@ function login(){
 					alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");
 					break;
 				case true:
-					ph.pageRequest("dashboard");
+					ph.pageRequest("/web/dashboard");
 					break;
 				default:
 					$("#password").val("");
@@ -54,4 +54,24 @@ function login(){
 				}
 			});
 	});
+}
+
+function prelogin(){
+
+	var url = ph.parseUrl();
+
+	// Handles validate
+	if(url[1] == "validate" && url.length == 4){
+		var req = new APICaller('user', 'verify');
+		var params = {hash: url[2], uid: url[3]};
+		req.send(params, function(result) {
+			if(result == true){
+				ph.pageRequest("/web/login");
+				alertHandler("info", "You've been verified! Go ahead and login");
+			} else {
+				console.log("failed!");
+				ph.pageRequest("/web/login");
+			}
+		});
+	}
 }

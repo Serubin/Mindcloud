@@ -54,8 +54,17 @@ function pageHandler(args) {
 	}
 
 	this.pageRequest = function(page, historypush){
-		if(historypush || typeof historypush == "undefined")
-			history.pushState({}, '', page);		
+		if(historypush || typeof historypush == "undefined"){
+			var joinedPage = page;
+			if(typeof page == "object")
+				joinedPage = page.join("/");
+
+			history.pushState({}, '', joinedPage);
+		}
+
+		if(typeof page == "object")
+			page = page[0];
+
 		pageLoad(page);
 	}
 	/**
@@ -64,7 +73,6 @@ function pageHandler(args) {
 	 * @param page - the pages url (excluding pages/)
 	 */
 	function pageLoad(page) {
-
 	 	var $content = $(contentDiv);			
 		/*
 		 * success()
@@ -101,6 +109,10 @@ function pageHandler(args) {
 			}
 		};
 
+		// Pre load script
+		if(typeof window["pre" + page] != "undefined")
+				window["pre" + page](); // calls loader for page
+
 		// Ajax call
 		$.ajax({
 			url: pageLoc + page + ".php",
@@ -120,35 +132,13 @@ function pageHandler(args) {
 	this.parseUrl = function(aURL) {
 	 
 		aURL = aURL || window.location.href;
-		
-		var vars = {};
-		// CHANGE BEFORE MOVING TO PROD
-
+	
 		// remove prefix and suffix
 		aURL = aURL.slice(aURL.indexOf('web/') + 4)
-		aURL = aURL.substr(0, aURL.lastIndexOf("#"));
-		var sHashes = aURL.split("/");
-		
-		var hashes = [];
-		for (var i = 0; i < sHashes.length; i += 2) {
-			if(typeof sHashes[i+1] != "undefined")
-				hashes.push(sHashes[i] + "/" + sHashes[i+1]);
-			else
-				hashes.push(sHashes[i])
-		}
-		for(var i = 0; i < hashes.length; i++) {
-			var hash = hashes[i].split('/');
-			if(hash.length > 1) {
-				vars[hash[0]] = hash[1];
-			} else {
-				vars[hash[0]] = null;
-			}			
-		}
-		
-		console.log(vars);
-		// Returns single string if only one element
-		if(Object.size(vars) == 1)
-			return Object.keys(vars)[0];
+		if(aURL.lastIndexOf("#") > 0)
+			aURL = aURL.substr(0, aURL.lastIndexOf("#"));
+
+		var vars = aURL.split("/");
 
 		return vars;
 	}

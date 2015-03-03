@@ -21,8 +21,10 @@ function APICaller (controller, action) {
 				if (result.success == true) {
 					callback(result['data']);
 				}
-				else 
+				else {
 					console.log("Failure: " + result['error']);
+					callback(false);
+				}
 		};
 
 		$.ajax({

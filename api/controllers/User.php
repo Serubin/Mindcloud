@@ -92,7 +92,7 @@ class User
 					  We've noticed that you created an account! We're very excited to have you! All you have left todo is verify your account by clicking the link below! <br/>
 					  See you on the other side!<br />
 
-					  <a href='http://mindcloud.io/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "'>Validate your account!</a> <br/>
+					  <a href='http://mindcloud.io/web/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "/" . $new_user->uid . "'>Validate your account!</a> <br/>
 
 					  -- The Mindcloud team! </p>";
 
@@ -137,17 +137,20 @@ class User
 	public function verifyUser(){
 		try{
 			if(!isset($this->_params['uid'], $this->_params['hash'])){
-				$user = new UserObject();
-				$user->id = filter_var($this->_params['uid'], FILTER_SANITIZE_STRING);
+				throw new UserException("Unset vars", __FUNCTION__);
+			}
+				$user = new UserObject($this->_mysqli);
+				$user->uid = filter_var($this->_params['uid'], FILTER_SANITIZE_STRING);
 				$user->load();
 
-				$local_hash = hash(‘sha512’, $user->uid . $user->first_name . $user->last_name . $user->email);
+				$local_hash = hash('sha512', $user->uid . $user->first_name . $user->last_name . $user->email);
 
-				if($local_hash == $this->_params) {
+				if($local_hash == $this->_params['hash']) {
 					$user->verified = true;
-					return $user->updateVerified();
+					return $user->updateVerify();
 				}
-			}
+
+				return false;
 		} catch (Exception $e){
 			return $e;
 		}
