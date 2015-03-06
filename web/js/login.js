@@ -27,7 +27,7 @@ function login(){
 	var req = new APICaller("user", "check");
 	req.send({}, function (result) {
 		if (result)
-			ph.pageRequest("/web/dashboard"); // loads dash
+			ph.pageRequest("dashboard"); // loads dash
 	});
 
 	/**
@@ -44,7 +44,7 @@ function login(){
 					alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");
 					break;
 				case true:
-					ph.pageRequest("/web/dashboard");
+					ph.pageRequest("dashboard");
 					break;
 				default:
 					$("#password").val("");
@@ -66,11 +66,11 @@ function prelogin(){
 		var params = {hash: url[2], uid: url[3]};
 		req.send(params, function(result) {
 			if(result == true){
-				ph.pageRequest("/web/login");
+				ph.pageRequest("login");
 				alertHandler("info", "You've been verified! Go ahead and login");
 			} else {
 				console.log("failed!");
-				ph.pageRequest("/web/login");
+				ph.pageRequest("login");
 			}
 		});
 	}

@@ -7,27 +7,24 @@
 	position: fixed;
 	z-index: -500;
 	width: 100%;
-	height: 115%; /* Fixes stupid body margin bug */
-	margin: -150px 0; 
+	height: 100%;
+	margin: 0; 
 }
 
-.title {
-	font-family: $title-font;
-	font-size: 64px;
-	text-align: center;
-}
+#title{
 
-.subtitle {
-	font-family: $primary-font;
-	text-align: center;
-}
+	padding: 25px 0;
 
-.bottom-bar {
-	position: absolute;
-}
+	.title {
+		font-family: $title-font;
+		font-size: 64px;
+		text-align: center;
+	}
 
-.secondary {
-	background: $secondary-color;
+	.subtitle {
+		font-family: $primary-font;
+		text-align: center;
+	}
 }
 
 .btn-login {
@@ -36,6 +33,10 @@
 
 .label {
 	//margin-left: 20px;
+}
+
+.row{
+	margin: 0 0 100px 0;
 }
 
 #reg_error_alert {

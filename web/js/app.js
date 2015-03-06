@@ -10,11 +10,11 @@ var ph; // page handler global variable
 $(function(){
 	// Loads page handler
 
-	ph = new pageHandler({"pageLoc": "/web/pages/", "animations": true});
+	ph = new pageHandler({"pageLoc": "/pages/", "animations": true});
 
 	// Loads navigation bar
 	var navLoader = new pageHandler({
-		"pageLoc": "/web/pages/", 
+		"pageLoc": "/pages/", 
 		"registerEvents": false, 
 		"contentDiv": "#navigation"
 	});

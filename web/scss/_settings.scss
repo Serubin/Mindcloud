@@ -119,8 +119,16 @@ $snow        : #F9F9F9;
 
 // We use these as default colors throughout
  $primary-color: #4754a4; // blue
- $secondary-color: #e86d50; // orange
- $aux-color: #34C6CD; 
+ $primary-color-light: #5965ad;
+ $primary-color-dark: #3f4b93;
+
+
+ $secondary-color: #ff7600; // orange
+ $secondary-color-light-2: #ff9132;
+ $secondary-color-light: #ff8319;
+ $secondary-color-dark: #e56a00;
+ $secondary-color-dark-2: #cc5e00;
+
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
 // $warning-color: #f08a24;
@@ -455,7 +463,7 @@ $alert-transition-ease: ease-out;
 // $button-border-width: 0;
 // $button-border-style: solid;
 $button-bg-color: $secondary-color;
-// $button-bg-hover: scale-color($button-bg-color, $lightness: $button-function-factor);
+$button-bg-hover: $secondary-color-dark-2;
 // $button-border-color: $button-bg-hover;
 // $secondary-button-bg-hover: scale-color($secondary-color, $lightness: $button-function-factor);
 // $secondary-button-border-color: $secondary-button-bg-hover;
@@ -1322,8 +1330,8 @@ $button-bg-color: $secondary-color;
 // $include-html-tabs-classes: $include-html-classes;
 
  $tabs-navigation-padding: rem-calc(6);
- $tabs-navigation-bg-color: $aux-color;
- $tabs-navigation-active-bg-color: $secondary-color;
+ $tabs-navigation-bg-color: $secondary-color;
+ $tabs-navigation-active-bg-color: $secondary-color-light;
 // $tabs-navigation-hover-bg-color: scale-color($tabs-navigation-bg-color, $lightness: -6%);
 // $tabs-navigation-font-color: $jet;
 // $tabs-navigation-active-font-color: $tabs-navigation-font-color;
@@ -1385,7 +1393,7 @@ $tabs-navigation-font-size: rem-calc(12);
 
 // Background color for the top bar
 // $topbar-bg-color: $oil;
-$topbar-bg: $color-complement-0;
+$topbar-bg: $primary-color;
 
 // Height and margin
 // $topbar-height: rem-calc(45);
@@ -1405,9 +1413,9 @@ $topbar-margin-bottom: 0;
 // $topbar-link-font-size: rem-calc(13);
 // $topbar-link-hover-lightness: -10%; // Darken by 10%
 // $topbar-link-bg: $topbar-bg;
-$topbar-link-bg-hover: $color-complement-3;
+$topbar-link-bg-hover: $primary-color-light;
 // $topbar-link-bg-color-hover: $charcoal;
-$topbar-link-bg-active: $color-complement-3;
+$topbar-link-bg-active: $primary-color-light;
 // $topbar-link-bg-active-hover: scale-color($primary-color, $lightness: -14%);
 // $topbar-link-font-family: $body-font-family;
 // $topbar-link-text-transform: none;
@@ -1418,11 +1426,11 @@ $topbar-link-bg-active: $color-complement-3;
 // $topbar-button-top: 7px;
 
 // Style the top bar dropdown elements
-$topbar-dropdown-bg: $color-complement-4;
+$topbar-dropdown-bg: $primary-color-dark;
 $topbar-dropdown-link-color: $white;
 // $topbar-dropdown-link-color-hover: $topbar-link-color-hover;
-$topbar-dropdown-link-bg: $color-complement-4;
-$topbar-dropdown-link-bg-hover: $color-complement-3;
+$topbar-dropdown-link-bg: $primary-color-dark;
+$topbar-dropdown-link-bg-hover: $primary-color;
 // $topbar-dropdown-link-weight: $font-weight-normal;
 // $topbar-dropdown-toggle-size: 5px;
 // $topbar-dropdown-toggle-color: $white;
@@ -1445,7 +1453,7 @@ $topbar-dropdown-link-bg-hover: $color-complement-3;
 // $topbar-menu-icon-position: $opposite-direction; // Change to $default-float for a left menu icon
 
 // Transitions and breakpoint styles
-// $topbar-transition-speed: 300ms;
+$topbar-transition-speed: 300ms;
 // Using rem-calc for the below breakpoint causes issues with top bar
 // $topbar-breakpoint: #{lower-bound($medium-range)}; // Change to 9999px for always mobile layout
 // $topbar-media-query: $medium-up;
