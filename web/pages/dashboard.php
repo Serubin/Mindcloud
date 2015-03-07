@@ -4,6 +4,11 @@
 <button class="success">create a solution</a>
 <button id="more" name="more">MORE</button>
 
+<div class="row" id="temp">
+	<div class="small-12 column text-center">
+		<p>Every problem is an opportunity</p>
+	</div>
+</div>
 
 <!-- pose-a-problem modal -->
 <div id="modal-create-problem" class="reveal-modal" data-reveal>

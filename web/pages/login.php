@@ -32,8 +32,8 @@
 					<small id="login_pass_err" class="error">Please enter a valid password</small>
 			</div>
 
-	<button type="submit" class="btn-login">login</button>
-	<button id="login_forgot" class="button btn-login secondary">help</button>
+	<button type="submit" class="button btn-login">login</button>
+	<button id="login_forgot" class="button btn-login">help</button>
 </form>
 
 

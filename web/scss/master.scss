@@ -8,3 +8,19 @@
 body{
 	min-width: 350px;
 }
+
+/* Alert wrapper */
+#alert-wrapper{
+	position: fixed;
+	width: 30%;
+	z-index: 55;
+	text-align: center;
+}
+
+#alert-wrapper .alert-box{
+	margin: 1.25rem 0;
+}
+
+#alert-wrapper span{
+	cursor: pointer;
+}

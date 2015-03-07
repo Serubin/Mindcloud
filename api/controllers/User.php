@@ -10,6 +10,7 @@
 
 // relative to index.php
 require_once "models/UserObject.php";
+require_once "include/mail/mail.php";
 
 class User
 {
@@ -78,10 +79,29 @@ class User
 			
 
 			// Submits new users
-			return $new_user->register();
+			$success = $new_user->register();
+			// returns if not true, wont send email
+
+			if($success !== true) {
+				return $success;
+			}
+			
+			// submit email
+			$emailBody = "<h2>Welcome to mindcloud!</h2>
+					  <p>Hi $first_name $last_name, <br />
+					  We've noticed that you created an account! We're very excited to have you! All you have left todo is verify your account by clicking the link below! <br/>
+					  See you on the other side!<br />
+
+					  <a href='http://mindcloud.io/web/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "/" . $new_user->uid . "'>Validate your account!</a> <br/>
+
+					  -- The Mindcloud team! </p>";
+
+			Mail::send($email, "Welcome to Mindcloud, this is it!", $emailBody);
+
+			return $success;
 	
 		} catch (Exception $e) {
-			return $e->getMessage();
+			return $e;
 		}
 	}
 
@@ -89,18 +109,21 @@ class User
 	 * Logs users in and sets sessions and cookies
 	 */
 	public function loginUser() {
-		if (!isset($this->_params['email'], $this->_params['password'])) {
-			throw new UserException("Unset variables.\n" .
-				"Email: " . $this->_params['email'] . "\n" .
-				"Password: " . $this->_params['password'],
-				__FUNCTION__);
+		try{
+			if (!isset($this->_params['email'], $this->_params['password'])) {
+				throw new UserException("Unset variables.\n" .
+					"Email: " . $this->_params['email'] . "\n" .
+					"Password: " . $this->_params['password'],
+					__FUNCTION__);
+			}
+
+			$user = new UserObject($this->_mysqli);
+			$user->email = $this->_params['email'];
+			$user->password = $this->_params['password'];
+			return $user->login();
+		} catch (Exception $e){
+			return $e;
 		}
-
-		$user = new UserObject($this->_mysqli);
-		$user->email = $this->_params['email'];
-		$user->password = $this->_params['password'];
-
-		return $user->login();
 	}
 
 	/* checkUser()
@@ -108,33 +131,28 @@ class User
 	 */
 	public function checkUser() {
 		$user = new UserObject($this->_mysqli);
-		// TODO add session vars
-		return $user->login_check();
+		return $user->loginCheck();
 	}
 
-	private function setSession(){
-		// sets session variables
-	}
-	/*
-	 * initUser()
-	 * Only called once immediately following a user's registration.
-	 * Takes care of the following tasks:
-	 * + TODO
-	 */
-	public function initUser() {
-		// Verify the user is logged in
-		$user = new UserObject($this->_mysqli);
-		if ($user->login_check() == 'init') {
+	public function verifyUser(){
+		try{
+			if(!isset($this->_params['uid'], $this->_params['hash'])){
+				throw new UserException("Unset vars", __FUNCTION__);
+			}
+				$user = new UserObject($this->_mysqli);
+				$user->uid = filter_var($this->_params['uid'], FILTER_SANITIZE_STRING);
+				$user->load();
 
-			
+				$local_hash = hash('sha512', $user->uid . $user->first_name . $user->last_name . $user->email);
 
-			// Do user init
-			$user->uid = $_SESSION['uid'];
-			if (!$user->init())
+				if($local_hash == $this->_params['hash']) {
+					$user->verified = true;
+					return $user->updateVerify();
+				}
+
 				return false;
-
-			$_SESSION['init'] = false;
-			return true;
+		} catch (Exception $e){
+			return $e;
 		}
 	}
 
@@ -144,19 +162,70 @@ class User
 	 * as well as the user's other lists.
 	 */
 	public function loadUser() {
-		// Veryify that the user is logged in
-		$user = new UserObject($this->_mysqli);
-		if ($user->login_check() == true) {
-			//error_log("Login check in load_user was sucessful");
-			
-			// TODO
+		try {
+
+			if(!isset($this->_params['uid'])) {
+				throw new UserException("Unset vars", __FUNCTION__);
+			}
+
+			$user = new UserObject($this->_mysqli);
+			$user->uid = $this->_params['uid'];
+			$user->load();
+
+			return Array ( 
+				"email" => $this->email,
+				"first_name" => $this->first_name,
+				"last_name" => $this->last_name,
+				"year" => $this->year,
+				"join_date" => $this->join_date,
+				"permission" => $this->permission,
+				"verified" => $this->verified
+			);
+		} catch (Exception $e) {
+			return $e;
 		}
 	}
 
+	public function updateUser(){
+		try {
+			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'])) {
+				return $this->updateInfo();
+			}
+
+			if(isset($_SESSION['uid'], $this->_params['password'])){
+				return $this->updatePassword();
+			}
+
+			throw new UserException("Unset vars", __FUNCTION__);
+
+		} catch(Exception $e) {
+			return $e;
+		}
+	}
+
+	private function updateInfo(){
+		$user = new UserObject();
+
+		$user->uid = $_SESSION['uid'];
+		$user->first_name = filter_var($this->_params['first_name'], FILTER_SANITIZE_STRING);
+		$user->last_name = filter_var($this->_params['last_name'], FILTER_SANITIZE_STRING);
+		$user->gender = filter_var($this->_params['gender'], FILTER_SANITIZE_STRING);
+
+		return $user->updateInfo();
+	}
+
+	private function updatePassword(){
+		$user = new UserObject();
+
+		$user->uid = $_SESSION['uid'];
+		$user->password = $this->_params['password'];
+
+		return $user->updatePassword();
+	}
 
 	public function logoutUser() {
 		$user = new UserObject($this->_mysqli);
-		if ($user->login_check() == true) {
+		if ($user->loginCheck() == true) {
 			return $user->logout();
 		}
 	}

@@ -8,49 +8,52 @@
 //@import url(http://openfontlibrary.org/face/gen-light);
 
 @font-face {
-    font-family: 'GenW01Light';
-    	src: url('/web/assets/fonts/GenW-Light.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+		font-family: 'GenW01Light';
+			src: url('/web/assets/fonts/GenW-Light.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
 }
 
 $title-font: 'GenW01Light';
 $primary-font: 'GenW01Light';
 
 @mixin border-radius($radius) {
-  -webkit-border-radius: $radius;
-     -moz-border-radius: $radius;
-      -ms-border-radius: $radius;
-          border-radius: $radius;
+	-webkit-border-radius: $radius;
+		 -moz-border-radius: $radius;
+			-ms-border-radius: $radius;
+					border-radius: $radius;
 }
 
 #main {
 
-  //padding: 3%;
+	//padding: 3%;
 
-  h1 {
-    color: white;
-  }
+	h1 {
+		color: white;
+	}
 
-  .accordion {
-    padding: 2%;
-  }
+	.accordion {
+		padding: 2%;
+	}
 }
 
-#content{
-  margin: 0 0 100px 0;
+/* adds transition to topbar */
+.top-bar {
+	a {
+		transition: background-color 300ms ease-out;
+	}
 }
-
+/*
 // light blue/teal
-$color-primary-0: #02F4FF;	/* Main Primary color */
+$color-primary-0: #02F4FF;	/* Main Primary color 
 $color-primary-1: #A4FBFF;
 $color-primary-2: #71F9FF;
 $color-primary-3: #007D83;
 $color-primary-4: #006065;
 
 // orange
-$color-complement-0: #FF7600;	/* Main Complement color */
+$color-complement-0: #FF7600;	/* Main Complement color 
 $color-complement-1: #FFCEA4;
 $color-complement-2: #FFB270;
 $color-complement-3: #D96400;
-$color-complement-4: #A74D00;
+$color-complement-4: #A74D00;*/

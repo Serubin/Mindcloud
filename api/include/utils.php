@@ -23,7 +23,7 @@
 function sec_session_start() {
 
 	// Declare the name of the session*
-	$session_name = "shopt";
+	$session_name = "mindcloud";
 
 	// Names the session	
 	session_name($session_name);
