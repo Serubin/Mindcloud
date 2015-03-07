@@ -1,4 +1,4 @@
-<h1>dashboard, yo</h1>
+	<h1>dashboard, yo</h1>
 
 <button class="success" data-reveal-id="modal-create-problem">pose a problem</a>
 <button class="success">create a solution</a>
@@ -32,23 +32,8 @@
 	    </div>
 
 		<!-- tags -->
-		<div id="tag-container" class="row">
-			<div class="medium-6 columns">
-				<input id="tag_field" type="text" placeholder="tag your problem"/>
 
-			</div>
-			<div class="medium-6 column">
-				<ul class="inline-list">
-					<li><a class="tag" href="#">Walt Disney's fucking shitface</a></li>
-					<li><a class="tag" href="#">Onomatopoeia</a></li>
-					<li><a class="tag" href="#">Link 3</a></li>
-					<li><a class="tag" href="#">Link 4</a></li>
-					<li><a class="tag" href="#">Link 5</a></li>
-				</ul>
-
-			</div>
-		</div>
-		<!-- end tags -->
+		<input name="tags" id="tags" value="foo,bar,baz" />
 
 	   	<button id="test" type="submit">Submit</button>
 	</form>

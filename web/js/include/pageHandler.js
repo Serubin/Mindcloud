@@ -134,7 +134,7 @@ function pageHandler(args) {
 		aURL = aURL || window.location.href;
 	
 		// remove prefix and suffix
-		aURL = aURL.slice(aURL.indexOf('web/') + 4)
+		aURL = aURL.slice(aURL.indexOf('.loc') + 5)
 		if(aURL.lastIndexOf("#") > 0)
 			aURL = aURL.substr(0, aURL.lastIndexOf("#"));
 

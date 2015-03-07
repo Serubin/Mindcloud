@@ -87,15 +87,7 @@ function dashboard() {
 	/** tag handler **/
 
 	// when enter pressed
-	$("#tag_field").keydown( function (event) {
-
-		var valid_keys = [13, 9, 188];
-
-		// if it is a valid enter key 
-		if ($.inArray(event.which, valid_keys)) {
-			console.log("keypress");
-		}
-	})
+	$('#tags').tagsInput();
 
 	// autocomplete
 
