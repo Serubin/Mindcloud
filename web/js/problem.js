@@ -1,6 +1,9 @@
 function problem(url){
-
-
-	var req = new APICaller('user', 'verify');
-	var params = {id: url[2];
+	console.log(url);
+	console.log("loading problem");
+	var req = new APICaller('problem', 'load');
+	var params = {id: url[2]};
+	req.send(params, function (result) {
+		console.log(result);
+	});
 }
