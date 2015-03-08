@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		sass: {
 			options: {
-				includePaths: ['../bower_components/foundation/scss']
+				includePaths: ['bower_components/foundation/scss']
 			},
 			dist: {
 				options: {
@@ -26,7 +26,7 @@ module.exports = function(grunt) {
 				tasks: ['build']
 			},
 			js_framework: {
-				files: ['../bower_components/**/*'],
+				files: ['bower_components/**/*'],
 				tasks: ['build']
 			}
 		},
@@ -50,9 +50,9 @@ module.exports = function(grunt) {
 				dest: '../assets/js/apps.js'
 			},
 			js_framework_concat: {
-				src: ['../bower_components/jquery/dist/jquery.js', 
-					  '../bower_components/modernizr/modernizr.js', 
-					  '../bower_components/foundation/js/foundation.js'],
+				src: ['bower_components/jquery/dist/jquery.js', 
+					  'bower_components/modernizr/modernizr.js', 
+					  'bower_components/foundation/js/foundation.js'],
 				dest: '../assets/js/frameworks.js'
 			}
 		}
