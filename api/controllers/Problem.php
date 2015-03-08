@@ -53,6 +53,11 @@ class Problem
 			return $e;
 		}
 	}
+
+	/**
+	 * getIdProblem()
+	 * Loads id from shorthand
+	 */
 	public function getIdProblem(){
 		if (!isset($this->_params['shorthand'])) {
 			throw new ProblemException("Could not load problem id; no shorthand provided.", __FUNCTION__);
@@ -86,6 +91,7 @@ class Problem
 				"statement" => $problem->statement,
 				"shorthand" => $problem->shorthand,
 				"description" => $problem->description,
+				"creator" => Array("user" => $problem->creator, "association" => "creator"),
 				"created" => $problem->created,
 				"tags" => $problem->tags,
 				"trial_no" => $problem->trial_no,

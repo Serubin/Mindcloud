@@ -118,7 +118,10 @@ class ProblemObject {
 		// set score
 		$this->getScore();
 	}
-
+	/**
+	 * getId()
+	 * Gets ID from short hand
+	 */
 	public function getId(){
 		if(!isset($this->shorthand))
 			throw new ProblemException("Shorthand not set", __FUNCTION__);
