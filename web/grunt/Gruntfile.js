@@ -52,13 +52,9 @@ module.exports = function(grunt) {
 			js_framework_concat: {
 				src: ['bower_components/jquery/dist/jquery.js', 
 					  'bower_components/modernizr/modernizr.js', 
-<<<<<<< HEAD
-					  'bower_components/foundation/js/foundation.js'],
-=======
 					  'bower_components/foundation/js/foundation.js',
 					  'bower_components/jquery-tags-input/jquery.tagsinput.js'
 					  ],
->>>>>>> origin/feat_dashboard
 				dest: '../assets/js/frameworks.js'
 			}
 		}

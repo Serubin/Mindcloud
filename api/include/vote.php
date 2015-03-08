@@ -27,8 +27,8 @@ class Vote {
 	 * @return true on success
 	 */
 	public static function addVote( $mysqli, $ctype, $cid, $uid, $vote ){
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO votes (`ctype`, `cid`, `uid`, `vote`) VALUES (?,?,?,?)")) {
-			throw new MindcloudException($this->_mysqli->error, "vote", __FUNCTION__);
+		if (!$stmt = $mysqli->prepare("INSERT INTO votes (`ctype`, `cid`, `uid`, `vote`) VALUES (?,?,?,?)")) {
+			throw new MindcloudException($mysqli->error, "vote", __FUNCTION__);
 		}
 
 		$stmt->bind_param("siii", $ctype, $cid, $uid, $vote);
@@ -53,7 +53,7 @@ class Vote {
 	 */
 	public static function fetchVote( $mysqli, $ctype, $cid, $uid ){
 		if (!$stmt = $this->_mysqli->prepare("SELECT `ctype`, `cid`, `uid`, `vote` FROM votes WHERE `ctype`= ? AND `cid` = ? AND`uid` = ?")) {
-			throw new MindcloudException($this->_mysqli->error, "vote", __FUNCTION__);
+			throw new MindcloudException($mysqli->error, "vote", __FUNCTION__);
 		}
 
 		$stmt->bind_param("sii", $ctype, $cid, $uid);
@@ -88,10 +88,10 @@ class Vote {
 	 * @param $cid content id
 	 * @return $score - score of content
 	 */
-	public function fetchScore( $mysqli, $ctype, $cid ){
-		$up = $this->fetchVoteTotal( $_mysqli, $ctype, $cid, 1 );
+	public static function fetchScore( $mysqli, $ctype, $cid ){
+		$up = Vote::fetchTotal( $mysqli, $ctype, $cid, 1 );
 
-		$down = $this->fetchVoteTotal( $_mysqli, $ctype, $cid, -1 );
+		$down = Vote::fetchTotal( $mysqli, $ctype, $cid, -1 );
 
 		return $up - $down;
 	}
@@ -111,8 +111,8 @@ class Vote {
 	 * @return $votes - votes of content;
 	 */
 	public static function fetchTotal( $mysqli, $ctype, $cid, $vote ){
-		if (!$stmt = $this->_mysqli->prepare("SELECT `ctype`, `cid`, `vote` FROM votes WHERE `ctype`= ? AND `cid` = ? AND`vote` = ?")) {
-			throw new MindcloudException($this->_mysqli->error, "vote", __FUNCTION__);
+		if (!$stmt = $mysqli->prepare("SELECT `ctype`, `cid`, `vote` FROM votes WHERE `ctype`= ? AND `cid` = ? AND`vote` = ?")) {
+			throw new MindcloudException($mysqli->error, "vote", __FUNCTION__);
 		}
 
 		$stmt->bind_param("sii", $ctype, $cid, $vote);
