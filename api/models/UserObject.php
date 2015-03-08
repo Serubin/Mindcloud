@@ -147,7 +147,7 @@ class UserObject
 		$this->verified = $verified;
 	
 		// create session identification
-		if (!setcookie('stoken', $sid, $expire, "/", "mindcloud.io", $secure, true)) {
+		if (!setcookie('stoken', $sid, $expire, "/", DOMAIN, SECURE, true)) {
 			throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
 		}
 

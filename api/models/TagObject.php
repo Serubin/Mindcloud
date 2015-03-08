@@ -50,6 +50,8 @@ class TagObject {
 			$stmt->bind_param("s", $this->identifier);
 			$stmt->execute();
 
+			$this->loadId();	
+
 			return true;
 
 		} catch (TagException $e) {
@@ -97,7 +99,7 @@ class TagObject {
 		try {
 			// ensure we have an identifier
 			if (!isset($this->id)) {
-				throw new TagException("Could not check tag; no id given.", __FUNCTION__);
+				throw new TagException("Could not check tag id; no id given.", __FUNCTION__);
 			}
 
 			// See if there are any tags with this identifer
@@ -121,6 +123,7 @@ class TagObject {
 	/**
 	 * loadID
 	 * Assuming that the identifer is set, load the tag id into this object.
+	 * @return the tag's id
 	 */
 	public function loadId() {
 		try {
@@ -141,7 +144,7 @@ class TagObject {
 			$stmt->fetch();
 
 			// Store this tag's id.
-			$this->id = $id;
+			return $this->id = $id;
 
 		} catch (TagException $e) {
 			return $e;
@@ -226,9 +229,12 @@ class TagObject {
 				thrown new TagException("Unset member vars", __FUNCTION__);
 			}
 
-			// Check that this tag exists
+			// Check that this tag exists; if it doesn't create it
 			if (!$this->idExists()) {
 				throw new Exception("Tag invalid", __FUNCTION__);
+			}
+			else {
+				$this->loadId();
 			}
 
 			if (!$stmt = $mysqli->prepare("INSERT INTO `tag_associations` (`tag_id`, `assoc_id`, `type`) VALUES (?, ?, ?)"))

@@ -45,6 +45,7 @@ class Problem
 			$problem->creator = $this->_params['uid'];
 			$problem->statement = $this->_params['statement'];
 			$problem->description = $this->_params['description'];
+			$problem->tags = $this->_params['tag'];
 			// only set the shorthand if given
 			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
 			return $problem->create();

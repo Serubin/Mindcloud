@@ -143,50 +143,58 @@ $problem-height: 80px;
  *  JQUERY-TAGS-INPUT 
  */
 
-/*div.tagsinput { 
+div.tagsinput { 
   border:1px solid #CCC; 
-  background: #FFF; 
+  background-color: white; 
   padding:5px; 
-  width:500px; 
-  height:100px; 
+  //width:300px;
+  //height:100px;
   overflow-y: auto;
+  margin-bottom: 5px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1) inset;
+  vertical-align: middle;
 }
 
+
 div.tagsinput span.tag { 
-  border: 1px solid #a5d24a; 
+  border: none; 
   -moz-border-radius:2px; 
   -webkit-border-radius:2px; 
   display: block; 
   float: left; 
   padding: 5px; 
   text-decoration:none; 
-  background: #cde69c; 
-  color: #638421; 
-  margin-right: 5px; 
-  margin-bottom: 5px;
+  background: $secondary-color; 
+  color: white; 
+  //margin-right: 5px; 
+  //margin-bottom: 5px;
   //font-family: helvetica;  
   font-size:13px;
+  vertical-align: middle;
+  
 }
 
+// links, including the delete icons
 div.tagsinput span.tag a { 
   font-weight: bold; 
-  color: #82ad2b; 
+  color: $white; 
   text-decoration:none; 
-  font-size: 11px;  
+  font-size: 18px;    
 } 
 
 div.tagsinput input { 
-  //width:80px; 
-  margin:0px; 
+  width:100px; 
   //font-family: helvetica; 
   font-size: 13px; 
   border:1px solid transparent; 
   padding:5px; 
   background: transparent; 
-  color: #000; outline:0px;  
+  color: #000; outline:0px; 
+  margin-top:5px; 
   margin-right:5px; 
   margin-bottom:5px; 
 }
+
 
 div.tagsinput div { 
   display:block; 
@@ -202,4 +210,4 @@ div.tagsinput div {
 .not_valid {
   background: #FBD8DB !important; 
   color: #90111A !important;
-}*/
+}

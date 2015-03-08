@@ -43,4 +43,19 @@ class Tag
 			return $e;
 		}
 	}
+
+	public function checkTag() {
+		try {
+			if (!isset($this->_params['identifer'])) {
+				throw new TagException("No identifier provided", __FUNCTION__);
+			}
+
+			$tag = new TagObject($this->_mysqli);
+			$tag->identifer = $this->_params['identifiers'];
+
+			return ($tag->identifierExists) ? $tag->loadId() : -1;
+		} catch (TagException $e) {
+			return $e;
+		}
+	}
 }

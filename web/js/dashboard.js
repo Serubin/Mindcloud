@@ -11,9 +11,15 @@ function dashboard() {
 	refreshProblems();
 
 	// Login form submission, validation done by Foundation form-abide
-	$('#submit-problem').on('valid', function() {
+
+	$('#submit_problem').on('valid', function() {
+		console.log("submitting");
 		var req = new APICaller('problem', 'create');
-		var params = {statement: $("#form_problem_statement").val(), description:$("#form_problem_desc").val()};
+		var params = {
+			statement: $("#form_problem_statement").val(), 
+			description:$("#form_problem_desc").val(), 
+			tags: $("#tag_container").val().split(',')
+		};
 		req.send(params, function(result) {
 				if (result) {
 					$("#register_modal").foundation('reveal', 'close');
@@ -21,6 +27,8 @@ function dashboard() {
 
 				}
 			});
+	}).on('invalid', function() {
+		console.log("invalid");
 	});
 
 	function refreshProblems() {
@@ -82,12 +90,35 @@ function dashboard() {
 		});
 	}
 
-	// disable default enter key listeners
+
+	// Problem create form
+	$(document).foundation({
+		abide: {
+			validators: {
+				tagsValid: function(el, required, parent) {
+					return el.value.split(",").length >= 5;
+				}
+			}
+		}
+	});
+	$(document).foundation('reflow');
 
 	/** tag handler **/
+	$('#tag_container').tagsInput({
+		'onAddTag': function(tag){
+			var tag_check_request = new APICaller("tag", "check");
+			tag_check_request.send({
+				identifer: tag
+			}, function (result) {
+				console.log(result);
+			});
 
-	// when enter pressed
-	$('#tags').tagsInput();
+			$(document).foundation('reflow');
+		},
+		'onRemoveTag' : function(tag) {
+
+		}
+	});
 
 	// autocomplete
 
