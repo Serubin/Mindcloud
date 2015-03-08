@@ -61,16 +61,20 @@ function prelogin(){
 
 	// Handles validate
 	if(url[1] == "validate" && url.length == 4){
+		console.log("processesing validate");
 		var req = new APICaller('user', 'verify');
 		var params = {hash: url[2], uid: url[3]};
 		req.send(params, function(result) {
-			if(result == true){
-				ph.pageRequest("login");
+			if(result === true){
+				ph.pageRequest("/login");
 				alertHandler("info", "You've been verified! Go ahead and login");
 			} else {
 				console.log("failed!");
-				ph.pageRequest("login");
-			}
+				ph.pageRequest("/login");
+			}	
 		});
+
+		return false;
 	}
+	return true;
 }

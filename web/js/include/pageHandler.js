@@ -31,6 +31,8 @@ function pageHandler(args) {
 	var contentDiv = "#content";
 	var animations = false;
 
+	var preloadStatus;
+
 
 	function construct() {
 
@@ -61,7 +63,6 @@ function pageHandler(args) {
 
 			history.pushState({}, '', joinedPage);
 		}
-
 		if(typeof page == "object")
 			page = page[0];
 
@@ -97,7 +98,7 @@ function pageHandler(args) {
 		function process(result) {
 			$content.html(result); // Changes content
 			if(typeof window[page] != "undefined")
-				window[page](); // calls loader for page
+				window[page](ph.parseUrl()); // calls loader for page
 
 			$(document).foundation('reflow'); // Updates foundation stuff
 			// registers all a links to use js for redirection
@@ -110,8 +111,14 @@ function pageHandler(args) {
 		};
 
 		// Pre load script
-		if(typeof window["pre" + page] != "undefined")
-				window["pre" + page](); // calls loader for page
+		var page = page.replace("/", "");
+		if(typeof window["pre" + page] != "undefined"){
+				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
+			if(preloadStatus === false){
+				return false;
+			}
+		}
+
 
 		// Ajax call
 		$.ajax({
