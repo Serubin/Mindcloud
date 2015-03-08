@@ -37,8 +37,12 @@ define('master', '
 </div>');
 
 class Mail{
-
+	 
+<<<<<<< HEAD
+	private function mailer($to, $from, $from_name, $subject, $body, $master) { 
+=======
 	private static function mailer($to, $from, $from_name, $subject, $body, $master) { 
+>>>>>>> a7fdb49a8a91dc1f24319b70f82429d1a8f8321f
 		global $error;
 		$mail = new PHPMailer();  // create a new object
 		$mail->IsSMTP(); // enable SMTP
@@ -61,8 +65,13 @@ class Mail{
 		}
 	}
 
+<<<<<<< HEAD
+	public function send($email, $subject, $body){
+		return mailer($email,"noreply@serubin.net","Mindcould - No Reply", $subject, $body, master);		
+=======
 	public static function send($email, $subject, $body){
-		return Mail::mailer($email,"noreply@serubin.net","Mindcloud - No Reply", $subject, $body, master);
+		return Mail::mailer($email,"noreply@serubin.net","Mindcould - No Reply", $subject, $body, master);		
+>>>>>>> a7fdb49a8a91dc1f24319b70f82429d1a8f8321f
 	}
 }
 ?>

@@ -1,2 +1,6 @@
 RewriteEngine On
+<<<<<<< HEAD
 RewriteRule ^([a-zA-Z0-9\/_-]+)$ /index.php [PT,L,QSA]
+=======
+RewriteRule ^([a-zA-Z0-9\/_-]+)$ /index.php?id=$1 [PT,L,QSA]
+>>>>>>> origin/feat_dashboard

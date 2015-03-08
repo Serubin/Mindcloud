@@ -79,6 +79,9 @@ class User
 			
 
 			// Submits new users
+<<<<<<< HEAD
+			return $new_user->register();
+=======
 			$success = $new_user->register();
 			// returns if not true, wont send email
 
@@ -99,9 +102,10 @@ class User
 			Mail::send($email, "Welcome to Mindcloud, this is it!", $emailBody);
 
 			return $success;
+>>>>>>> a7fdb49a8a91dc1f24319b70f82429d1a8f8321f
 	
 		} catch (Exception $e) {
-			return $e;
+			return $e->getMessage();
 		}
 	}
 
@@ -109,21 +113,18 @@ class User
 	 * Logs users in and sets sessions and cookies
 	 */
 	public function loginUser() {
-		try{
-			if (!isset($this->_params['email'], $this->_params['password'])) {
-				throw new UserException("Unset variables.\n" .
-					"Email: " . $this->_params['email'] . "\n" .
-					"Password: " . $this->_params['password'],
-					__FUNCTION__);
-			}
-
-			$user = new UserObject($this->_mysqli);
-			$user->email = $this->_params['email'];
-			$user->password = $this->_params['password'];
-			return $user->login();
-		} catch (Exception $e){
-			return $e;
+		if (!isset($this->_params['email'], $this->_params['password'])) {
+			throw new UserException("Unset variables.\n" .
+				"Email: " . $this->_params['email'] . "\n" .
+				"Password: " . $this->_params['password'],
+				__FUNCTION__);
 		}
+
+		$user = new UserObject($this->_mysqli);
+		$user->email = $this->_params['email'];
+		$user->password = $this->_params['password'];
+
+		return $user->login();
 	}
 
 	/* checkUser()
@@ -131,6 +132,38 @@ class User
 	 */
 	public function checkUser() {
 		$user = new UserObject($this->_mysqli);
+<<<<<<< HEAD
+		// TODO add session vars
+		return $user->login_check();
+	}
+
+	private function setSession(){
+		// sets session variables
+	}
+	/*
+	 * initUser()
+	 * Only called once immediately following a user's registration.
+	 * Takes care of the following tasks:
+	 * + TODO
+	 */
+	public function initUser() {
+		// Verify the user is logged in
+		$user = new UserObject($this->_mysqli);
+		if ($user->login_check() == 'init') {
+
+			
+
+			// Do user init
+			$user->uid = $_SESSION['uid'];
+			if (!$user->init())
+				return false;
+
+			$_SESSION['init'] = false;
+			return true;
+		}
+	}
+
+=======
 		return $user->loginCheck();
 	}
 
@@ -156,12 +189,21 @@ class User
 		}
 	}
 
+>>>>>>> a7fdb49a8a91dc1f24319b70f82429d1a8f8321f
 	/*
 	 * loadUser()
 	 * Sends to the client a json array of the current list name and contents,
 	 * as well as the user's other lists.
 	 */
 	public function loadUser() {
+<<<<<<< HEAD
+		// Veryify that the user is logged in
+		$user = new UserObject($this->_mysqli);
+		if ($user->login_check() == true) {
+			//error_log("Login check in load_user was sucessful");
+			
+			// TODO
+=======
 		try {
 
 			if(!isset($this->_params['uid'])) {
@@ -200,28 +242,10 @@ class User
 
 		} catch(Exception $e) {
 			return $e;
+>>>>>>> a7fdb49a8a91dc1f24319b70f82429d1a8f8321f
 		}
 	}
 
-	private function updateInfo(){
-		$user = new UserObject();
-
-		$user->uid = $_SESSION['uid'];
-		$user->first_name = filter_var($this->_params['first_name'], FILTER_SANITIZE_STRING);
-		$user->last_name = filter_var($this->_params['last_name'], FILTER_SANITIZE_STRING);
-		$user->gender = filter_var($this->_params['gender'], FILTER_SANITIZE_STRING);
-
-		return $user->updateInfo();
-	}
-
-	private function updatePassword(){
-		$user = new UserObject();
-
-		$user->uid = $_SESSION['uid'];
-		$user->password = $this->_params['password'];
-
-		return $user->updatePassword();
-	}
 
 	public function logoutUser() {
 		$user = new UserObject($this->_mysqli);

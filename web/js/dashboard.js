@@ -2,7 +2,7 @@
  * dashboard.js
  * @author Michael Shullick, Solomon Rubin
  * 13 Febuary 2015
- * Javascript for dashboard page
+ * Javascript for account page
  *****************************************************************************/
 
 function dashboard() {
@@ -79,9 +79,17 @@ function dashboard() {
 			   $optionSet.find('.selected').removeClass('selected');
 			   $this.addClass('selected'); 
 			}); 
-					});
-				}
+		});
+	}
+
+	// disable default enter key listeners
+
+	/** tag handler **/
+
+	// when enter pressed
+	$('#tags').tagsInput();
+
+	// autocomplete
 
 
-    //$(document).foundation();
 }

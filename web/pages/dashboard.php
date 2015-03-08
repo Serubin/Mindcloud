@@ -1,9 +1,14 @@
-<h1>dashboard, yo</h1>
+	<h1>dashboard, yo</h1>
 
 <button class="success" data-reveal-id="modal-create-problem">pose a problem</a>
 <button class="success">create a solution</a>
 <button id="more" name="more">MORE</button>
 
+<div class="row" id="temp">
+	<div class="small-12 column text-center">
+		<p>Every problem is an opportunity</p>
+	</div>
+</div>
 
 <!-- pose-a-problem modal -->
 <div id="modal-create-problem" class="reveal-modal" data-reveal>
@@ -25,6 +30,10 @@
 	     	</label>
 	     	<small class="error">Please elaborate on your problem.</small>
 	    </div>
+
+		<!-- tags -->
+
+		<input name="tags" id="tags" value="foo,bar,baz" />
 
 	   	<button id="test" type="submit">Submit</button>
 	</form>
