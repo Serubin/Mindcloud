@@ -11,8 +11,8 @@
 <section class="top-bar-section">
 	<!-- Right Nav Section -->
 	<ul class="right">
-		<li class=""><a href="login">log in</a></li>
-		<li class=""><a href="register" >sign up</a></li>
+		<li class=""><a href="/login">log in</a></li>
+		<li class=""><a href="/register" >sign up</a></li>
 		<li class=""><a href="#">what is this?</a></li>
 		<li class="has-dropdown">
 			<a href="#">username</a>

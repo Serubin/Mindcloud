@@ -85,7 +85,7 @@ class Problem
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['problem_id']), $this->_params['vote'], $_SESSON['uid']) {
+			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSON['uid'])) {
 				throw new Exception("No problem id given", __FUNCTION__);
 			}
 
