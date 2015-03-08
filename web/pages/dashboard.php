@@ -39,7 +39,7 @@
 		 	<small class="error">Please include at least 5 tags</small>
 		 </div>
 
- 		<button type="submit">Submit</button>
+		<button type="submit" class="button btn-login">login</button>
 
 	   	<!--<a role="button" type="submit" aria-label="submit form" href="#" class="button keep-native">submit</a>-->
 	</form>

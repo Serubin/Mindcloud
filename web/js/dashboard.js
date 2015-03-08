@@ -10,25 +10,38 @@ function dashboard() {
 	// initial load
 	refreshProblems();
 
-	// Login form submission, validation done by Foundation form-abide
+	/** tag handler **/
+	var problem_tags = $('#tag_container').tagsInput({
+		'onAddTag': function(tag){
+			var tag_check_request = new APICaller("tag", "identify");
+			tag_check_request.send({
+				identifer: tag
+			}, function (result) {
+				$('#tag_container').setId(tag, result['id']);
+			});
 
+			$(document).foundation('reflow');
+		}
+	});
+
+	// Problem creation submission
 	$('#submit_problem').on('valid', function() {
-		console.log("submitting");
+		$("#tag_container").getAllTags('');
 		var req = new APICaller('problem', 'create');
 		var params = {
 			statement: $("#form_problem_statement").val(), 
 			description:$("#form_problem_desc").val(), 
-			tags: $("#tag_container").val().split(',')
+			//tags: $("#tag_container").val().split(',')
 		};
-		req.send(params, function(result) {
+		/*req.send(params, function(result) {
 				if (result) {
 					$("#register_modal").foundation('reveal', 'close');
 					refreshProblems();
 
 				}
-			});
+			});*/
 	}).on('invalid', function() {
-		console.log("invalid");
+		problem_tags.getAllTags();
 	});
 
 	function refreshProblems() {
@@ -103,22 +116,7 @@ function dashboard() {
 	});
 	$(document).foundation('reflow');
 
-	/** tag handler **/
-	$('#tag_container').tagsInput({
-		'onAddTag': function(tag){
-			var tag_check_request = new APICaller("tag", "check");
-			tag_check_request.send({
-				identifer: tag
-			}, function (result) {
-				console.log(result);
-			});
 
-			$(document).foundation('reflow');
-		},
-		'onRemoveTag' : function(tag) {
-
-		}
-	});
 
 	// autocomplete
 
