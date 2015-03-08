@@ -7,7 +7,7 @@
 
 function APICaller (controller, action) {
 
-	this.API_URL = "http://mindcloud.io/api/";
+	this.API_URL = "http://mindcloud.loc/api/";
 	this.cont = controller;
 	this.act = action;
 
@@ -21,8 +21,10 @@ function APICaller (controller, action) {
 				if (result.success == true) {
 					callback(result['data']);
 				}
-				else 
+				else {
 					console.log("Failure: " + result['error']);
+					callback(false);
+				}
 		};
 
 		$.ajax({

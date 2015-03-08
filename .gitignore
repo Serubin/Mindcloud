@@ -1,5 +1,5 @@
 *.DS_Store
 web/assets/css/*
 web/assets/js/*
-web/bower_components/*
+web/grunt/bower_components/*
 web/grunt/node_modules/*
