@@ -13,7 +13,7 @@ class ProblemObject {
 	// member vars
 	public $id;
 	public $creator;
-	public $statement;
+	public $title;
 	public $shorthand;
 	public $description;
 	public $creation_datetime;
@@ -42,7 +42,7 @@ class ProblemObject {
 	 */
 	public function create() {
 
-		if (!isset($this->statement, $this->creator, $this->description, $this->tags)) {
+		if (!isset($this->title, $this->creator, $this->description, $this->tags)) {
 			throw new ProblemException("Unset required instance vars", __FUNCTION__);
 		}
 
@@ -55,20 +55,38 @@ class ProblemObject {
 		}
 
 		// sanitize strings
-		$this->statement = filter_var($this->statement, FILTER_SANITIZE_STRING);
-		$this->description = strip_tags($this->statement);
+		$this->title = filter_var($this->title, FILTER_SANITIZE_STRING);
+		$this->description = strip_tags($this->title);
 		$this->shorthand = filter_var($this->shorthand, FILTER_SANITIZE_STRING);
 
 		// insert problem into db
-		$stmt->bind_param('isss', $this->creator, $this->statement, $this->description, $this->shorthand);
+		$stmt->bind_param('isss', $this->creator, $this->title, $this->description, $this->shorthand);
 		$stmt->execute();
+
+		error_log($stmt->error);
+
+		// get the id of the new problem
+		// TODO: FIND MORE CONCRETE way that prevents duplicates
+		$stmt->close();
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `problems` WHERE `creator` = ? AND `title` = ?"))
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		$stmt->bind_param('ss', $this->creator, $this->title);
+		$stmt->execute();
+		$stmt->store_result();
+		if (!$stmt->num_rows == 1) {
+			error_log("Params: " . $this->creator  . " " . $this->title);
+			throw new ProblemException("invalid number of problems returned: got " . $stmt->num_rows, __FUNCTION__);
+		}
+		$stmt->bind_result($id);
+		$stmt->fetch();
+
+		$this->id = $id;
 
 		// associate tags
 		error_log(json_encode($this->tags));
 		foreach ($this->tags as $tag_id) {
 			$tag_object = new TagObject($this->_mysqli);
 			$tag_object->id = $tag_id;
-			$tag_object->identifier = $this->tags[$tag_id];
 			if ($tag_object->createAssociation($this->id, 'PROBLEM') != true) {
 				throw new ProblemException("Failed to associate problem tag " . $tag, __FUNCTION__);
 			}
@@ -107,7 +125,7 @@ class ProblemObject {
 
 			// Set this object's member vars
 			$this->shorthand = $shorthand;
-			$this->statement = $title;
+			$this->title = $title;
 			$this->description = $description;
 			$this->created = $creation_datetime;
 			$this->status = $status;
@@ -192,13 +210,10 @@ class ProblemObject {
 
 			// Set this object's member vars
 			$this->shorthand = $shorthand;
-			$this->statement = $title;
+			$this->title = $title;
 			$this->description = $description;
 			$this->created = $creation_datetime;
-			$this->trial_no = $current_trial;
-
-			
-
+			$this->trial_no = $current_trial;			
 
 		} catch (ProblemException $e) {
 			return $e;

@@ -29,10 +29,10 @@ function dashboard() {
 
 	// Problem creation submission
 	$('#submit_problem').on('valid', function() {
-		$("#tag_container").getAllTags('');
+		$("#tag_container").getAllTags();
 		var req = new APICaller('problem', 'create');
 		var params = {
-			statement: $("#form_problem_statement").val(), 
+			title: $("#form_problem_statement").val(), 
 			description:$("#form_problem_desc").val(), 
 			tags: $("#tag_container").getAllTags()
 		};
@@ -44,7 +44,7 @@ function dashboard() {
 				}
 			});
 	}).on('invalid', function() {
-		problem_tags.getAllTags();
+		//problem_tags.getAllTags();
 	});
 
 	function refreshProblems() {

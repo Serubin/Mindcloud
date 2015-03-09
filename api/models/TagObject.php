@@ -94,7 +94,7 @@ class TagObject {
 			$stmt->bind_param('i', $this->id);
 			$stmt->execute();
 			$stmt->store_result();
-			return ($stmt->num_rows != 0) ?  true : false;
+			return ($stmt->num_rows == 1) ?  true : false;
 
 		} catch (TagException $e) {
 
@@ -212,23 +212,24 @@ class TagObject {
 	 */
 	public function createAssociation($associate_id, $associate_type) {
 
-			if (!isset($this->id, $this->identifer)) {
+			if (!isset($this->id)) {
 				throw new TagException("Unset member vars", __FUNCTION__);
 			}
 
 			// Check that this tag exists; if it doesn't create it
 			if (!$this->idExists()) {
-				throw new TagException("Tag invalid", __FUNCTION__);
+				throw new TagException("Tag invalid: " . $this->id, __FUNCTION__);
 			}
 			else {
 				$this->loadId();
 			}
 
-			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `tag_associations` (`tag_id`, `assoc_id`, `type`) VALUES (?, ?, ?)"))
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `tag_associations` (`tag_id`, `associate`, `type`) VALUES (?, ?, ?)"))
 				throw new TagException($this->_mysqli->error, __FUNCTION__);
-			$stmt->bind_param("iis", $this->id, $associate_id, $associate_type);
-			$stmt->execute();
-			return true;
+		$stmt->bind_param("iis", $this->id, $associate_id, $associate_type);
+		$stmt->execute();
+		error_log("created association: error " . $stmt->error);
+		return true;
 
 	}
 
