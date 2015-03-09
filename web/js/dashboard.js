@@ -12,15 +12,18 @@ function dashboard() {
 
 	/** tag handler **/
 	var problem_tags = $('#tag_container').tagsInput({
+
+		// New tag callback
 		'onAddTag': function(tag){
+			// request the tag id
 			var tag_check_request = new APICaller("tag", "identify");
 			tag_check_request.send({
-				identifer: tag
+				identifier: tag
 			}, function (result) {
-				$('#tag_container').setId(tag, result['id']);
+				// set the retrieved id as the element id of the tag
+				console.log(result);
+				$('#tag_container').setId(tag, result);
 			});
-
-			$(document).foundation('reflow');
 		}
 	});
 
@@ -31,15 +34,15 @@ function dashboard() {
 		var params = {
 			statement: $("#form_problem_statement").val(), 
 			description:$("#form_problem_desc").val(), 
-			//tags: $("#tag_container").val().split(',')
+			tags: $("#tag_container").getAllTags()
 		};
-		/*req.send(params, function(result) {
+		req.send(params, function(result) {
 				if (result) {
 					$("#register_modal").foundation('reveal', 'close');
 					refreshProblems();
 
 				}
-			});*/
+			});
 	}).on('invalid', function() {
 		problem_tags.getAllTags();
 	});
@@ -115,10 +118,4 @@ function dashboard() {
 		}
 	});
 	$(document).foundation('reflow');
-
-
-
-	// autocomplete
-
-
 }

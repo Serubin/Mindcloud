@@ -30,21 +30,18 @@ class TagObject {
 	 */
 	public function create() {
 
-		try {
-		
 			// ensure we have an identifier
 			if (!isset($this->identifier)) {
 				throw new TagException("Could not create tag; no identifier given.", __FUNCTION__);
 			}
 
 			// ensure the identifer is new
-			if ($this->identiferExists()) {
+			if ($this->identifierExists()) {
 				throw new Exception("Could not create tag: identifier exists", __FUNCTION__);
 			}
 
 			// Otherwise keep going and create new tag
-			$stmt->close();
-			if (!$stmt = $mysql->prepare("INSERT INTO `tags` ('identifer`) VALUES (?)")) {
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `tags` (`identifier`) VALUES (?)")) {
 				throw new TagException($this->_mysqli->error, __FUNCTION__);
 			}
 			$stmt->bind_param("s", $this->identifier);
@@ -53,10 +50,6 @@ class TagObject {
 			$this->loadId();	
 
 			return true;
-
-		} catch (TagException $e) {
-			return $e;
-		}
 	}
 
 	/**
@@ -64,16 +57,15 @@ class TagObject {
 	 * Checks whether a tag with the set identifier already exists.
 	 * USE idExists when possible, as it is based on numberic comparison
 	 */
-	public function identiferExists() {
+	public function identifierExists() {
 
-		try {
 			// ensure we have an identifier
 			if (!isset($this->identifier)) {
 				throw new TagException("Could not create tag; no identifier given.", __FUNCTION__);
 			}
 
 			// See if there are any tags with this identifer
-			if (!$stmt = $this->_mysqli->prepare("SELECT * FROM `tags` WHERE `identifer` = ?")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT * FROM `tags` WHERE `identifier` = ?")) {
 				throw new TagException($this->_mysqli->error, __FUNCTION__);
 			}
 			$stmt->bind_param('s', $this->identifier);
@@ -81,13 +73,6 @@ class TagObject {
 			$stmt->store_result();
 			return ($stmt->num_rows != 0) ?  true : false;
 
-		} catch (TagException $e) {
-
-			error_log("Exception encountered in " . __FUNCTION__ . ": " . $e->getMessage());
-
-			// default to true so the program procedes as if the tag exists
-			return true;
-		}
 	}
 
 	/**
@@ -128,19 +113,22 @@ class TagObject {
 	public function loadId() {
 		try {
 
-			if (!isset($this->identifer)) 
+			if (!isset($this->identifier)) 
 				throw new TagException("Identifier not set", __FUNCTION__);
 
-			if (!$this->identiferExists)
-				throw new TagException("There is no tag with this identifer.", __FUNCTION__);
-
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `tags` WHERE `identifer` = ?")) {
-				throw new TagException($this->mysqli->error, __FUNCTION__);
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `tags` WHERE `identifier` = ?")) {
+				throw new TagException($this->_mysqli->error, __FUNCTION__);
 			}
 			$stmt->bind_param("s", $this->identifier);
 			$stmt->execute();
 			$stmt->store_result();
-			$stmt->bind_result($id):
+
+
+			if ($stmt->num_rows != 1) {
+				throw new TagException("There is/are " . $stmt->num_rows . " tag(s) with this identifer.", __FUNCTION__);
+			}
+
+			$stmt->bind_result($id);
 			$stmt->fetch();
 
 			// Store this tag's id.
@@ -170,7 +158,7 @@ class TagObject {
 			$stmt->bind_param("s", $this->id);
 			$stmt->execute();
 			$stmt->store_result();
-			$stmt->bind_result($identifier):
+			$stmt->bind_result($identifier);
 			$stmt->fetch();
 
 			// Store this tag's id.
@@ -223,30 +211,25 @@ class TagObject {
 	 * passed ID. Assumes type will be "PROBLEM" and "SOLUTION".
 	 */
 	public function createAssociation($associate_id, $associate_type) {
-		try {
 
 			if (!isset($this->id, $this->identifer)) {
-				thrown new TagException("Unset member vars", __FUNCTION__);
+				throw new TagException("Unset member vars", __FUNCTION__);
 			}
 
 			// Check that this tag exists; if it doesn't create it
 			if (!$this->idExists()) {
-				throw new Exception("Tag invalid", __FUNCTION__);
+				throw new TagException("Tag invalid", __FUNCTION__);
 			}
 			else {
 				$this->loadId();
 			}
 
-			if (!$stmt = $mysqli->prepare("INSERT INTO `tag_associations` (`tag_id`, `assoc_id`, `type`) VALUES (?, ?, ?)"))
-				throw new Exception($this->_mysqli->error, __FUNCTION__);
+			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `tag_associations` (`tag_id`, `assoc_id`, `type`) VALUES (?, ?, ?)"))
+				throw new TagException($this->_mysqli->error, __FUNCTION__);
 			$stmt->bind_param("iis", $this->id, $associate_id, $associate_type);
 			$stmt->execute();
 			return true;
 
-		} catch (TagException $e) {
-			error_log($e->getMessage());
-			return false;
-		}
 	}
 
 	/**

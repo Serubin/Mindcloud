@@ -41,44 +41,41 @@ class ProblemObject {
 	 * 
 	 */
 	public function create() {
-		try {
-			if (!isset($this->statement, $this->creator, $this->description, $this->tags)) {
-				throw new ProblemException("Unset required instance vars", __FUNCTION__);
-			}
 
-			if (!isset($this->shorthand)) {
-				// TODO: create random shorthand for url / mentions, maximum length?
-			}
-
-			if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `statement`, `description`, `shorthand`) VALUES (?, ?, ?, ?)")) {
-				throw new ProblemException($this->_mysqli->error, __FUNCTION__);
-			}
-
-			// sanitize strings
-			$this->statement = filter_var($this->statement, FILTER_SANITIZE_STRING);
-			$this->description = strip_tags($this->statement);
-			$this->shorthand = filter_var($this->shorthand, FILTER_SANITIZE_STRING);
-
-			// insert problem into db
-			$stmt->bind_param('isss', $this->creator, $this->statement, $this->description, $this->shorthand);
-			$stmt->execute();
-
-			// associate tags
-			$new_tags = array();
-			foreach ($this->tags as $tag) {
-				$tag_object = new TagObject();
-				$tag_object->identifier = $tag;
-				if ($tag_object->createAssociation($this->id, 'PROBLEM') != true) {
-					throw ProblemException("Failed to associate problem tag " . $tag, __FUNCTION__);
-				}
-			}
-
-			// return true on success
-			return true;
-
-		} catch (ProblemException $e) {
-			return $e;
+		if (!isset($this->statement, $this->creator, $this->description, $this->tags)) {
+			throw new ProblemException("Unset required instance vars", __FUNCTION__);
 		}
+
+		if (!isset($this->shorthand)) {
+			// TODO: create random shorthand for url / mentions, maximum length?
+		}
+
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `title`, `description`, `shorthand`) VALUES (?, ?, ?, ?)")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		// sanitize strings
+		$this->statement = filter_var($this->statement, FILTER_SANITIZE_STRING);
+		$this->description = strip_tags($this->statement);
+		$this->shorthand = filter_var($this->shorthand, FILTER_SANITIZE_STRING);
+
+		// insert problem into db
+		$stmt->bind_param('isss', $this->creator, $this->statement, $this->description, $this->shorthand);
+		$stmt->execute();
+
+		// associate tags
+		error_log(json_encode($this->tags));
+		foreach ($this->tags as $tag_id) {
+			$tag_object = new TagObject($this->_mysqli);
+			$tag_object->id = $tag_id;
+			$tag_object->identifier = $this->tags[$tag_id];
+			if ($tag_object->createAssociation($this->id, 'PROBLEM') != true) {
+				throw new ProblemException("Failed to associate problem tag " . $tag, __FUNCTION__);
+			}
+		}
+
+		// return true on success
+		return true;
 	}
 
 	/**

@@ -6,7 +6,7 @@
  * 28 February 2015
  * Model for the object representation of a problem/solution tag.
  ******************************************************************************/
-
+require_once("models/TagObject.php");
 
 class Tag
 {
@@ -55,6 +55,42 @@ class Tag
 
 			return ($tag->identifierExists) ? $tag->loadId() : -1;
 		} catch (TagException $e) {
+			return $e;
+		}
+	}
+
+
+	/**
+	 * Identify problem()
+	 * Retrieve the id of the passed tag identifier or create a new and return
+	 * @return the id of the given tag
+	 */
+	public function identifyTag() {
+		try {
+
+			// first check that we have the identifier 
+			if (!isset($this->_params['identifier'])) {
+				throw new ProblemException("Cannot identify tag; no identifier given", __FUNCTION__);
+			}
+
+			// setup
+			$tag = new TagObject($this->_mysqli);
+			$tag->identifier = $this->_params['identifier'];
+
+			// then check if it's in the database
+			if ($tag->identifierExists()) {
+
+				// if it is, return it
+				return $tag->loadId();
+			}
+			else {
+				// else, create a new problem, and return the new id
+				$tag->create();
+				return $tag->id;
+			}
+
+
+		} catch (ProblemException $e) {
 			return $e;
 		}
 	}
