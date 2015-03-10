@@ -12,8 +12,8 @@ class ProblemObject {
 
 	// member vars
 	public $id;
-	public $creators;
-	public $statement;
+	public $creator;
+	public $title;
 	public $shorthand;
 	public $description;
 	public $created;
@@ -41,7 +41,8 @@ class ProblemObject {
 	 * 
 	 */
 	public function create() {
-		if (!isset($this->statement, $this->creator, $this->description, $this->tags)) {
+
+		if (!isset($this->title, $this->creator, $this->description, $this->tags)) {
 			throw new ProblemException("Unset required instance vars", __FUNCTION__);
 		}
 
@@ -49,20 +50,20 @@ class ProblemObject {
 			// TODO: create random shorthand for url / mentions, maximum length?
 		}
 
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `statement`, `description`, `shorthand`) VALUES (?, ?, ?, ?)")) {
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `title`, `description`, `shorthand`) VALUES (?, ?, ?, ?)")) {
 			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
 		}
 
 		// sanitize strings
-		$this->statement = filter_var($this->statement, FILTER_SANITIZE_STRING);
-		$this->description = strip_tags($this->statement);
+		$this->title = filter_var($this->title, FILTER_SANITIZE_STRING);
+		$this->description = strip_tags($this->title);
 		$this->shorthand = filter_var($this->shorthand, FILTER_SANITIZE_STRING);
 
 		// insert problem into db
-		$stmt->bind_param('isss', $this->creator, $this->statement, $this->description, $this->shorthand);
+		$stmt->bind_param('isss', $this->creator, $this->title, $this->description, $this->shorthand);
 		$stmt->execute();
 
-			$this->id = $this->_mysqli->insert_id;
+		$this->id = $this->_mysqli->insert_id;
 
 		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,'PROBLEM',?,?,?)")) {
 			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
@@ -70,14 +71,14 @@ class ProblemObject {
 
 		$stmt->bind_param("iis", $this->id, $this->creator, Contributors::CREATOR);
 		$stmt->execute();
-		
+
 		// associate tags
-		$new_tags = array();
-		foreach ($this->tags as $tag) {
-			$tag_object = new TagObject();
-			$tag_object->identifier = $tag;
+		//error_log(json_encode($this->tags));
+		foreach ($this->tags as $tag_id) {
+			$tag_object = new TagObject($this->_mysqli);
+			$tag_object->id = $tag_id;
 			if ($tag_object->createAssociation($this->id, 'PROBLEM') != true) {
-				throw ProblemException("Failed to associate problem tag " . $tag, __FUNCTION__);
+				throw new ProblemException("Failed to associate problem tag " . $tag, __FUNCTION__);
 			}
 		}
 
@@ -113,7 +114,7 @@ class ProblemObject {
 
 		// Set this object's member vars
 		$this->shorthand = $shorthand;
-		$this->statement = $title;
+		$this->title = $title;
 		$this->description = $description;
 		$this->created = $created;
 		$this->status = $status;
@@ -205,6 +206,7 @@ class ProblemObject {
 
 		$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $current_trial);
 		$stmt->fetch();
+
 
 		// Set this object's member vars
 		$this->shorthand = $shorthand;

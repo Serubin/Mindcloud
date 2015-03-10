@@ -37,7 +37,7 @@ function login(){
 		var req = new APICaller('user', 'login');
 		var params = {email: $("#login_email").val(), password:hex_sha512($("#login_password").val())};
 		req.send(params, function(result) {
-			console.log(result);
+			//console.log(result);
 			switch (result) {
 				case "unverified":
 					alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");

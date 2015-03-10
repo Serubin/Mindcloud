@@ -8,6 +8,7 @@
  ******************************************************************************/
 
 require_once("models/ProblemObject.php");
+require_once("models/TagObject.php");
 require_once("include/vote.php");
 
 class Problem 
@@ -36,15 +37,16 @@ class Problem
 	public function createProblem() {
 		
 		try {
-			if (!isset($this->_params['uid'], $this->_params['statement'], $this->_params['description'], $this->_params['tags'])) {
+			if (!isset($this->_params['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'])) {
 				error_log(json_encode($this->_params));
 				throw new ProblemException("Unset vars.", __FUNCTION__);
 			}
 
 			$problem = new ProblemObject($this->_mysqli);
 			$problem->creator = $this->_params['uid'];
-			$problem->statement = $this->_params['statement'];
+			$problem->title = $this->_params['title'];
 			$problem->description = $this->_params['description'];
+			$problem->tags = $this->_params['tags'];
 			// only set the shorthand if given
 			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
 			return $problem->create();
@@ -126,6 +128,35 @@ class Problem
 			$problem->id = $this->_params['problem_id'];
 			$problem->creator = $_SESSION['uid'];
 			$problem->vote(UPVOTE);
+
+		} catch (ProblemException $e) {
+			return $e;
+		}
+	}
+
+	/**
+	 * Identify problem()
+	 * Retrieve the id of the passed tag identifier or create a new and return
+	 * @return the id of the given tag
+	 */
+	public function identifyProblem() {
+		try {
+
+			// first check that we have the identifier 
+			if (!isset($this->_params['identifer'])) {
+				throw new ProblemException("Cannot identify tag; no identifier given", __FUNCTION__);
+			}
+
+			// setup
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->identifier = $this->params['identifer'];
+
+			// then check if it's in the database
+
+			// if it is, return it
+
+			// else, create a new problem, and return the new id
+
 
 		} catch (ProblemException $e) {
 			return $e;

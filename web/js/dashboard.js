@@ -10,10 +10,32 @@ function dashboard() {
 	// initial load
 	refreshProblems();
 
-	// Login form submission, validation done by Foundation form-abide
-	$('#submit-problem').on('valid', function() {
+	/** tag handler **/
+	var problem_tags = $('#tag_container').tagsInput({
+
+		// New tag callback
+		'onAddTag': function(tag){
+			// request the tag id
+			var tag_check_request = new APICaller("tag", "identify");
+			tag_check_request.send({
+				identifier: tag
+			}, function (result) {
+				// set the retrieved id as the element id of the tag
+				console.log(result);
+				$('#tag_container').setId(tag, result);
+			});
+		}
+	});
+
+	// Problem creation submission
+	$('#submit_problem').on('valid', function() {
+		$("#tag_container").getAllTags();
 		var req = new APICaller('problem', 'create');
-		var params = {statement: $("#form_problem_statement").val(), description:$("#form_problem_desc").val()};
+		var params = {
+			title: $("#form_problem_statement").val(), 
+			description:$("#form_problem_desc").val(), 
+			tags: $("#tag_container").getAllTags()
+		};
 		req.send(params, function(result) {
 				if (result) {
 					$("#register_modal").foundation('reveal', 'close');
@@ -21,6 +43,8 @@ function dashboard() {
 
 				}
 			});
+	}).on('invalid', function() {
+		//problem_tags.getAllTags();
 	});
 
 	function refreshProblems() {
@@ -82,14 +106,16 @@ function dashboard() {
 		});
 	}
 
-	// disable default enter key listeners
 
-	/** tag handler **/
-
-	// when enter pressed
-	$('#tags').tagsInput();
-
-	// autocomplete
-
-
+	// Problem create form
+	$(document).foundation({
+		abide: {
+			validators: {
+				tagsValid: function(el, required, parent) {
+					return el.value.split(",").length >= 5;
+				}
+			}
+		}
+	});
+	$(document).foundation('reflow');
 }
