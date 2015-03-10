@@ -87,7 +87,7 @@ class Problem
 			$problem->loadFull();
 
 			return Array(
-				"id" => $problem->creator,
+				"id" => $problem->id,
 				"statement" => $problem->statement,
 				"shorthand" => $problem->shorthand,
 				"description" => $problem->description,

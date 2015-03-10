@@ -36,7 +36,7 @@ function processProblem(data){
 	$("#banner #title").html(data.statement);
 	$("#description").html(data.description);
 
-	$("#contributers ul").append("<li><span>" + data.creator.association + "</span> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
+	$("#contributers").append("<li><span>" + data.creator.association + "</span> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
 }
 /**
  * handleNotFound()

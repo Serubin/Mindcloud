@@ -12,7 +12,7 @@ class ProblemObject {
 
 	// member vars
 	public $id;
-	public $creator;
+	public $creators;
 	public $statement;
 	public $shorthand;
 	public $description;
@@ -62,6 +62,15 @@ class ProblemObject {
 		$stmt->bind_param('isss', $this->creator, $this->statement, $this->description, $this->shorthand);
 		$stmt->execute();
 
+			$this->id = $this->_mysqli->insert_id;
+
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,'PROBLEM',?,?,?)")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("iis", $this->id, $this->creator, Contributors::CREATOR);
+		$stmt->execute();
+		
 		// associate tags
 		$new_tags = array();
 		foreach ($this->tags as $tag) {
