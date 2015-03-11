@@ -33,7 +33,7 @@ function loadData(id){
 
 function processProblem(data){
 	console.log(data);
-	$("#banner #title").html(data.statement);
+	$("#banner #title").html(data.title);
 	$("#description").html(data.description);
 
 	$("#contributers").append("<li><span>" + data.creator.association + "</span> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")

@@ -47,7 +47,7 @@ class Problem
 			$problem->title = $this->_params['title'];
 			$problem->description = $this->_params['description'];
 			$problem->tags = $this->_params['tags'];
-			// only set the shorthand if given
+			// only set the shorthand if given //TODO make sure it's not already taken
 			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
 			return $problem->create();
 
@@ -90,7 +90,7 @@ class Problem
 
 			return Array(
 				"id" => $problem->id,
-				"statement" => $problem->statement,
+				"title" => $problem->title,
 				"shorthand" => $problem->shorthand,
 				"description" => $problem->description,
 				"creator" => Array("user" => $problem->creator, "association" => "creator"),

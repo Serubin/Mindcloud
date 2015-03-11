@@ -128,9 +128,45 @@ class ProblemObject {
 		// set score
 		$this->getScore();
 	}
+
+
+	/**
+	 * getPreview()
+	 * For obtaining less innformation to display on dashboard.
+	 */
+	public function loadPreview() {
+		if (isset($this->id)) {
+			throw new ProblemException("Could not load preview: id not set.", __FUNCTION__);
+		}
+
+		// fetch from the db the information about this problem
+		if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->bind_result();
+		if ($stmt->num_rows != 1) {
+			throw new ProblemException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
+		}
+
+		$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $current_trial);
+		$stmt->fetch();
+
+
+		// Set this object's member vars
+		$this->shorthand = $shorthand;
+		$this->statement = $title;
+		$this->description = $description;
+		$this->created = $created;
+		$this->trial_no = $current_trial;
+
+		$stmt->close();
+	}
 	/**
 	 * getId()
-	 * Gets ID from short hand
+	 * Gets ID from shorthand
 	 */
 	public function getId(){
 		if(!isset($this->shorthand))
@@ -175,7 +211,7 @@ class ProblemObject {
 	public function getScore() {
 		// check that we have the problem id
 		if (!isset($this->id)) {
-			throw new Exception("Unset id", __FUNCTION__);
+			throw new ProblemException("Unset id", __FUNCTION__);
 		}
 
 		// get score
@@ -184,36 +220,37 @@ class ProblemObject {
 	}
 
 	/**
-	 * getPreview()
-	 * For obtaining less innformation to display on dashboard.
+	 * validateShorthand()
+	 * Ensures shorthand is avalible
 	 */
-	public function loadPreview() {
-		if (isset($this->id)) {
-			throw new ProblemException("Could not load preview: id not set.", __FUNCTION__);
+	public function validateShorthand(){
+		// Checks that all required post variables are set
+		if (!isset($this->shorthand)) {
+			throw new ProblemsException("Couldn't validate, shorthand not set.", __FUNCTION__);
 		}
 
-		// fetch from the db the information about this problem
-		if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
-			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		// Prepares variables
+		$this->shorthand = strtolower($this->shorthand);
+
+		if (!$stmt = $this->_mysqli->prepare("SELECT `shorthand` FROM problems WHERE `shorthand` = ?")) {
+			throw new ProblemsException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("i", $this->id);
+		$stmt->bind_param("s", $this->shorthand);
 		$stmt->execute();
-		$stmt->bind_result();
-		if ($stmt->num_rows != 1) {
-			throw new Exception("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
-		}
+		$stmt->store_results();
 
-		$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $current_trial);
+		$stmt->bind_result($db_shorthand);
 		$stmt->fetch();
 
+		$rows = $stmt->num_rows;
 
-		// Set this object's member vars
-		$this->shorthand = $shorthand;
-		$this->statement = $title;
-		$this->description = $description;
-		$this->created = $created;
-		$this->trial_no = $current_trial;
+		$stmt->close();
+
+		if($rows >= 1)
+			return false;
+
+		return true;
 	}
 
 }
