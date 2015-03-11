@@ -200,7 +200,7 @@ class UserObject
 		$_SESSION['uid'] = $this->uid;
 
 		// If the user hasn't been initalized, do that now
-		if ($this->checkVerified()) 
+		if (!$this->checkVerified()) 
 			return "unverified";
 		// All checks out
 		return true;
@@ -256,6 +256,7 @@ class UserObject
 		if($stmt->num_rows != 1){
 			throw new UserException("More than one row returned", "VERIFY");
 		}
+
 		// Returns true false based on database
 		return ($verified === 1) ? true : false;
 	}
