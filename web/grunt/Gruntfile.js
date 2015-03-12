@@ -15,8 +15,10 @@ module.exports = function(grunt) {
 			}
 		},
 		watch: {
-			grunt: { files: ['Gruntfile.js'] },
-
+			grunt: {
+				files: ['Gruntfile.js'],
+				tasks: ['build']
+			},
 			sass: {
 				files: '../scss/**/*.scss',
 				tasks: ['build']
@@ -25,10 +27,6 @@ module.exports = function(grunt) {
 				files: ['../js/**/*.js'],
 				tasks: ['build']
 			},
-			js_framework: {
-				files: ['bower_components/**/*'],
-				tasks: ['build']
-			}
 		},
 		clean: {
 			js_clean: {
@@ -50,9 +48,7 @@ module.exports = function(grunt) {
 				dest: '../assets/js/apps.js'
 			},
 			js_framework_concat: {
-				src: ['bower_components/jquery/dist/jquery.js', 
-					  'bower_components/modernizr/modernizr.js', 
-					  'bower_components/foundation/js/foundation.js'],
+				src: ['../js/framework/*.js'],
 				dest: '../assets/js/frameworks.js'
 			}
 		}
