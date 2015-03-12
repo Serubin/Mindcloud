@@ -1,3 +1,9 @@
+/******************************************************************************
+ * problem.js
+ * @author Michael Shullick, Solomon Rubin
+ * 13 Febuary 2015
+ * Javascript for problem pages
+ *****************************************************************************/
 function problem(url){
 	// Checks if id or shorthand was submitted
 	if(isNaN(parseInt(url[1]))){
@@ -14,9 +20,19 @@ function problem(url){
 		loadProblem(url[1]);
 	}
 }
+
+function preproblem(){
+	// Checks for user login
+	var req = new APICaller('user', 'check');
+	req.send({}, function(result){
+		if(!result)
+			ph.pageRequest("/login");
+	});
+}
+
 /**
- *
- *
+ * loadData()
+ * Loads data via id
  */
 function loadData(id){
 	var req = new APICaller('problem', 'load');
@@ -31,6 +47,10 @@ function loadData(id){
 	});
 }
 
+/**
+ * processProblem()
+ * Dynamicaly adds in data
+ */
 function processProblem(data){
 	console.log(data);
 	$("#banner #title").html(data.title);
@@ -38,6 +58,7 @@ function processProblem(data){
 
 	$("#contributers").append("<li><span>" + data.creator.association + "</span> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
 }
+
 /**
  * handleNotFound()
  * Redirects to dashboard if no id

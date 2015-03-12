@@ -21,6 +21,8 @@ function pageHandler(args) {
 	var _this = this;
 	var history = window.history;
 
+	var pkg = "pageHandler"; // For logger
+
 	// public functions
 	var pageRequest;
 	var parseUrl;
@@ -62,7 +64,10 @@ function pageHandler(args) {
 				joinedPage = page.join("/");
 
 			history.pushState({}, '', joinedPage);
+
+			log.info(pkg, "Loading " + joinedPage);
 		}
+
 		if(typeof page == "object")
 			page = page[0];
 
