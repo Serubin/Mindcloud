@@ -56,23 +56,44 @@ class Problem
 			return $e;
 		}
 	}
+	public function getIdProblem(){
+		if (!isset($this->_params['shorthand'])) {
+			throw new ProblemException("Could not load problem id; no shorthand provided.", __FUNCTION__);
+		}
 
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->shorthand = $this->_params['shorthand'];
+		$problem->getId();
+
+		return $problem->id;
+	}
 	/**
 	 * loadProblem()
 	 * Function for loading content of problem page.
 	 */
 	public function loadProblem() {
-
 		try {
 
-			if (!isset($_params['id'])) {
+			if (!isset($this->_params['id'])) {
 				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
 			}
 
-			// inflate the problem with its own information
 			$problem = new ProblemObject($this->_mysqli);
+
+			// inflate the problem with its own information
+			$problem->id = $this->_params['id'];
 			$problem->loadFull();
-			return $problem;
+
+			return Array(
+				"id" => $problem->creator,
+				"statement" => $problem->statement,
+				"shorthand" => $problem->shorthand,
+				"description" => $problem->description,
+				"created" => $problem->created,
+				"tags" => $problem->tags,
+				"trial_no" => $problem->trial_no,
+				"score" => $problem->score
+			);
 
 		} catch (ProblemException $e) {
 			return $e;

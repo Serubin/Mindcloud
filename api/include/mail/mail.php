@@ -37,7 +37,7 @@ define('master', '
 </div>');
 
 class Mail{
-	 
+
 	private static function mailer($to, $from, $from_name, $subject, $body, $master) { 
 		global $error;
 		$mail = new PHPMailer();  // create a new object
@@ -62,7 +62,9 @@ class Mail{
 	}
 
 	public static function send($email, $subject, $body){
+
 		return Mail::mailer($email,"noreply@serubin.net","Mindcloud - No Reply", $subject, $body, master);		
+
 	}
 }
 ?>

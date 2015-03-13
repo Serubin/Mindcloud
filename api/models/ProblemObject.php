@@ -16,7 +16,7 @@ class ProblemObject {
 	public $title;
 	public $shorthand;
 	public $description;
-	public $creation_datetime;
+	public $created;
 	public $tags;
 	public $trial_no;
 	public $score;
@@ -42,7 +42,7 @@ class ProblemObject {
 	 */
 	public function create() {
 
-		if (!isset($this->title, $this->creator, $this->description, $this->tags)) {
+		if (!isset($this->title, $this->creator, $this->description, $this->tags, $this->category)) {
 			throw new ProblemException("Unset required instance vars", __FUNCTION__);
 		}
 
@@ -66,12 +66,12 @@ class ProblemObject {
 		$this->id = $this->_mysqli->insert_id;
 
 		// associate tags
-		error_log(json_encode($this->tags));
 		foreach ($this->tags as $tag_id) {
 			$tag_object = new TagObject($this->_mysqli);
 			$tag_object->id = $tag_id;
 			if ($tag_object->createAssociation($this->id, 'PROBLEM') != true) {
 				throw new ProblemException("Failed to associate problem tag " . $tag, __FUNCTION__);
+
 			}
 		}
 
@@ -83,48 +83,69 @@ class ProblemObject {
 	 * load()
 	 * Loads all of the necessary problem data for displaying on a problem page.
 	 */
-	public function loadFull()
-	{
-		try {
-			// ensure we have the necessary data
-			if (!isset($this->id)) {
-				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
-			}
-
-			// fetch from the db the information about this problem
-			if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `status`, `current_trial` FROM `problem` WHERE `id` = ? LIMIT 1")) {
-				throw new ProblemException($this->_mysqli->error, __FUNCTION__);
-			}
-
-			$stmt->bind_param("i", $this->id);
-			$stmt->execute();
-			$stmt->bind_result();
-			if ($stmt->num_rows != 1) {
-				throw new Exception("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
-			}
-
-			$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $status, $current_trial);
-			$stmt->fetch();
-
-			// Set this object's member vars
-			$this->shorthand = $shorthand;
-			$this->title = $title;
-			$this->description = $description;
-			$this->created = $creation_datetime;
-			$this->status = $status;
-			$this->trial_no = $current_trial;
-
-			// fetch creator info
-			$this->creator = new UserObject();
-			$this->creator->id = $creator_id;
-			$this->creator->load();
-
-			// set score
-			$this->getScore();
-
-		} catch (ProblemException $e) {
-			return $e;
+	public function loadFull() {
+		// ensure we have the necessary data
+		if (!isset($this->id)) {
+			throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
 		}
+
+		// fetch from the db the information about this problem
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand`, `title`, `description`, `created`, `creator`, `status`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->store_result();
+
+		if ($stmt->num_rows != 1) {
+			throw new ProblemException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
+		}
+
+		$stmt->bind_result($id, $shorthand, $title, $description, $created, $creator_id, $status, $current_trial);
+		$stmt->fetch();
+
+
+		// Set this object's member vars
+		$this->shorthand = $shorthand;
+		$this->title = $title;
+		$this->description = $description;
+		$this->created = $creation_datetime;
+		$this->status = $status;
+		$this->trial_no = $current_trial;
+
+
+		// fetch creator info
+		$this->creator = new UserObject($this->_mysqli);
+		$this->creator->uid = $creator_id;
+		$this->creator->load();
+
+		// set score
+		$this->getScore();
+	}
+
+	public function getId(){
+		if(!isset($this->shorthand))
+			throw new ProblemException("Shorthand not set", __FUNCTION__);
+		
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM `problems` WHERE `shorthand`= ? LIMIT 1")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$this->shorthand = strtolower($this->shorthand);
+
+		$stmt->bind_param("i", $this->shorthand);
+		$stmt->execute();
+		$stmt->store_result();
+
+		if($stmt->num_rows < 1) {
+			throw new ProblemException("Unable to fetch id, less than one row returned", __FUNCTION__);
+		}
+
+		$stmt->bind_result($db_id, $shorthand);
+		$stmt->fetch();
+
+		$this->id = $db_id;
 	}
 
 	/**
@@ -132,16 +153,11 @@ class ProblemObject {
 	 * Enter an upvote for a problem
 	 */
 	public function vote($val) {
-		try {
-			if (!isset($this->id, $this->creator))
-				throw new ProblemException("Id or creator not set", __FUNCTION__);
+		if (!isset($this->id, $this->creator))
+			throw new ProblemException("Id or creator not set", __FUNCTION__);
 
-			// submit vote
-			return Vote::addVote($this->_mysqli, "PROBLEM", $this->id, $this->creator, $val);
-
-		} catch (ProblemException $e) {
-			return $e;
-		}
+		// submit vote
+		return Vote::addVote($this->_mysqli, "PROBLEM", $this->id, $this->creator, $val);
 	}
 
 	/**
@@ -149,20 +165,14 @@ class ProblemObject {
 	 * Get the difference between upvotes and downvotes.
 	 */
 	public function getScore() {
-		try {
-
-			// check that we have the problem id
-			if (!isset($this->id)) {
-				throw new Exception("Unset id", __FUNCTION__);
-			}
-
-			// get score
-			$this->score = Vote::fetchScore($this->_mysqli, "PROBLEM" , $this->id);
-			return $this->score;
-
-		} catch (ProblemException $e) {
-			return $e;
+		// check that we have the problem id
+		if (!isset($this->id)) {
+			throw new Exception("Unset id", __FUNCTION__);
 		}
+
+		// get score
+		$this->score = Vote::fetchScore($this->_mysqli, "PROBLEM" , $this->id);
+		return $this->score;
 	}
 
 	/**
@@ -170,36 +180,35 @@ class ProblemObject {
 	 * For obtaining less innformation to display on dashboard.
 	 */
 	public function loadPreview() {
-
-		try {
-			if (isset($this->id)) {
-				throw new ProblemException("Could not load preview: id not set.", __FUNCTION__);
-			}
-
-			// fetch from the db the information about this problem
-			if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial` FROM `problem` WHERE `id` = ? LIMIT 1")) {
-				throw new ProblemException($this->_mysqli->error, __FUNCTION__);
-			}
-
-			$stmt->bind_param("i", $this->id);
-			$stmt->execute();
-			$stmt->bind_result();
-			if ($stmt->num_rows != 1) {
-				throw new Exception("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
-			}
-
-			$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $current_trial);
-			$stmt->fetch();
-
-			// Set this object's member vars
-			$this->shorthand = $shorthand;
-			$this->title = $title;
-			$this->description = $description;
-			$this->created = $creation_datetime;
-			$this->trial_no = $current_trial;			
-
-		} catch (ProblemException $e) {
-			return $e;
+		if (isset($this->id)) {
+			throw new ProblemException("Could not load preview: id not set.", __FUNCTION__);
 		}
+
+		if (isset($this->id)) {
+			throw new ProblemException("Could not load preview: id not set.", __FUNCTION__);
+		}
+
+		// fetch from the db the information about this problem
+		if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial` FROM `problem` WHERE `id` = ? LIMIT 1")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->bind_result();
+		if ($stmt->num_rows != 1) {
+			throw new Exception("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
+		}
+
+		$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $current_trial);
+		$stmt->fetch();
+
+		// Set this object's member vars
+		$this->shorthand = $shorthand;
+		$this->title = $title;
+		$this->description = $description;
+		$this->created = $creation_datetime;
+		$this->trial_no = $current_trial;			
+
 	}
 }

@@ -106,7 +106,7 @@ class UserObject
 		if (!$stmt = $this->_mysqli->prepare("SELECT `user_accounts`.`id`, `user_accounts`.`password`, `user_accounts`.`email`, `user_meta`.`id`, `user_meta`.`verified` FROM `user_accounts` INNER JOIN `user_meta` ON `user_accounts`.`id`=`user_meta`.`id` WHERE `email` = ? LIMIT 1")) {
 			throw new UserException("Prepare failed." . $this->_mysqli->error, "LOGIN");
 		}
-		
+
 		$stmt->bind_param('s', $this->email); // puts the email in place of the '?'
 		$stmt->execute();
 		$stmt->store_result();
@@ -337,7 +337,7 @@ class UserObject
 	 */
 	public function load() {
 		if (!isset($this->uid)) {
-			throw new UserException("Unset vars", __FUNCTION__);
+			throw new UserException("Unset vars: UID", __FUNCTION__);
 		}
 
 		if(!$stmt = $this->_mysqli->prepare("SELECT * FROM user_accounts INNER JOIN user_data ON user_accounts.id = user_data.id INNER JOIN `user_meta` ON user_data.id=user_meta.id WHERE user_accounts.id = ?")){
@@ -356,7 +356,8 @@ class UserObject
 		$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_permission, $db_id, $db_verified);
 		$stmt->fetch();
 
-		$this->email = $db_email;
+		// Will not store email for user privacy
+		//$this->email = $db_email;
 		$this->first_name = $db_first_name;
 		$this->last_name = $db_last_name;
 		$this->year = $db_year;
