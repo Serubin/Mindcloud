@@ -113,8 +113,8 @@ function dashboard() {
 					$("#form_problem_cat").append("<option value='" + value[0] + "'>" + value[1] + "</option");
 				});
 
-		}
-	});
+		});
+	}
 
 
 	// Problem create form
