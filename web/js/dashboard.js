@@ -8,7 +8,7 @@
 function dashboard() {
 
 	// initial load
-	refreshProblems();
+	loadDashboard();
 
 	/** tag handler **/
 	var problem_tags = $('#tag_container').tagsInput({
@@ -47,64 +47,74 @@ function dashboard() {
 		//problem_tags.getAllTags();
 	});
 
-	function refreshProblems() {
+	function loadDashboard() {
 		// initial load
 		var req = new APICaller("dashboard", "load");
-		req.send({}, function(result) {
-			$("#container").empty();
-			$.each(result, function(i, value) {
-				$("#container").append(
-					"<div class='isotope-item' datetime='" + value[2] + "' id=" + value[0] + ">" + 
-						"<div class='row'>" +
-							"<div class='small-9 column problem-statement'>" +
-								"<span text-left'>" + 
-									value[1] + 
-								"</span>" +
-							"</div>" +
-							"<div class='small-3 column voter'>" +
-								"<div class='arrow'><i class='fi-arrow-up'></i></div>" +
-								"<div class='arrow'><i class='fi-arrow-down'></i></div>" +
-							"</div>" +
-						"<div>" + // end row
-					"</div>");
-			});
 
-			var $container = $('#container');
+		// load and display problem
+		req.send({}, 
+			// loader callback
+			function(result) {
+				$("#container").empty();
+				$.each(result.problems, function(i, value) {
+					$("#container").append(
+						"<div class='isotope-item' datetime='" + value[2] + "' id=" + value[0] + ">" + 
+							"<div class='row'>" +
+								"<div class='small-9 column problem-statement'>" +
+									"<span text-left'>" + 
+										value[1] + 
+									"</span>" +
+								"</div>" +
+								"<div class='small-3 column voter'>" +
+									"<div class='arrow'><i class='fi-arrow-up'></i></div>" +
+									"<div class='arrow'><i class='fi-arrow-down'></i></div>" +
+								"</div>" +
+							"<div>" + // end row
+						"</div>");
+				});
 
-			// initialize isotope
-			$container.isotope({
+				var $container = $('#container');
 
-			  itemSelector : '.isotope-item',
-			  layoutMode : 'masonry',
-			  masonry: {
-			  	columnWidth: 50
-			  }
-			  // options...
-			});
+				// initialize isotope
+				$container.isotope({
 
-			// filter items when filter link is clicked
-			/*$('#filters a').click(function(){
-			  var selector = $(this).attr('data-filter');
-			  $container.isotope({ filter: selector });
-			  return false;
-			});
-			*/	
+				  itemSelector : '.isotope-item',
+				  layoutMode : 'masonry',
+				  masonry: {
+				  	columnWidth: 50
+				  }
+				  // options...
+				});
+
+				// filter items when filter link is clicked
+				/*$('#filters a').click(function(){
+				  var selector = $(this).attr('data-filter');
+				  $container.isotope({ filter: selector });
+				  return false;
+				});
+				*/	
 				// set selected menu items
 				var $optionSets = $('.inline-list'),
 				$optionLinks = $optionSets.find('a');
 
 				$optionLinks.click(function(){
-				var $this = $(this);
-			    // don't proceed if already selected
-			    if ( $this.hasClass('selected') ) {
-			        return false;
-			    }
-			   var $optionSet = $this.parents('.inline-list');
-			   $optionSet.find('.selected').removeClass('selected');
-			   $this.addClass('selected'); 
-			}); 
-		});
-	}
+					var $this = $(this);
+				    // don't proceed if already selected
+				    if ( $this.hasClass('selected') ) {
+				        return false;
+				    }
+				   var $optionSet = $this.parents('.inline-list');
+				   $optionSet.find('.selected').removeClass('selected');
+				   $this.addClass('selected'); 
+				}); 
+
+				// display categories
+				$.each(result.categories, function (i, value) {
+					$("#form_problem_cat").append("<option value='" + value[0] + "'>" + value[1] + "</option");
+				});
+
+		}
+	});
 
 
 	// Problem create form

@@ -50,7 +50,7 @@ class ProblemObject {
 			// TODO: create random shorthand for url / mentions, maximum length?
 		}
 
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `title`, `description`, `shorthand`) VALUES (?, ?, ?, ?)")) {
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `title`, `description`, `shorthand`, `category`) VALUES (?, ?, ?, ?, ?)")) {
 			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -60,27 +60,10 @@ class ProblemObject {
 		$this->shorthand = filter_var($this->shorthand, FILTER_SANITIZE_STRING);
 
 		// insert problem into db
-		$stmt->bind_param('isss', $this->creator, $this->title, $this->description, $this->shorthand);
+		$stmt->bind_param('isssi', $this->creator, $this->title, $this->description, $this->shorthand, $this->category);
 		$stmt->execute();
 
-		error_log($stmt->error);
-
-		// get the id of the new problem
-		// TODO: FIND MORE CONCRETE way that prevents duplicates
-		$stmt->close();
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `problems` WHERE `creator` = ? AND `title` = ?"))
-			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
-		$stmt->bind_param('ss', $this->creator, $this->title);
-		$stmt->execute();
-		$stmt->store_result();
-		if (!$stmt->num_rows == 1) {
-			error_log("Params: " . $this->creator  . " " . $this->title);
-			throw new ProblemException("invalid number of problems returned: got " . $stmt->num_rows, __FUNCTION__);
-		}
-		$stmt->bind_result($id);
-		$stmt->fetch();
-
-		$this->id = $id;
+		$this->id = $this->_mysqli->insert_id;
 
 		// associate tags
 		error_log(json_encode($this->tags));
@@ -219,5 +202,4 @@ class ProblemObject {
 			return $e;
 		}
 	}
-
 }

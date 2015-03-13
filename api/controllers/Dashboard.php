@@ -36,23 +36,41 @@ class Dashboard {
 
 		try {
 
+			// initialize result array
+			$result = array();
+			$result['problems'] = array();
+			$result['categories'] = array();
+
 			// if problems are to be loaded
 			// load most recent 10
-			// TODO change constant 10 to be however can fit on screen
-			if ($stmt = $this->_mysqli->prepare("SELECT `id`, `statement`, `created` FROM `problems` ORDER BY `created` LIMIT 10")) {
-				$stmt->execute();
-				$stmt->store_result();
-				$problems = array();
-				$stmt->bind_result($id, $pr_stmt, $date);
-				while ($stmt->fetch()) {
-					$problems[] = array($id, $pr_stmt, $date);
-					error_log(html_entity_decode($pr_stmt));	
-				}
-				return $problems;
-			}
-			else {
+			// TODO change constant 10 to be however many can fit on screen
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `statement`, `created` FROM `problems` ORDER BY `created` LIMIT 10")) {
 				throw new Exception($this->_mysqli->error);
 			}
+
+			$stmt->execute();
+			$stmt->store_result();
+			$stmt->bind_result($id, $pr_stmt, $date);
+			while ($stmt->fetch()) {
+				$result['problems'][] = array($id, $pr_stmt, $date);
+				//error_log(html_entity_decode($pr_stmt));	
+			}
+
+			// load categories
+			$stmt->close();
+			if (!$stmt = $this->_mysqli->prepare("SELECT (`id`, `name`) FROM `categories`")) {
+				throw new Exception($this->_mysqli->error);
+			}
+
+			$stmt->execute();
+			$stmt->store_result();
+			$stmt->bind_result($id, $name);
+			while($stmt->fetch()) {
+				$result['categories'][] = array($id, $name);
+			}
+
+			return $result;
+
 		} catch (Exception $e) {
 			return $e;
 		}
