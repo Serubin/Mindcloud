@@ -4,10 +4,16 @@
 <button class="success">create a solution</a>
 <button id="more" name="more">MORE</button>
 
-<div class="row" id="temp">
-	<div class="small-12 column text-center">
-		<p>Every problem is an opportunity</p>
-	</div>
+
+<input type="text" id="thread_test_title" placeholder="create a thread: title">
+<input type="text" id="thread_test_body" placeholder="create a thread: body">
+<button id="create_thread">add thread</button>
+
+<input type="text" id="post_test" placeholder="create a post">
+<button id="create_post">add post</button>
+
+<div id="discussion_container">
+
 </div>
 
 <!-- pose-a-problem modal -->

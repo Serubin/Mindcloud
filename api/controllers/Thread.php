@@ -8,6 +8,9 @@
  * to one forum.
  ******************************************************************************/
 
+require_once("models/ThreadObject.php");
+require_once("models/PostObject.php");
+
 class Thread
 {
 	private $_params;
@@ -27,21 +30,37 @@ class Thread
 		try {
 
 			// check for required parameters
-			if (!isset($this->_params['header'], $this->_params['body'], $this->_params['problem_id'], $_SESSION['uid'])) {
+			if (!isset( $_SESSION['uid'] , $this->_params['problem_id'], $this->_params['title'], $this->_params['body'])) {
 				throw new ThreadException("unset vars; cannot create thread.", __FUNCTION__ );
 			}
 
-			// create thread
+			// sanitize
+			$title = filter_var($this->_params['title'], FILTER_SANITIZE_STRING);
+			$body = filter_var($this->_params['body'], FILTER_SANITIZE_STRING);	
+
+			// create thread object
 			$new_thread = new ThreadObject($this->_mysqli);
-			$new_thread->creator = $_SESSION['uid'];
-			$new_thread->heading = $this->_params['header'];
-			$new_thread->body = $this->_params'body'];
-			return $new_thread->create();
+			$new_thread->op = $_SESSION['uid'];
+			$new_thread->title = $title;
+			$new_thread->problem_id = $this->_params['problem_id'];
+			$new_thread->create();
+
+			// create first post
+			$new_post = new PostObject($this->_mysqli);
+			$new_post->uid = $_SESSION['uid'];
+			$new_post->thread_id = $new_thread->id;
+			$new_post->body = $body;
+			$new_post->create();
+
+			// return success
+			return array(
+				"thread_id" => $new_thread->id,
+				"post_id" => $new_post->id
+			);
 
 		} catch (ThreadException $e) {
-
+			return $e;
 		}
-		
 	}
 
 	/**

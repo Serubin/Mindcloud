@@ -6,16 +6,17 @@
  * Model representation of a discussion thread.
  *****************************************************************************/
 
-class ProblemObject {
+class ThreadObject {
 
 	private $_mysqli;
 
 	// member vars
-	public $creator;
-	public $heading;
-	public $body;
+	public $id;
+	public $op;
+	public $title;
 	public $status;
-	public $replies;
+	public $created;
+	public $problem_id;
 
 	/**
 	 * Constructor
@@ -28,27 +29,29 @@ class ProblemObject {
 
 	/**
 	 * create this thread in the database
+	 * @return an array of the new thread id and the new post id
 	 */
 	public function create() {
-		try {
-
-			if (!isset($this->creator, $this->heading, $this->body)) {
-				throw new Exception("unset vars", __FUNCTION__);
+		
+		if (!isset($this->op, $this->title, $this->problem_id)) {
+				throw new ThreadException("unset vars", __FUNCTION__);
 			}
 
-			// prepare statement and execute
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `threads` (`heading`, `body`, `creator`) VALUES (?, ?, ?)")) {
-				throw new Exception($this->_mysqli->error, __FUNCTION__);
-			}
-
-			$stmt->bind_param("sssi", $this->heading, $this->body, $this->creator);
-			$stmt->execute();
-
-
-			}
-		} catch (ThreadException $e) {
-			return $e;
+		// prepate statement
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `threads` (`op_id`, `title`, `problem_id`) VALUES (?, ?, ?)")) {
+			throw new ThreadException("Insert failed: " + $this->_mysqli->error, __FUNCTION__);
 		}
+
+		$stmt->bind_param("isi", $this->op, $this->title, $this->problem_id);
+
+		// submit thread
+		$stmt->execute();
+
+		// store id
+		$this->id = $this->_mysqli->insert_id;
+
+		// finish
+		return true;
 	}
 
 	/**

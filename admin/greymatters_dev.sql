@@ -188,8 +188,11 @@ CREATE TABLE `tag_associations` (
 CREATE TABLE `threads` (
   `id` int(11) unsigned NOT NULL, 
   `op_id` int(11) unsigned NOT NULL,
-  `date` datetime NOT NULL,
-)
+  `title` varchar(255) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `problem_id` int(11) NOT NULL,
+  `status` tinyint(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `posts`
@@ -198,10 +201,26 @@ CREATE TABLE `threads` (
 CREATE TABLE `posts` (
   `id` int(11) unsigned NOT NULL, 
   `uid` int(11) unsigned NOT NULL,
-  `thread` int(11) unsigned NOT NULL,
-  `body` int(11) unsigned NOT NULL,
-  `date` datetime NOT NULL
-)
+  `thread_id` int(11) unsigned NOT NULL,
+  `body` text NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` tinyint(2) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+--
+-- Table structure for table `flags`
+--
+
+CREATE TABLE `flags` (
+  `id` int(11) unsigned NOT NULL, 
+  `ctype` enum('PROBLEM','SOLUTION','THREAD','POST') NOT NULL,
+  `cid` int(11) unsigned NOT NULL,
+  `uid` int(11) unsigned NOT NULL,
+  `flag` enum('INNAPROPRIATE', 'DUPLICATE', 'INCORRECT') NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 --
 -- Indexes for dumped tables
 --

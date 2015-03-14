@@ -57,7 +57,7 @@ function dashboard() {
 	function loadDashboard() {
 
 		// initialize isotope
-		$problems.isotope({
+		/*$problems.isotope({
 
 		  itemSelector : '.isotope-item',
 		  layoutMode : 'masonry',
@@ -65,7 +65,7 @@ function dashboard() {
 		  	columnWidth: 50
 		  }
 		  // options...
-		});
+		});*/
 
 		// TODO: This stuff will be useful for sorting problems
 		// filter items when filter link is clicked
@@ -153,6 +153,21 @@ function dashboard() {
 
 		$problems.isotope('appended', new_problems);
 	}
+
+
+	/** TEMPORARY 
+	 * test for discussion div
+	 */
+	 var problem_id = 0;
+
+	 var $disc_container = $("#discussion_container");
+	 $disc_container.Discussion();
+
+	 // set up thread creator
+	 $("#create_thread").click(function (event) {
+	 	if ($("#thread_test_title").val().length > 0 && $("#thread_test_body").val().length > 0)
+	 	$disc_container.addThread(problem_id, $("#thread_test_title").val(), $("#thread_test_body").val());
+	 });
 
 
 	// Problem create form

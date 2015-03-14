@@ -12,7 +12,7 @@ class ProblemObject {
 
 	// member vars
 	public $id;
-	public $creator;
+	public $uid;
 	public $title;
 	public $shorthand;
 	public $description;
