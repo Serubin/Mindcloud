@@ -181,7 +181,27 @@ CREATE TABLE `tag_associations` (
   `type` enum('PROBLEM', 'SOLUTION') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Table structure for table `threads`
+--
 
+CREATE TABLE `threads` (
+  `id` int(11) unsigned NOT NULL, 
+  `op_id` int(11) unsigned NOT NULL,
+  `date` datetime NOT NULL,
+)
+
+--
+-- Table structure for table `posts`
+--
+
+CREATE TABLE `posts` (
+  `id` int(11) unsigned NOT NULL, 
+  `uid` int(11) unsigned NOT NULL,
+  `thread` int(11) unsigned NOT NULL,
+  `body` int(11) unsigned NOT NULL,
+  `date` datetime NOT NULL
+)
 --
 -- Indexes for dumped tables
 --
@@ -265,6 +285,18 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `threads`
+--
+ALTER TABLE `threads`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `posts`
+--
+ALTER TABLE `posts`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -314,10 +346,24 @@ ALTER TABLE `tag_associations`
 ALTER TABLE `categories`
   MODIFY `id` int(2) unsigned NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `categories`
+-- AUTO_INCREMENT for table `status`
 --
 ALTER TABLE `status`
   MODIFY `id` int(2) unsigned NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `threads`
+--
+ALTER TABLE `threads`
+  MODIFY `id` int(2) unsigned NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `posts`
+--
+ALTER TABLE `posts`
+  MODIFY `id` int(2) unsigned NOT NULL AUTO_INCREMENT;
+
+
 
 -- --------------------------------------------------------
 
