@@ -1,6 +1,6 @@
 	<h1>dashboard, yo</h1>
 
-<button class="success" data-reveal-id="modal-create-problem">pose a problem</a>
+<button class="success" data-reveal-id="create_problem_modal">pose a problem</a>
 <button class="success">create a solution</a>
 <button id="more" name="more">MORE</button>
 
@@ -11,7 +11,7 @@
 </div>
 
 <!-- pose-a-problem modal -->
-<div id="modal-create-problem" class="reveal-modal" data-reveal>
+<div id="create_problem_modal" class="reveal-modal" data-reveal>
   <h2>Pose a problem</h2>
   <p class="lead">Your couch.  It is mine.</p>
 
@@ -32,6 +32,7 @@
 					<option value="">Select a category</option>
 				</select>
 			</label>
+		</div>
 
 	    <!-- description -->
 	    <div class="description-field">
@@ -49,13 +50,13 @@
 		 	<small class="error">Please include at least 5 tags</small>
 		 </div>
 
-		<button type="submit" class="button btn-login">login</button>
+		<button type="submit" class="button btn-login">create</button>
 
 	   	<!--<a role="button" type="submit" aria-label="submit form" href="#" class="button keep-native">submit</a>-->
 	</form>
   <a href="#" class="close-reveal-modal keep-native">&#215;</a>
 </div> <!-- end pose-a-problem modal -->
 
-<div id="container">
+<div id="content_container">
 
 <div>

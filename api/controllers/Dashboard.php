@@ -44,8 +44,9 @@ class Dashboard {
 			// if problems are to be loaded
 			// load most recent 10
 			// TODO change constant 10 to be however many can fit on screen
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `statement`, `created` FROM `problems` ORDER BY `created` LIMIT 10")) {
-				throw new Exception($this->_mysqli->error);
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created` FROM `problems` ORDER BY `created` LIMIT 10")) {
+				error_log("failing");
+				throw new DashboardException($this->_mysqli->error, __FUNCTION__);
 			}
 
 			$stmt->execute();
@@ -58,8 +59,8 @@ class Dashboard {
 
 			// load categories
 			$stmt->close();
-			if (!$stmt = $this->_mysqli->prepare("SELECT (`id`, `name`) FROM `categories`")) {
-				throw new Exception($this->_mysqli->error);
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `name` FROM `categories`")) {
+				throw new DashboardException($this->_mysqli->error);
 			}
 
 			$stmt->execute();
@@ -68,6 +69,8 @@ class Dashboard {
 			while($stmt->fetch()) {
 				$result['categories'][] = array($id, $name);
 			}
+
+			//error_log(json_encode($result));
 
 			return $result;
 
