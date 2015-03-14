@@ -8,21 +8,18 @@
 var ph; // page handler global variable
 
 $(function(){
-	// Loads page handler
 
+	var topbar = new topBar();
+	topbar.load();
+
+	// Loads page handler
 	ph = new pageHandler({"pageLoc": "/pages/", "animations": true});
 
-	// Loads navigation bar
-	var navLoader = new pageHandler({
-		"pageLoc": "/pages/", 
-		"registerEvents": false, 
-		"contentDiv": "#navigation"
-	});
-	
-	console.log(ph.parseUrl())
-
-	navLoader.pageRequest("topbar", false);
-
+	// if index page
+	if(ph.parseUrl()[0] == ""){
+		ph.pageRequest("/welcome");
+		return;
+	}
 	// loads page
 	ph.pageRequest( ph.parseUrl(), false );
 	

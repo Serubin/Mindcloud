@@ -130,8 +130,12 @@ class User
 	 * Checks whether the user is logged in.
 	 */
 	public function checkUser() {
-		$user = new UserObject($this->_mysqli);
-		return $user->loginCheck();
+		try {
+			$user = new UserObject($this->_mysqli);
+			return $user->loginCheck();
+		} catch (Exception $e){
+			return $e;
+		}
 	}
 
 	public function verifyUser(){
@@ -158,12 +162,11 @@ class User
 
 	/*
 	 * loadUser()
-	 * Sends to the client a json array of the current list name and contents,
+	 * Sends to the client a json array of the current list name and join_date,
 	 * as well as the user's other lists.
 	 */
 	public function loadUser() {
 		try {
-
 			if(!isset($this->_params['uid'])) {
 				throw new UserException("Unset vars", __FUNCTION__);
 			}
@@ -173,19 +176,35 @@ class User
 			$user->load();
 
 			return Array ( 
-				"email" => $this->email,
-				"first_name" => $this->first_name,
-				"last_name" => $this->last_name,
-				"year" => $this->year,
-				"join_date" => $this->join_date,
-				"permission" => $this->permission,
-				"verified" => $this->verified
+				"first_name" => $user->first_name,
+				"last_name" => $user->last_name,
+				"join_date" => $user->join_date,
 			);
 		} catch (Exception $e) {
 			return $e;
 		}
 	}
 
+	/*
+	 * getCurrentUser()
+	 * retrieves the id of the current user from session var
+	 */
+	public function getCurrentUser(){
+		try {
+			if(!isset($_SESSION['uid'])) {
+				throw new UserException("User not logged in", __FUNCTION__);
+			}
+
+			return $_SESSION['uid'];
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	/*
+	 * updateUser()
+	 * updates either password or basic info of current user 
+	 */
 	public function updateUser(){
 		try {
 			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'])) {
