@@ -105,7 +105,7 @@ function pageHandler(args) {
 			if(registerEvents) {
 				$("a").not(".keep-native").unbind("click");
 				$("a").not(".keep-native").click(function() {
-					if(this.attr("href").indexOf("#") > -1){
+					if($(this).attr("href").indexOf("#") > -1){
 						return true;
 					}
 					return linkHandler( $(this).attr("href") );

@@ -50,6 +50,8 @@
 	}
 
 	function defaultLinks($links){
+		$("#home-link").attr("href", "/login"); // sets home link to login
+
 		$links.html(""); // clears links area
 		$links.append(createTopbarItem("/login", "log in"));
 		$links.append(createTopbarItem("/register", "sign up"));
@@ -60,21 +62,28 @@
 		var req = new APICaller("user", "load");
 		var params = {"uid": uid};
 		req.send(params, function(result){
-			console.log(result);
+			// Sets home link to dashboard
+			$("#home-link").attr("href", "/dashboard");
+
+			$links.html(""); // clears current link
 			$links.append(createTopbarItem("#","pose a problem"));
 			$links.append(createTopbarItem("#","pose a solution"));
-
+			// formats name
+			result.first_name = result.first_name.toLowerCase();
+			result.last_name = result.last_name.toLowerCase()
 			// Creates dropdown
 			$dropdownWrapper = createTopbarItem("users/" + result.first_name + "-" + result.last_name, result.first_name + " " + result.last_name);
-			$dropdownWrapper.addClass("has-dropdown");
+			$dropdownWrapper.addClass("has-dropdown"); // foundation dropdown class
+			// List for actual dropdown
 			$dropdown = $("<ul class='dropdown'><ul>");
 			$dropdown.append(createTopbarItem("/user/settings", "account settings"));
 			$dropdown.append(createTopbarItem("/user/logout", "log out"));
 			$dropdownWrapper.append($dropdown);
 
+			// Adds bar to page and allows foundation to do it's magic.
 			$links.append($dropdownWrapper);
 			$(document).foundation('topbar', 'reflow');
-			$(".parent-link").css("display", "none", "important");
+			$(".parent-link").css("display", "none", "important"); // Fixes magic
 		});
 	}
 
