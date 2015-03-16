@@ -25,10 +25,7 @@ function register(){
 
 	 // Foundation form abide
 	$("#registration_form").on('valid', function() {
-
-		alert("forms look good; registering");
 		processRegistration();
-
 	});
 	
 	/**
@@ -53,7 +50,7 @@ function register(){
 		req.send(params, function(result) {
 			console.log(result);
 			if (result == true) {
-				alert("yer good");
+				new alertHandler("info","<p>You've been registered! Check your email to confirm your account</p>");
 				
 				// Redirect browser page
 				ph.pageRequest("login");

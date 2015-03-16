@@ -22,7 +22,6 @@ function login(){
 
 	/**
 	 * Redirect user to the app if already logged in
-	 * TODO; just change body content?
 	 */
 	var req = new APICaller("user", "check");
 	req.send({}, function (result) {
@@ -38,7 +37,7 @@ function login(){
 		var req = new APICaller('user', 'login');
 		var params = {email: $("#login_email").val(), password:hex_sha512($("#login_password").val())};
 		req.send(params, function(result) {
-			console.log(result);
+			//console.log(result);
 			switch (result) {
 				case "unverified":
 					alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");
@@ -64,7 +63,8 @@ function prelogin(){
 	if(url[1] == "validate" && url.length == 4){
 		console.log("processesing validate");
 		var req = new APICaller('user', 'verify');
-		var params = {hash: url[2], uid: url[3]};
+		var params = {hash: url[2], email: url[3].replace("-", ".")};
+		console.log("checking stuffs");
 		req.send(params, function(result) {
 			if(result === true){
 				ph.pageRequest("/login");

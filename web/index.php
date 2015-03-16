@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Mindcloud</title>
 		<link rel="stylesheet" href="/assets/css/master.css" />
+		<!--<link rel="stylesheet" href="/grunt/bower_components/jquery-tags-input/jquery.tagsinput.css" />-->
 
 		
 		<script type="text/javascript" src="/assets/js/frameworks.js"></script>

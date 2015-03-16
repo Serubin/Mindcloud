@@ -6,7 +6,9 @@
  *****************************************************************************/
 function alertHandler(type, html) {
 
-	var timeout = 30000;
+	this.close;
+
+	var timeout = 30 * 1000; // 30 seconds
 
 	if(arguments.length == 3){
 		timeout = arguments[2];
@@ -37,10 +39,10 @@ function alertHandler(type, html) {
 
 	$alertBox.fadeIn(300);
 
-	setTimeout(close, timeout);
+	setTimeout(this.close, timeout);
 
 
-	function close(){
+	this.close = function(){
 		$alertBox.fadeOut(300, function(){
 			$alertBox.remove();
 		});

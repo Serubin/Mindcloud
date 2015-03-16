@@ -115,6 +115,8 @@ function pageHandler(args) {
 
 		// Pre load script
 		var page = page.replace("/", "");
+		console.log("Loaded " + page);
+		console.log(typeof window["pre"+page]);
 		if(typeof window["pre" + page] != "undefined"){
 				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
 			if(preloadStatus === false){
@@ -143,14 +145,16 @@ function pageHandler(args) {
 	 
 		aURL = aURL || window.location.href;
 		// Removes hash
-		aURL.split("#");
+		aURL = aURL.split("#");
 		aURL = aURL[0];
 		// Removes ?
-		aURL.split("?");
+		aURL = aURL.split("?");
 		aURL = aURL[0];
 
 		// remove prefix and suffix
-		aURL = aURL.slice(aURL.indexOf('oc/') + 3)
+
+		aURL = aURL.slice(aURL.indexOf('.loc') + 5)
+
 		if(aURL.lastIndexOf("#") > 0)
 			aURL = aURL.substr(0, aURL.lastIndexOf("#"));
 

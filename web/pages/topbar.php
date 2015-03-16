@@ -1,5 +1,3 @@
-<!-- TODO add php to check if logged in and load data based on that -->
-
 <ul class="title-area">
 	<li class="name">
 		<h1><a id="home-link" href="/dashboard"><img width="150px" class="logo-mini" src="/assets/images/logo/mindcloud_full.png"></a></h1>
@@ -14,18 +12,3 @@
 		
 	</ul>
 </section>
-
-<!--
-
-	<li class=""><a href="login">log in</a></li>
-		<li class=""><a href="register" >sign up</a></li>
-		<li class=""><a href="#">what is this?</a></li>
-		<li class="has-dropdown">
-			<a href="#">username</a>
-			<ul class="dropdown">
-				<li><a href="#">First link in dropdown</a></li>
-				<li class="active"><a href="#">Active link in dropdown</a></li>
-			</ul>
-		</li>
-
-		-->

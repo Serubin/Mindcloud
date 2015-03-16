@@ -16,6 +16,7 @@ $(function(){
 	ph = new pageHandler({"pageLoc": "/pages/", "animations": true});
 
 	// if index page
+	console.log(ph.parseUrl());
 	if(ph.parseUrl()[0] == ""){
 		ph.pageRequest("/welcome");
 		return;
