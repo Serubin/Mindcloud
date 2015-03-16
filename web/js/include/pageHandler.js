@@ -56,12 +56,18 @@ function pageHandler(args) {
 	}
 
 	this.pageRequest = function(page, historypush, callback){
+		if(typeof page == "string"){
+			if(page.indexOf("/") == 0)
+				page = page.slice(1,page.length);
+			page = page.split("/");
+		}
+		console.log(page);
 		if(historypush || typeof historypush == "undefined"){
 			var joinedPage = page;
 			if(typeof page == "object")
 				joinedPage = page.join("/");
 
-			history.pushState({}, '', joinedPage);
+			history.pushState({}, '', "/" + joinedPage);
 		}
 		if(typeof page == "object")
 			page = page[0];
@@ -82,6 +88,7 @@ function pageHandler(args) {
 		 * @param result - results of ajax
 		 */
 		function success(result){
+			log.debug("PageHandler", "Loaded " + page);
 			if(!animations)
 				return process(result);
 
@@ -116,7 +123,7 @@ function pageHandler(args) {
 
 		// Pre load script
 		var page = page.replace("/", "");
-		log.debug("PageHandler", "Loaded " + page);
+		log.debug("Checking for pre" + page + "(): " + typeof window["pre" + page])
 		if(typeof window["pre" + page] != "undefined"){
 				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
 			if(preloadStatus === false){

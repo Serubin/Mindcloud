@@ -56,6 +56,9 @@ function login(){
 
 function prelogin(){
 
+	// Reloads topbar for consistenacy
+	tp.reload();
+
 	var url = ph.parseUrl();
 
 	// Handles validate

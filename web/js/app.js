@@ -11,7 +11,6 @@ var tp;
 $(function(){
 
 	tp = new topBar();
-	//tp.load();
 
 	// Loads page handler
 	ph = new pageHandler({"pageLoc": "/pages/", "animations": true});
