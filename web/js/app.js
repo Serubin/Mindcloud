@@ -6,18 +6,19 @@
  *****************************************************************************/
 
 var ph; // page handler global variable
+var tp;
 
 $(function(){
 
-	var topbar = new topBar();
-	topbar.load();
+	tp = new topBar();
+	//tp.load();
 
 	// Loads page handler
 	ph = new pageHandler({"pageLoc": "/pages/", "animations": true});
 
 	// if index page
-	console.log(ph.parseUrl());
 	if(ph.parseUrl()[0] == ""){
+		log.debug("App", "No start page, redirecting");
 		ph.pageRequest("/welcome");
 		return;
 	}

@@ -7,10 +7,13 @@
  function topBar(){
  	var _this = this;
 
+ 	// public functions
+ 	var load;
+ 	var reload;
+
+ 	// vars
  	var navLoader;
  	var $navLinks;
-
- 	this.reload;
 
  	function construct(){
 	 	// Loads navigation bar
@@ -19,36 +22,50 @@
 			"registerEvents": false, 
 			"contentDiv": "#navigation"
 		});
+		_this.load();
 	}
 
+	/* load()
+	 * Loads topbar html and calculates links
+	 * gets called when topbar object is created
+	 */
 	this.load = function(){
 		navLoader.pageRequest("topbar", false);
 		window["topbar"] = function(){
 			$navLinks = $("#right-topbar");
 			checkUser();
-			console.log("loaded");
+			log.info("Topbar", "Topbar loaded");
 		}
 	}
 
+	/* reload()
+	 * recalculates links
+	 */
 	this.reload = function(){
-		console.log("wil");
-
+		checkUser();
+		log.info("Topbar","Topbar reloaded");
 	}
 
+	/* checkUser()
+	 * Checks if user is logged in and creates links based on login status
+	 */
 	function checkUser(){
 		var req = new APICaller("user", "getCurrent");
 		req.send({}, function(result){
-			console.log(result);
 			if(result < 1){
-				console.log("false");
+				log.debug("Topbar","User not logged in creating default links");
 				defaultLinks($navLinks);
 				return;
 			}
-			console.log("true?");
+			log.debug("Topbar","User logged in creating user links");
 			userLinks(result, $navLinks);
 		});
 	}
 
+	/* defaultLinks()
+	 * Creates links for not logged in or default
+	 * @param $links - right-topbar ul element
+	 */
 	function defaultLinks($links){
 		$("#home-link").attr("href", "/login"); // sets home link to login
 
@@ -58,6 +75,11 @@
 		$links.append(createTopbarItem("/about", "what is this?"));
 	}
 
+	/* userLinks()
+	 * Creates links for logged in
+	 * @param $uid - user id for user
+	 * @param $links - right-topbar ul element
+	 */
 	function userLinks(uid, $links){
 		var req = new APICaller("user", "load");
 		var params = {"uid": uid};
@@ -87,6 +109,11 @@
 		});
 	}
 
+	/* createTopbarItem()
+	 * Creates basic link li element
+	 * @param link - url for link, shouldn't be html
+	 * @param text - text for link, can be html
+	 */
 	function createTopbarItem(link, text){
 		var $li = $("<li class=''></li>");
 		var $a = $("<a></a>");

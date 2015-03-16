@@ -22,7 +22,7 @@ function APICaller (controller, action) {
 					callback(result['data']);
 				}
 				else {
-					console.log("Failure: " + result['error']);
+					log.warning("APICaller", "Failure: " + result['error']);
 					callback(false);
 				}
 		};

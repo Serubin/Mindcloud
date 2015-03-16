@@ -215,8 +215,8 @@ CREATE TABLE IF NOT EXISTS `tag_associations` (
 CREATE TABLE IF NOT EXISTS `threads` (
   `id` int(11) unsigned NOT NULL, 
   `op_id` int(11) unsigned NOT NULL,
-  `date` datetime NOT NULL,
-)
+  `date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `posts`
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `thread` int(11) unsigned NOT NULL,
   `body` int(11) unsigned NOT NULL,
   `date` datetime NOT NULL
-)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 --
 -- Indexes for dumped tables
 --

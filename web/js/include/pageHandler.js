@@ -66,6 +66,7 @@ function pageHandler(args) {
 		if(typeof page == "object")
 			page = page[0];
 
+		log.info("PageHandler", "Loading " + page);
 		pageLoad(page, callback);
 	}
 	/**
@@ -115,8 +116,7 @@ function pageHandler(args) {
 
 		// Pre load script
 		var page = page.replace("/", "");
-		console.log("Loaded " + page);
-		console.log(typeof window["pre"+page]);
+		log.debug("PageHandler", "Loaded " + page);
 		if(typeof window["pre" + page] != "undefined"){
 				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
 			if(preloadStatus === false){
