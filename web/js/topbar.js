@@ -88,16 +88,16 @@
 			$("#home-link").attr("href", "/dashboard");
 
 			$links.html(""); // clears current link
-			$links.append(createTopbarItem("#","pose a problem"));
-			$links.append(createTopbarItem("#","pose a solution"));
+			$links.append(createTopbarItem("#","pose a problem")); //TODO attach/create global pose problem context
+			$links.append(createTopbarItem("#","pose a solution")); //TODO attach/create global pose solution context
 			// formats name
 			result.first_name = result.first_name.toLowerCase();
 			result.last_name = result.last_name.toLowerCase()
 			// Creates dropdown
-			$dropdownWrapper = createTopbarItem("users/" + result.first_name + "-" + result.last_name, result.first_name + " " + result.last_name);
+			var $dropdownWrapper = createTopbarItem("users/" + result.first_name + "-" + result.last_name, result.first_name + " " + result.last_name);
 			$dropdownWrapper.addClass("has-dropdown"); // foundation dropdown class
 			// List for actual dropdown
-			$dropdown = $("<ul class='dropdown'><ul>");
+			var $dropdown = $("<ul class='dropdown'><ul>");
 			$dropdown.append(createTopbarItem("/user/settings", "account settings"));
 			$dropdown.append(createTopbarItem("/user/logout", "log out"));
 			$dropdownWrapper.append($dropdown);
