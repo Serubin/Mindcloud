@@ -8,6 +8,8 @@
  * thread.
  ******************************************************************************/
 
+require_once("models/PostObject.php");
+
 class Post
 {
 	private $_params;
@@ -26,7 +28,7 @@ class Post
 		try {
 
 			// check for the right vars
-			if (!isset($_SESSION['uid'], $this->params['thread_id'], $this->params['body'])) {
+			if (!isset($_SESSION['uid'], $this->_params['thread_id'], $this->_params['body'])) {
 				throw new PostException("Unset vars", __FUNCTION__);
 			}	
 
@@ -34,14 +36,14 @@ class Post
 			$body = filter_var($this->_param['body'], FILTER_SANITIZE_STRING);
 
 			// create the problem
-			$new_post = new ProblemObject();
+			$new_post = new PostObject($this->_mysqli);
 			$new_post->uid = $_SESSION['uid'];
 			$new_post->thread_id = $this->_params['thread_id'];
 			$new_post->body = $body;
 			$new_post->create();
 
 			// return success
-			return $true;
+			return true;
 
 		} catch (PostException $e) {
 			return $e;

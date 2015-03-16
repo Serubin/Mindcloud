@@ -168,6 +168,11 @@ function dashboard() {
 	 	if ($("#thread_test_title").val().length > 0 && $("#thread_test_body").val().length > 0)
 	 	$disc_container.addThread(problem_id, $("#thread_test_title").val(), $("#thread_test_body").val());
 	 });
+	 $("#create_post").click(function (event) {
+	 	if ($("#post_test").val() > 0 ) {
+	 		$disc_container.addPost(problem_id, $("#post_test").val());
+	 	}
+	 });
 
 
 	// Problem create form
