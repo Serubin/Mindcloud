@@ -1,9 +1,15 @@
+/* Foundation */
 @import "settings";
 @import "foundation";
+@import "foundation-icons";
+
+/* Mindcloud globals */
 @import "mindcloud";
+
+/* Pages */
 @import "splash";
 @import "dashboard";
-@import "foundation-icons";
+@import "problem";
 
 body{
 	min-width: 350px;

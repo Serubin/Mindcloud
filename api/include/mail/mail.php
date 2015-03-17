@@ -62,9 +62,7 @@ class Mail{
 	}
 
 	public static function send($email, $subject, $body){
-
-		return Mail::mailer($email,"noreply@serubin.net","Mindcloud - No Reply", $subject, $body, master);		
-
+		return Mail::mailer($email,"noreply@serubin.net","Mindcloud - No Reply", $subject, $body, master);
 	}
 }
 ?>

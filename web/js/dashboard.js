@@ -167,3 +167,12 @@ function dashboard() {
 	});
 	$(document).foundation('reflow');
 }
+
+function predashboard(){
+	// Checks for user login
+	var req = new APICaller('user', 'check');
+	req.send({}, function(result){
+		if(!result)
+			ph.pageRequest("/login");
+	});
+}
