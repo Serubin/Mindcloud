@@ -57,12 +57,12 @@ class SolutionObject {
 
 		$this->id = $this->_mysqli->insert_id;
 
-	if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,'PROBLEM',?,?,?)")) {
-		throw new ProblemException($this->_mysqli->error, __FUNCTION__);
-	}
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,'PROBLEM',?,?,?)")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
 
-	$stmt->bind_param("iis", $this->id, $this->creator, Contributors::CREATOR);
-	$stmt->execute();
+		$stmt->bind_param("iis", $this->id, $this->creator, Contributors::CREATOR);
+		$stmt->execute();
 
 		return true;
 	}
@@ -239,9 +239,6 @@ class SolutionObject {
 		$stmt->execute();
 		$stmt->store_results();
 
-		$stmt->bind_result($db_shorthand);
-		$stmt->fetch();
-
 		$rows = $stmt->num_rows;
 
 		$stmt->close();
@@ -250,6 +247,19 @@ class SolutionObject {
 			return false;
 
 		return true;
+	}
+
+	public function addContributor($uid, $association){
+		if(!isset($this->id)){
+			throw new SolutionException("Unset var: Id", __FUNCTION__);
+		}
+
+		if(!$stmt = $this->_mysql->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,?,?,?")){
+			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("isis", $this->id, "SOLUTION", $uid, $association);
+		$stmt->execute();
 	}
 
 }

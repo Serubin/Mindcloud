@@ -1,4 +1,5 @@
 *.DS_Store
+.idea/*
 web/assets/css/*
 web/assets/js/*
 web/grunt/bower_components/*
