@@ -174,6 +174,40 @@ class UserObject
 		return true;
 	}
 	
+	/* verifyPassword()
+	 * Verifies that password is correct
+	 * Returns true or false;
+	 */
+	public function verifyPassword(){
+		if(!isset($this->uid, $this->password)){
+			throw new UserException("Unset vars: UID, Password", __FUNCTION__);
+		}
+
+		// Fetch password from database
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `user_accounts` WHERE `id` = ? LIMIT 1")) {
+			throw new UserException("Prepare failed." . $this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param('i', $this->uid); // puts the email in place of the '?'
+		$stmt->execute();
+		$stmt->store_result();
+		
+		// stores results from query in variables corresponding to statement
+		$stmt->bind_result($db_uid, $db_password);
+		$stmt->fetch();
+
+		// TODO Defense against brute-force attacks
+
+		if ($stmt->num_rows != 1) {
+			return false; // if there is 0 results
+		}
+
+		// Compare the submitted password to the stored password
+		if (!validate_password($this->password, $db_password)) {
+			return false; // Password is incorrect
+		}
+		return true;
+	}
 	/* loginCheck()
 	 * Verify whether this given user is logged in
 	 * Returns true or false depending on whether the user is presently logged in,
@@ -205,9 +239,6 @@ class UserObject
 		
 		// Save retreived info
 		$this->uid = $db_uid;
-
-		// Save in session
-		$_SESSION['uid'] = $this->uid;
 
 		// If the user hasn't been initalized, do that now
 		if ($this->checkVerified()) 

@@ -13,9 +13,6 @@
 	<div id="registration-pane" class="column small-10 small-offset-1 medium-8 medium-offset-2 large-6 large-offset-3" data-reveal>
 		
 		<p class="lead">Please fill all of these fields</p>
-		<div data-alert id="reg_error_alert" class="alert-box alert round">
-			<a href="#" class="close">&times;</a>
-		</div>
 
 
 		<form id="registration_form" data-abide="ajax">

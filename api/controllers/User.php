@@ -120,7 +120,10 @@ class User
 			$user = new UserObject($this->_mysqli);
 			$user->email = $this->_params['email'];
 			$user->password = $this->_params['password'];
-			return $user->login();
+			
+			$result = $user->login();
+			$_SESSION['uid'] = $this->uid;
+			resturn $result;
 		} catch (Exception $e){
 			return $e;
 		}
@@ -208,11 +211,11 @@ class User
 	 */
 	public function updateUser(){
 		try {
-			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'])) {
+			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'],$this->_params['password'])) {
 				return $this->updateInfo();
 			}
 
-			if(isset($_SESSION['uid'], $this->_params['password'])){
+			if(isset($_SESSION['uid'], $this->_params['password'], $this->_params['new_password'])){
 				return $this->updatePassword();
 			}
 
@@ -227,6 +230,11 @@ class User
 		$user = new UserObject();
 
 		$user->uid = $_SESSION['uid'];
+		$user->password = $this->_params['password'];
+
+		if(!$this->verifyPassword())
+			return false;
+
 		$user->first_name = filter_var($this->_params['first_name'], FILTER_SANITIZE_STRING);
 		$user->last_name = filter_var($this->_params['last_name'], FILTER_SANITIZE_STRING);
 		$user->gender = filter_var($this->_params['gender'], FILTER_SANITIZE_STRING);
@@ -240,6 +248,10 @@ class User
 		$user->uid = $_SESSION['uid'];
 		$user->password = $this->_params['password'];
 
+		if(!$this->verifyPassword())
+			return false;
+
+		$user->password = $this->_params['new_password'];
 		return $user->updatePassword();
 	}
 

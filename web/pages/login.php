@@ -11,11 +11,6 @@
 <div class="row">
 	<div class="small-10 medium-4 column small-offset-1 medium-offset-4" id="login-pane">
 		<p>Please log in.</p>
-
-		<div class="alert-box success round" style="display:none">
-			Registration successful! Please log in.
-			<a href="#" class="close">&times;</a>
-		</div>
 		<form id="login_form" data-abide="ajax">
 			<!-- email -->
 			<div class="email-field">
