@@ -48,6 +48,7 @@ class Problem
 			$problem->description = $this->_params['description'];
 			$problem->tags = $this->_params['tags'];
 			$problem->category = $this->_params['category'];
+
 			// only set the shorthand if given
 			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
 			return $problem->create();
@@ -56,6 +57,11 @@ class Problem
 			return $e;
 		}
 	}
+
+	/**
+	 * getIdProblem()
+	 * Loads id from shorthand
+	 */
 	public function getIdProblem(){
 		if (!isset($this->_params['shorthand'])) {
 			throw new ProblemException("Could not load problem id; no shorthand provided.", __FUNCTION__);
@@ -85,10 +91,11 @@ class Problem
 			$problem->loadFull();
 
 			return Array(
-				"id" => $problem->creator,
-				"statement" => $problem->statement,
+				"id" => $problem->id,
+				"title" => $problem->title,
 				"shorthand" => $problem->shorthand,
 				"description" => $problem->description,
+				"creator" => Array("user" => $problem->creator, "association" => "creator"),
 				"created" => $problem->created,
 				"tags" => $problem->tags,
 				"trial_no" => $problem->trial_no,
