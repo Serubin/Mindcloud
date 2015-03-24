@@ -5,3 +5,67 @@
 		color: #676767;
 	}
 }
+
+#header,#info_container,.discussions-parent{
+}
+
+.discussions-parent,#info_container{
+	margin-right:5px;
+	margin-left:5px;
+}
+
+#discussions_container {
+	width: 100%;
+	height: 200px;
+
+	.thread-btn {
+		background-color: $secondary-color;
+		width: 5%;
+		height: 100%;
+		color: white;
+		padding-top: 90px;
+		padding-bottom: 90px;
+		float: left;
+	}
+
+	.thread-btn:hover {
+		background-color: orange;
+	}
+
+	.thread-forms {
+
+		width: 0px;
+		height: 100%;
+		overflow: hidden;
+		float: left;
+
+		input {
+			width: 75%;
+			margin: 5px;
+		}
+
+		.thread-desc {
+			display: inline;
+		}
+
+		button {
+			display: inline;
+			margin: 5px;
+		}
+
+		h2 span {
+			font-size: 16px;
+		}
+	}
+}
+
+#info_container {
+	width:auto;
+}
+
+#meta_action_menu {
+	height: 20px;
+}
+
+
+

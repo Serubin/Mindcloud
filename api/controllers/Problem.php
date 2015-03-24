@@ -80,14 +80,20 @@ class Problem
 	public function loadProblem() {
 		try {
 
-			if (!isset($this->_params['id'])) {
+			if (!isset($this->_params['identifier'])) {
 				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
 			}
 
+			// initialize problem object
 			$problem = new ProblemObject($this->_mysqli);
 
+			if (is_numeric($this->_params['identifier'])) {
+				$problem->id = $this->_params['identifier']; 
+			} else {
+				$problem->shorthand = $this->_params['identifier'];
+			}
+
 			// inflate the problem with its own information
-			$problem->id = $this->_params['id'];
 			$problem->loadFull();
 
 			return Array(

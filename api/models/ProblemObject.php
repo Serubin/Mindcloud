@@ -83,17 +83,30 @@ class ProblemObject {
 	 * Loads all of the necessary problem data for displaying on a problem page.
 	 */
 	public function loadFull() {
-		// ensure we have the necessary data
-		if (!isset($this->id)) {
-			throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
+
+		// try to load problem with an id
+		if (isset($this->id)) {
+
+			// fetch from the db the information about this problem based on its id
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand`, `title`, `description`, `created`, `creator`, `status`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
+				throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+			}
+			$stmt->bind_param("i", $this->id);
+		}
+		// try to load problem from shorthand
+		else if (isset($this->shorthand)) {
+
+			// fetch from the db the information about this problem based on its shorthand
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand`, `title`, `description`, `created`, `creator`, `status`, `current_trial` FROM `problems` WHERE `shorthand` = ? LIMIT 1")) {
+				throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+			}
+			$stmt->bind_param("i", $this->shorthand);
+		}
+		// throw an exception because we have neither the id or nor the shorthand to load from
+		else {
+			throw new ProblemException("Could not load problem; no id or shorthand provided.", __FUNCTION__);
 		}
 
-		// fetch from the db the information about this problem
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand`, `title`, `description`, `created`, `creator`, `status`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
-			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
-		}
-
-		$stmt->bind_param("i", $this->id);
 		$stmt->execute();
 		$stmt->store_result();
 
@@ -244,7 +257,5 @@ class ProblemObject {
 			return false;
 
 		return true;
-	}
-
 	}
 }
