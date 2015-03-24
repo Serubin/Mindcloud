@@ -69,6 +69,20 @@
 					<input type="radio" name="register_gender" value="F" id="register_gender" required><label for="female">Female
 					<input type="radio" name="register_gender" value="O" id="register_gender" required><label for="other">Other
 			</div>
+			<div class="captcha">
+				<label for="captcha"><span class="label">Human?</span></label>
+				<div class="row">
+					<div class="large-2 small-3 columns">
+						<img src="/assets/images/captcha.php" id="captcha-img" />
+					</div>
+					<div class="large-2 small-3 columns">
+						<input type="text" name="captcha" required />
+					</div>
+					<div class="large-2 large-offset-6 small-3 small-offset-3 columns">
+						<a class="keep-native" id="reload-captcha">reload captcha</a>
+					</div>
+				</div>
+			</div>
 			<br/>
 			<button type="submit">register</button>
 			<a href="login" class="button secondary" id="reg_to_login">Already have an account?</a>

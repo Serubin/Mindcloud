@@ -23,6 +23,12 @@ function register(){
 		}
 	});
 
+	$("reload-captcha").click(function(){
+		log.warning("thing do");
+		$("#captcha-img").attr("src","");
+		$("#captcha-img").attr("src","/assets/images/captcha.php");
+	});
+
 	 // Foundation form abide
 	$("#registration_form").on('valid', function() {
 		processRegistration();

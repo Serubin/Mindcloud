@@ -123,7 +123,7 @@ class User
 			
 			$result = $user->login();
 			$_SESSION['uid'] = $this->uid;
-			resturn $result;
+			return $result;
 		} catch (Exception $e){
 			return $e;
 		}
