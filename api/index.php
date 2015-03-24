@@ -1,4 +1,5 @@
 <?php
+session_start();
 /******************************************************************************
  * index.php
  * Author: Solomon Rubin, Michael Shullick

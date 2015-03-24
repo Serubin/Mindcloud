@@ -32,9 +32,14 @@ class User
 		try {
 			// Checks that all required post variables are set
 			if (!isset($this->_params['email'], $this->_params['password'], $this->_params['first_name'], 
-				$this->_params['last_name'], $this->_params['year'], $this->_params['gender'])) {
+				$this->_params['last_name'], $this->_params['year'], $this->_params['gender'], $this->_params['captcha'])) {
 				error_log(json_encode($this->_params));
 				throw new UserException("Unset vars", __FUNCTION__);
+			}
+
+			if($this->_params['captcha'] != $_SESSION['captcha']) {
+				return "captcha-mismatch";
+				//throw new UserException("Captcha mismatch. Are you a Robot?", __FUNCTION__);
 			}
 
 			// Register new user
@@ -61,7 +66,8 @@ class User
 			$new_user->email = $email;
 
 			if(!$new_user->checkEmail()){
-				throw new UserException("Duplicate email.", __FUNCTION__);
+				return "duplicate-email";
+				//throw new UserException("Duplicate email.", __FUNCTION__);
 			}
 
 			// ensure valid password
@@ -122,7 +128,7 @@ class User
 			$user->password = $this->_params['password'];
 			
 			$result = $user->login();
-			$_SESSION['uid'] = $this->uid;
+			$_SESSION['uid'] = $user->uid;
 			return $result;
 		} catch (Exception $e){
 			return $e;

@@ -76,7 +76,7 @@
 						<img src="/assets/images/captcha.php" id="captcha-img" />
 					</div>
 					<div class="large-2 small-3 columns">
-						<input type="text" name="captcha" required />
+						<input type="text" name="register_captcha" id="register_captcha" required />
 					</div>
 					<div class="large-2 large-offset-6 small-3 small-offset-3 columns">
 						<a class="keep-native" id="reload-captcha">reload captcha</a>
