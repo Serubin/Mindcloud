@@ -21,7 +21,7 @@ class ProblemObject {
 	public $trial_no;
 	public $score;
 	// TODO: activity
-	// TODO: forum/thread/posts
+	public $threads;
 
 	/**
 	 * Constructor
@@ -132,6 +132,9 @@ class ProblemObject {
 
 		// set score
 		$this->getScore();
+
+		// get array of afficiliated thread ids
+		$this->getThreads();
 	}
 
 
@@ -244,7 +247,7 @@ class ProblemObject {
 
 		$stmt->bind_param("s", $this->shorthand);
 		$stmt->execute();
-		$stmt->store_results();
+		$stmt->store_result();
 
 		$stmt->bind_result($db_shorthand);
 		$stmt->fetch();
@@ -257,5 +260,36 @@ class ProblemObject {
 			return false;
 
 		return true;
+	}
+
+	/**
+	 * getThreads
+	 * Queries for a list of ids of threads specfic to this problem
+	 */
+	public function getThreads() {
+
+		// check that we have the id of the problem
+		if (!isset($this->id)) {
+			throw new ProblemException("Couldn't get threads; no id given", __FUNCTION__);
+		}
+
+		// prepare statement
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `threads` WHERE `problem_id` = ?")) {
+			throw new ProblemException("Prepared failed: " . $this->_mysqli->error, __FUNCTION__);
+		}
+
+		error_log("id of problem: " . $this->id);
+
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->store_result();
+
+		$stmt->bind_result($thread_id);
+		$result = array();
+		while ($stmt->fetch()) {
+			$result[] = $thread_id;
+		}
+
+		$this->threads = $result;
 	}
 }

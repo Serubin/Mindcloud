@@ -30,18 +30,19 @@ class Thread
 		try {
 
 			// check for required parameters
-			if (!isset( $_SESSION['uid'] , $this->_params['problem_id'], $this->_params['title'], $this->_params['body'])) {
+			if (!isset( $_SESSION['uid'] , $this->_params['problem_id'], $this->_params['subject'], $this->_params['body'])) {
+				error_log(json_encode($this->_params));
 				throw new ThreadException("unset vars; cannot create thread.", __FUNCTION__ );
 			}
 
 			// sanitize
-			$title = filter_var($this->_params['title'], FILTER_SANITIZE_STRING);
+			$subject = filter_var($this->_params['subject'], FILTER_SANITIZE_STRING);
 			$body = filter_var($this->_params['body'], FILTER_SANITIZE_STRING);	
 
 			// create thread object
 			$new_thread = new ThreadObject($this->_mysqli);
 			$new_thread->op = $_SESSION['uid'];
-			$new_thread->title = $title;
+			$new_thread->subject = $subject;
 			$new_thread->problem_id = $this->_params['problem_id'];
 			$new_thread->create();
 
@@ -77,6 +78,26 @@ class Thread
 	 */
 	public function loadThread() {
 
+		try {
+
+			if (!isset($this->_params['id'])) {
+				throw new ThreadException("Failed to load thead, no id provided", __FUNCTION__);
+			}
+
+			$thread = new ThreadObject($this->_mysqli);
+			$thread->id = $this->_params['id'];
+			$thread->loadPreview();
+
+			$result = Array (
+				"id" => $thread->id,
+				"subject" => $thread->subject
+			);
+
+			return $result;
+
+		} catch (Exception $e) {
+			return $e;
+		}
 
 	}
 

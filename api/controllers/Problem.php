@@ -105,7 +105,8 @@ class Problem
 				"created" => $problem->created,
 				"tags" => $problem->tags,
 				"trial_no" => $problem->trial_no,
-				"score" => $problem->score
+				"score" => $problem->score,
+				"threads" => $problem->threads
 			);
 
 		} catch (ProblemException $e) {

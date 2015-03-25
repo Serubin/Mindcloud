@@ -33,25 +33,22 @@ function problem(url){
 	});
 
 	// new thread listener
-	$("#submit_thread").on("valid", function () {
-		console.log("Adding thread");
+	$("#submit_thread").submit( function (event) {
 
-		var thread_title = $("#new_thread_title").val();
+		console.log("submitting thread");
+
+		// prevent default submission
+		event.preventDefault();
+
+		var subject = $("#new_thread_subject").val();
 		var body = $("#new_thread_body").val();
 
-		var req = new APICaller("thread", "create");
-		var params = {
-			problem_id: id,
-			title: title,
-			body: body
-		}
-		req.send(params, function (result) {
-			if (result) {
-				$discussions.addThread(id, title, body);
-			} else {
-				alertHandler("alert", "<p>Failed to create new thread</p>");
-			}
-		});
+		// hide forms
+		$("#discussions_container_toggle").click();
+
+		// add the thread
+		$discussions.createThread(id, subject, body);
+
 	});
 
 	// TODO: post listener
@@ -81,7 +78,7 @@ function preproblem(){
  */
 function populatePage(data){
 	//console.log(data);
-	// set title
+	// set subject
 	$("#banner #title").html(data.title);
 
 	// set description
@@ -91,4 +88,7 @@ function populatePage(data){
 	$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
 
 	// add threads and posts
+	$.each(data.threads, function(i, value) {
+		$("#discussions_container").loadThread(value);
+	});
 }

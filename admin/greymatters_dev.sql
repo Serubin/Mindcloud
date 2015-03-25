@@ -188,7 +188,7 @@ CREATE TABLE `tag_associations` (
 CREATE TABLE `threads` (
   `id` int(11) unsigned NOT NULL, 
   `op_id` int(11) unsigned NOT NULL,
-  `title` varchar(255) NOT NULL,
+  `subject` varchar(255) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `problem_id` int(11) NOT NULL,
   `status` tinyint(2) NOT NULL
