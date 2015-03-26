@@ -25,10 +25,9 @@ function register(){
 
 	//TODO why no work
 
-	$("reload-captcha").click(function(){
-		log.warning("thing do");
-		$("#captcha-img").attr("src","");
-		$("#captcha-img").attr("src","/assets/images/captcha.php");
+	$("#reload-captcha").click(function(){
+		d = new Date();
+		$("#captcha-img").attr("src","/assets/images/captcha.php?"+d);
 	});
 
 	 // Foundation form abide

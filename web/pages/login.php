@@ -27,6 +27,24 @@
 					<small id="login_pass_err" class="error">Please enter a valid password</small>
 			</div>
 
+			<div class="captcha" style="display: none;">
+				<label for="captcha"><span class="label">Human?</span></label>
+				<div class="row">
+					<div class="large-2 medium-2 small-6 columns">
+						<img src="/assets/images/captcha.php" id="captcha-img" />
+					</div>
+					<div class="large-2 medium-2 small-4 columns" id="c_input">
+						<!-- add input as needed -->
+					</div>
+					<div class="large-2 large-offset-6 medium-2 medium-offset-6 small-1 columns">
+						<a class="keep-native" id="reload-captcha">
+							<span class="show-for-medium-up">reload captcha</span>
+							<i class="show-for-small-only fi-loop icon-medium"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+
 	<button type="submit" class="button btn-login">login</button>
 	<button id="login_forgot" class="button btn-login">help</button>
 </form>

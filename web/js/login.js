@@ -20,6 +20,11 @@ function login(){
 		}
 	});
 
+	$("#reload-captcha").click(function(){
+		d = new Date();
+		$("#captcha-img").attr("src","/assets/images/captcha.php?"+d);
+	});
+
 	/**
 	 * Redirect user to the app if already logged in
 	 */
@@ -41,6 +46,10 @@ function login(){
 				case "unverified":
 					alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");
 					break;
+				case "captcha":
+					alertHandler("alert", "You have logged in incorrectly too many times. Please verify that you are not a robot.");
+					$("#c_input").html('<input type="text" name="register_captcha" id="register_captcha" required />');
+					$(".captcha").fadeIn(300);
 				case true:
 					tp.reload();
 					ph.pageRequest("dashboard");

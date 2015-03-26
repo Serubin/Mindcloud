@@ -72,14 +72,17 @@
 			<div class="captcha">
 				<label for="captcha"><span class="label">Human?</span></label>
 				<div class="row">
-					<div class="large-2 small-3 columns">
+					<div class="large-2 medium-2 small-6 columns">
 						<img src="/assets/images/captcha.php" id="captcha-img" />
 					</div>
-					<div class="large-2 small-3 columns">
+					<div class="large-2 medium-2 small-4 columns" id="c_input">
 						<input type="text" name="register_captcha" id="register_captcha" required />
 					</div>
-					<div class="large-2 large-offset-6 small-3 small-offset-3 columns">
-						<a class="keep-native" id="reload-captcha">reload captcha</a>
+					<div class="large-2 large-offset-6 medium-2 medium-offset-6 small-1 columns">
+						<a class="keep-native" id="reload-captcha">
+							<span class="show-for-medium-up">reload captcha</span>
+							<i class="show-for-small-only fi-loop icon-medium"></i>
+						</a>
 					</div>
 				</div>
 			</div>

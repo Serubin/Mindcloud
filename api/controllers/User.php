@@ -123,12 +123,39 @@ class User
 					__FUNCTION__);
 			}
 
+			// require captcha match if more than 3 attempts
+			if(isset($_SESSION['login-attempts']) && $_SESSION['login-attempts'] > 3){
+				if(!isset($this->_params['login_captcha']))
+					throw new UserException("Unset variables: captcha");
+
+				error_log("doing captcha stuff");
+				// Checks for captcha consistency
+				if($this->_params['login_captcha'] != $_SESSION['captcha'])
+					return false;
+			}
+
 			$user = new UserObject($this->_mysqli);
 			$user->email = $this->_params['email'];
 			$user->password = $this->_params['password'];
 			
 			$result = $user->login();
+
+			// track login attempts 
+			if(!$result) {
+				if(!isset($_SESSION['login-attempts'])) 
+					$_SESSION['login-attempts'] = 1;
+				else
+					$_SESSION['login-attempts'] += 1;
+
+				// if login attempts is greater than 3, tell client to require captcha
+				if($_SESSION['login-attempts'] > 3)
+					$result = "captcha";
+			} else {
+				unset($_SESSION['login-attempts']);
+			}
+
 			$_SESSION['uid'] = $user->uid;
+
 			return $result;
 		} catch (Exception $e){
 			return $e;
