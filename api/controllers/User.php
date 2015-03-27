@@ -92,7 +92,7 @@ class User
 					  We've noticed that you created an account! We're very excited to have you! All you have left todo is verify your account by clicking the link below! <br/>
 					  See you on the other side!<br />
 
-					  <a href='http://mindcloud.io/web/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "/" . $new_user->uid . "'>Validate your account!</a> <br/>
+					  <a href='https://mindcloud.io/login/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "/" . str_replace(".", "-", $new_user->email) . "'>Validate your account!</a> <br/>
 
 					  -- The Mindcloud team! </p>";
 
@@ -130,17 +130,22 @@ class User
 	 * Checks whether the user is logged in.
 	 */
 	public function checkUser() {
-		$user = new UserObject($this->_mysqli);
-		return $user->loginCheck();
+		try {
+			$user = new UserObject($this->_mysqli);
+			return $user->loginCheck();
+		} catch (Exception $e){
+			return $e;
+		}
 	}
 
 	public function verifyUser(){
 		try{
-			if(!isset($this->_params['uid'], $this->_params['hash'])){
+			if(!isset($this->_params['email'], $this->_params['hash'])){
 				throw new UserException("Unset vars", __FUNCTION__);
 			}
 				$user = new UserObject($this->_mysqli);
-				$user->uid = filter_var($this->_params['uid'], FILTER_SANITIZE_STRING);
+				$user->email = filter_var($this->_params['email'], FILTER_SANITIZE_STRING);
+				$user->getIdFromEmail();
 				$user->load();
 
 				$local_hash = hash('sha512', $user->uid . $user->first_name . $user->last_name . $user->email);
@@ -158,12 +163,11 @@ class User
 
 	/*
 	 * loadUser()
-	 * Sends to the client a json array of the current list name and contents,
+	 * Sends to the client a json array of the current list name and join_date,
 	 * as well as the user's other lists.
 	 */
 	public function loadUser() {
 		try {
-
 			if(!isset($this->_params['uid'])) {
 				throw new UserException("Unset vars", __FUNCTION__);
 			}
@@ -173,19 +177,35 @@ class User
 			$user->load();
 
 			return Array ( 
-				"email" => $this->email,
-				"first_name" => $this->first_name,
-				"last_name" => $this->last_name,
-				"year" => $this->year,
-				"join_date" => $this->join_date,
-				"permission" => $this->permission,
-				"verified" => $this->verified
+				"first_name" => $user->first_name,
+				"last_name" => $user->last_name,
+				"join_date" => $user->join_date,
 			);
 		} catch (Exception $e) {
 			return $e;
 		}
 	}
 
+	/*
+	 * getCurrentUser()
+	 * retrieves the id of the current user from session var
+	 */
+	public function getCurrentUser(){
+		try {
+			if(!isset($_SESSION['uid'])) {
+				throw new UserException("User not logged in", __FUNCTION__);
+			}
+
+			return $_SESSION['uid'];
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	/*
+	 * updateUser()
+	 * updates either password or basic info of current user 
+	 */
 	public function updateUser(){
 		try {
 			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'])) {

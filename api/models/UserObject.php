@@ -216,6 +216,8 @@ class UserObject
 			throw new UserException("Unset vars", __FUNCTION__);
 		}
 
+		// "UPDATE M SET M.`verified`=? FROM user_meta as M INNER JOIN user_accounts AS A ON A.`id`=M.`id` WHERE `email` = ?"
+		
 		if(!$stmt = $this->_mysqli->prepare("UPDATE user_meta SET `verified`=? WHERE `id` = ?")) {
 			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
@@ -369,6 +371,39 @@ class UserObject
 		return true;
 	}
 
+	/*
+	 * getIdFromEmail()
+	 * retreives id from
+	 */
+	public function getIdFromEmail(){
+		if (!isset($this->email)) {
+			throw new UserException("Unset vars: email", __FUNCTION__);
+		}
+
+		// Fetches ID. Work around for inner join
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `email` FROM user_accounts WHERE `email` = ? LIMIT 1")) {
+			throw new UserException($this->_mysqli->error);
+		}
+
+		$stmt->bind_param('s', $this->email);
+		$stmt->execute();
+		$stmt->store_result(); // DO THIS FUCKER.
+
+		// if a user already exists with this email
+		if ($stmt->num_rows > 1) {
+			return false;
+		}
+
+		// Bind/Fetch results
+		$stmt->bind_result($db_uid, $db_email);
+		$stmt->fetch();
+
+		$this->uid = $db_uid;
+
+		$stmt->close();
+
+		return true;
+	}
 	/* logout()
 	 * Deletes the session and cookie arrays, the cookies, and 
 	 * destroys the session.

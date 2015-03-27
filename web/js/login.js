@@ -28,17 +28,16 @@ function login(){
 		var req = new APICaller('user', 'login');
 		var params = {email: $("#login_email").val(), password:hex_sha512($("#login_password").val())};
 		req.send(params, function(result) {
-			//console.log(result);
 			switch (result) {
 				case "unverified":
 					alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");
 					break;
 				case true:
+					tp.reload();
 					ph.pageRequest("dashboard");
 					break;
 				default:
 					$("#password").val("");
-					// TODO show prettier error
 					alertHandler("alert", "Incorrect username or password")
 					break;
 				}
@@ -60,15 +59,16 @@ function prelogin(){
 
 	// Handles validate
 	if(url[1] == "validate" && url.length == 4){
-		console.log("processesing validate");
+		log.debug("Login","processesing validate");
 		var req = new APICaller('user', 'verify');
-		var params = {hash: url[2], uid: url[3]};
+		var params = {hash: url[2], email: url[3].replace("-", ".")};
 		req.send(params, function(result) {
 			if(result === true){
 				ph.pageRequest("/login");
+				log.debug("Login", "Validate was successful");
 				alertHandler("info", "You've been verified! Go ahead and login");
 			} else {
-				console.log("failed!");
+				log.debug("Login", "Validate was unsuccessful");
 				ph.pageRequest("/login");
 			}	
 		});

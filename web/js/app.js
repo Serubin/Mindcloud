@@ -6,23 +6,22 @@
  *****************************************************************************/
 
 var ph; // page handler global variable
+var tp;
 
 $(function(){
-	// Loads page handler
 
+	tp = new topBar();
+	//tp.load();
+
+	// Loads page handler
 	ph = new pageHandler({"pageLoc": "/pages/", "animations": true});
 
-	// Loads navigation bar
-	var navLoader = new pageHandler({
-		"pageLoc": "/pages/", 
-		"registerEvents": false, 
-		"contentDiv": "#navigation"
-	});
-	
-	console.log(ph.parseUrl())
-
-	navLoader.pageRequest("topbar", false);
-
+	// if index page
+	if(ph.parseUrl()[0] == ""){
+		log.debug("App", "No start page, redirecting");
+		ph.pageRequest("/welcome");
+		return;
+	}
 	// loads page
 	ph.pageRequest( ph.parseUrl(), false );
 	

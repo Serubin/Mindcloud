@@ -14,8 +14,22 @@ SET time_zone = "+00:00";
 -- Database: `dev_greymatters`
 --
 
-CREATE DATABASE `dev_greymatters`;
+CREATE DATABASE IF NOT EXISTS `dev_greymatters`;
 USE `dev_greymatters`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contributors`
+--
+
+CREATE TABLE IF NOT EXISTS `contributors` (
+  `id` int(11) unsigned NOT NULL,
+  `cid` int(11) unsigned NOT NULL,
+  `type` enum('PROBLEM','SOLUTION') NOT NULL,
+  `uid` int(11) unsigned NOT NULL,
+  `association` enum('creator','contributor','developer','engineer') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -23,7 +37,7 @@ USE `dev_greymatters`;
 -- Table structure for table `media`
 --
 
-CREATE TABLE `media` (
+CREATE TABLE IF NOT EXISTS `media` (
   `id` int(11) unsigned NOT NULL,
   `cid` int(11) unsigned NOT NULL,
   `role` enum('profile','banner','solution','') NOT NULL,
@@ -40,7 +54,7 @@ CREATE TABLE `media` (
 -- Table structure for table `media_extensions`
 --
 
-CREATE TABLE `media_extensions` (
+CREATE TABLE IF NOT EXISTS `media_extensions` (
   `id` int(10) unsigned NOT NULL,
   `ext` varchar(15) NOT NULL,
   `type` enum('application','audio','image','model','text','video') NOT NULL,
@@ -50,10 +64,23 @@ CREATE TABLE `media_extensions` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `media_extensions`
+--
+
+CREATE TABLE IF NOT EXISTS `media_associations` (
+  `id` int(11) NOT NULL,
+  `ctype` enum('PROBLEM','SOLUTION','POST','') NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `mid` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `problems`
 --
 
-CREATE TABLE `problems` (
+CREATE TABLE IF NOT EXISTS `problems` (
   `id` int(11) unsigned NOT NULL,
   `shorthand` varchar(40) NOT NULL,
   `title` varchar(160) NOT NULL,
@@ -71,7 +98,7 @@ CREATE TABLE `problems` (
 -- Table structure for table `solutions`
 --
 
-CREATE TABLE `solutions` (
+CREATE TABLE IF NOT EXISTS `solutions` (
   `id` int(11) unsigned NOT NULL,
   `pid` int(11) unsigned NOT NULL,
   `shorthand` varchar(40) NOT NULL,
@@ -89,7 +116,7 @@ CREATE TABLE `solutions` (
 -- Table structure for table `status`
 --
 
-CREATE TABLE `status` (
+CREATE TABLE IF NOT EXISTS `status` (
   `id` tinyint(2) unsigned NOT NULL,
   `value` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -98,7 +125,7 @@ CREATE TABLE `status` (
 -- Table structure for table `status`
 --
 
-CREATE TABLE `categories` (
+CREATE TABLE IF NOT EXISTS `categories` (
   `id` tinyint(2) unsigned NOT NULL,
   `name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -107,7 +134,7 @@ CREATE TABLE `categories` (
 -- Table structure for table `user_accounts`
 --
 
-CREATE TABLE `user_accounts` (
+CREATE TABLE IF NOT EXISTS `user_accounts` (
   `id` int(10) unsigned NOT NULL,
   `email` varchar(256) NOT NULL,
   `password` varchar(77) NOT NULL
@@ -117,7 +144,7 @@ CREATE TABLE `user_accounts` (
 -- Table structure for table `user_data`
 --
 
-CREATE TABLE `user_data` (
+CREATE TABLE IF NOT EXISTS `user_data` (
   `id` int(11) unsigned NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
@@ -131,7 +158,7 @@ CREATE TABLE `user_data` (
 -- Table structure for table `user_meta`
 --
 
-CREATE TABLE `user_meta` (
+CREATE TABLE IF NOT EXISTS `user_meta` (
   `id` int(11) unsigned NOT NULL,
   `verified` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -140,7 +167,7 @@ CREATE TABLE `user_meta` (
 -- Table structure for table `user_sessions`
 --
 
-CREATE TABLE `user_sessions` (
+CREATE TABLE IF NOT EXISTS `user_sessions` (
   `id` varchar(64) NOT NULL,
   `uid` int(11) unsigned NOT NULL,
   `timestamp` int(16) unsigned NOT NULL COMMENT 'Unix timestamp',
@@ -152,7 +179,7 @@ CREATE TABLE `user_sessions` (
 -- Table structure for table `votes`
 --
 
-CREATE TABLE `votes` (
+CREATE TABLE IF NOT EXISTS `votes` (
   `id` int(11) unsigned NOT NULL,
   `ctype` enum('PROBLEM','SOLUTION','THREAD','POST') NOT NULL,
   `cid` int(11) unsigned NOT NULL,
@@ -164,7 +191,7 @@ CREATE TABLE `votes` (
 -- Table structure for table `tags`
 --
 
-CREATE TABLE `tags` (
+CREATE TABLE IF NOT EXISTS `tags` (
   `id` int(11) unsigned NOT NULL,
   `identifier` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -174,7 +201,7 @@ CREATE TABLE `tags` (
 -- Table structure for table `tag_associations`
 --
 
-CREATE TABLE `tag_associations` (
+CREATE TABLE IF NOT EXISTS `tag_associations` (
   `id` int(11) unsigned NOT NULL,
   `tag_id` int(11) unsigned NOT NULL,
   `associate` int(11) unsigned NOT NULL,
@@ -185,20 +212,24 @@ CREATE TABLE `tag_associations` (
 -- Table structure for table `threads`
 --
 
-CREATE TABLE `threads` (
+CREATE TABLE IF NOT EXISTS `threads` (
   `id` int(11) unsigned NOT NULL, 
   `op_id` int(11) unsigned NOT NULL,
+<<<<<<< HEAD
   `subject` varchar(255) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `problem_id` int(11) NOT NULL,
   `status` tinyint(2) NOT NULL
+=======
+  `date` datetime NOT NULL
+>>>>>>> origin/develop
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `posts`
 --
 
-CREATE TABLE `posts` (
+CREATE TABLE IF NOT EXISTS `posts` (
   `id` int(11) unsigned NOT NULL, 
   `uid` int(11) unsigned NOT NULL,
   `thread_id` int(11) unsigned NOT NULL,
@@ -220,10 +251,15 @@ CREATE TABLE `flags` (
   `flag` enum('INNAPROPRIATE', 'DUPLICATE', 'INCORRECT') NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `contributors`
+--
+ALTER TABLE `contributors`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `media`

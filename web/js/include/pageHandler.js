@@ -57,7 +57,7 @@ function pageHandler(args) {
 		}
 	}
 
-	this.pageRequest = function(page, historypush){
+	this.pageRequest = function(page, historypush, callback){
 		if(historypush || typeof historypush == "undefined"){
 			var joinedPage = page;
 			if(typeof page == "object")
@@ -71,15 +71,16 @@ function pageHandler(args) {
 		if(typeof page == "object")
 			page = page[0];
 
-		pageLoad(page);
+		log.info("PageHandler", "Loading " + page);
+		pageLoad(page, callback);
 	}
 	/**
 	 * pageLoad()
 	 * Page requests dynamicly loads in a new content
 	 * @param page - the pages url (excluding pages/)
 	 */
-	function pageLoad(page) {
-	 	var $content = $(contentDiv);			
+	function pageLoad(page, callback) {
+	 	var $content = $(contentDiv);		
 		/*
 		 * success()
 		 * Handles pre-process (animate vs no animate)
@@ -110,6 +111,9 @@ function pageHandler(args) {
 			if(registerEvents) {
 				$("a").not(".keep-native").unbind("click");
 				$("a").not(".keep-native").click(function() {
+					if($(this).attr("href").indexOf("#") > -1){
+						return true;
+					}
 					return linkHandler( $(this).attr("href") );
 				});
 			}
@@ -117,6 +121,7 @@ function pageHandler(args) {
 
 		// Pre load script
 		var page = page.replace("/", "");
+		log.debug("PageHandler", "Loaded " + page);
 		if(typeof window["pre" + page] != "undefined"){
 				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
 			if(preloadStatus === false){
@@ -144,7 +149,13 @@ function pageHandler(args) {
 	this.parseUrl = function(aURL) {
 	 
 		aURL = aURL || window.location.href;
-	
+		// Removes hash
+		aURL = aURL.split("#");
+		aURL = aURL[0];
+		// Removes ?
+		aURL = aURL.split("?");
+		aURL = aURL[0];
+
 		// remove prefix and suffix
 
 		aURL = aURL.slice(aURL.indexOf('.loc') + 5)
