@@ -40,16 +40,18 @@ function login(){
 	$('#login_form').on('valid', function() {
 
 		var req = new APICaller('user', 'login');
-		var params = {email: $("#login_email").val(), password:hex_sha512($("#login_password").val())};
+		var params = {email: $("#login_email").val(), password:hex_sha512($("#login_password").val()), login_captcha:$("#login_captcha").val()};
 		req.send(params, function(result) {
 			switch (result) {
 				case "unverified":
 					alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");
+					return;
 					break;
 				case "captcha":
 					alertHandler("alert", "You have logged in incorrectly too many times. Please verify that you are not a robot.");
-					$("#c_input").html('<input type="text" name="register_captcha" id="register_captcha" required />');
+					$("#c_input").html('<input type="text" name="login_captcha" id="login_captcha" required />');
 					$(".captcha").fadeIn(300);
+					return;
 				case true:
 					tp.reload();
 					ph.pageRequest("dashboard");

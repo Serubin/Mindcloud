@@ -30,16 +30,15 @@
 			<div class="captcha" style="display: none;">
 				<label for="captcha"><span class="label">Human?</span></label>
 				<div class="row">
-					<div class="large-2 medium-2 small-6 columns">
+					<div class="large-6 medium-6 small-6 columns">
 						<img src="/assets/images/captcha.php" id="captcha-img" />
 					</div>
-					<div class="large-2 medium-2 small-4 columns" id="c_input">
+					<div class="large-5 medium-5 small-5 columns" id="c_input">
 						<!-- add input as needed -->
 					</div>
-					<div class="large-2 large-offset-6 medium-2 medium-offset-6 small-1 columns">
+					<div class="large-1 medium-1 small-1 columns">
 						<a class="keep-native" id="reload-captcha">
-							<span class="show-for-medium-up">reload captcha</span>
-							<i class="show-for-small-only fi-loop icon-medium"></i>
+							<i class="fi-loop"></i>
 						</a>
 					</div>
 				</div>

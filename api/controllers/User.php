@@ -122,16 +122,13 @@ class User
 					"Password: " . $this->_params['password'],
 					__FUNCTION__);
 			}
-
 			// require captcha match if more than 3 attempts
-			if(isset($_SESSION['login-attempts']) && $_SESSION['login-attempts'] > 3){
+			if(isset($_SESSION['login-attempts']) && $_SESSION['login-attempts'] > 3) {
 				if(!isset($this->_params['login_captcha']))
-					throw new UserException("Unset variables: captcha");
-
-				error_log("doing captcha stuff");
+					return "captcha";
 				// Checks for captcha consistency
 				if($this->_params['login_captcha'] != $_SESSION['captcha'])
-					return false;
+					return "captcha";
 			}
 
 			$user = new UserObject($this->_mysqli);
@@ -139,7 +136,6 @@ class User
 			$user->password = $this->_params['password'];
 			
 			$result = $user->login();
-
 			// track login attempts 
 			if(!$result) {
 				if(!isset($_SESSION['login-attempts'])) 

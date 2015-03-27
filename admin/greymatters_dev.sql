@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.3.10
+-- version 4.3.11.1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Feb 28, 2015 at 11:10 PM
--- Server version: 5.5.38
--- PHP Version: 5.6.2
+-- Generation Time: Mar 26, 2015 at 11:40 PM
+-- Server version: 5.6.23
+-- PHP Version: 5.5.22
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -13,23 +13,38 @@ SET time_zone = "+00:00";
 --
 -- Database: `dev_greymatters`
 --
-
-CREATE DATABASE IF NOT EXISTS `dev_greymatters`;
+CREATE DATABASE IF NOT EXISTS `dev_greymatters` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `dev_greymatters`;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `contributors`
+-- Table structure for table `categories`
 --
 
-CREATE TABLE IF NOT EXISTS `contributors` (
-  `id` int(11) unsigned NOT NULL,
-  `cid` int(11) unsigned NOT NULL,
-  `type` enum('PROBLEM','SOLUTION') NOT NULL,
-  `uid` int(11) unsigned NOT NULL,
-  `association` enum('creator','contributor','developer','engineer') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE IF NOT EXISTS `categories` (
+  `id` tinyint(2) unsigned NOT NULL,
+  `name` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`) VALUES
+(0, 'art'),
+(0, 'automotive'),
+(0, 'education'),
+(0, 'electronics'),
+(0, 'entertainment'),
+(0, 'food'),
+(0, 'household'),
+(0, 'medical'),
+(0, 'music'),
+(0, 'science'),
+(0, 'society'),
+(0, 'sustainability');
 
 -- --------------------------------------------------------
 
@@ -37,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `contributors` (
 -- Table structure for table `media`
 --
 
+DROP TABLE IF EXISTS `media`;
 CREATE TABLE IF NOT EXISTS `media` (
   `id` int(11) unsigned NOT NULL,
   `cid` int(11) unsigned NOT NULL,
@@ -54,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `media` (
 -- Table structure for table `media_extensions`
 --
 
+DROP TABLE IF EXISTS `media_extensions`;
 CREATE TABLE IF NOT EXISTS `media_extensions` (
   `id` int(10) unsigned NOT NULL,
   `ext` varchar(15) NOT NULL,
@@ -64,15 +81,18 @@ CREATE TABLE IF NOT EXISTS `media_extensions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `media_extensions`
+-- Table structure for table `posts`
 --
 
-CREATE TABLE IF NOT EXISTS `media_associations` (
-  `id` int(11) NOT NULL,
-  `ctype` enum('PROBLEM','SOLUTION','POST','') NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `mid` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `posts`;
+CREATE TABLE IF NOT EXISTS `posts` (
+  `id` int(11) unsigned NOT NULL,
+  `uid` int(11) unsigned NOT NULL,
+  `thread_id` int(11) unsigned NOT NULL,
+  `body` text NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` tinyint(2) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -80,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `media_associations` (
 -- Table structure for table `problems`
 --
 
+DROP TABLE IF EXISTS `problems`;
 CREATE TABLE IF NOT EXISTS `problems` (
   `id` int(11) unsigned NOT NULL,
   `shorthand` varchar(40) NOT NULL,
@@ -98,6 +119,7 @@ CREATE TABLE IF NOT EXISTS `problems` (
 -- Table structure for table `solutions`
 --
 
+DROP TABLE IF EXISTS `solutions`;
 CREATE TABLE IF NOT EXISTS `solutions` (
   `id` int(11) unsigned NOT NULL,
   `pid` int(11) unsigned NOT NULL,
@@ -116,34 +138,84 @@ CREATE TABLE IF NOT EXISTS `solutions` (
 -- Table structure for table `status`
 --
 
+DROP TABLE IF EXISTS `status`;
 CREATE TABLE IF NOT EXISTS `status` (
   `id` tinyint(2) unsigned NOT NULL,
   `value` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Table structure for table `status`
+-- Dumping data for table `status`
 --
 
-CREATE TABLE IF NOT EXISTS `categories` (
-  `id` tinyint(2) unsigned NOT NULL,
-  `name` varchar(20) NOT NULL
+INSERT INTO `status` (`id`, `value`) VALUES
+(0, 'ACTIVE'),
+(0, 'INACTIVE'),
+(0, 'HIDDEN'),
+(0, 'LOCKED');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tags`
+--
+
+DROP TABLE IF EXISTS `tags`;
+CREATE TABLE IF NOT EXISTS `tags` (
+  `id` int(11) unsigned NOT NULL,
+  `identifier` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tag_associations`
+--
+
+DROP TABLE IF EXISTS `tag_associations`;
+CREATE TABLE IF NOT EXISTS `tag_associations` (
+  `id` int(11) unsigned NOT NULL,
+  `tag_id` int(11) unsigned NOT NULL,
+  `associate` int(11) unsigned NOT NULL,
+  `type` enum('PROBLEM','SOLUTION') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `threads`
+--
+
+DROP TABLE IF EXISTS `threads`;
+CREATE TABLE IF NOT EXISTS `threads` (
+  `id` int(11) unsigned NOT NULL,
+  `op_id` int(11) unsigned NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `problem_id` int(11) NOT NULL,
+  `status` tinyint(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `user_accounts`
 --
 
+DROP TABLE IF EXISTS `user_accounts`;
 CREATE TABLE IF NOT EXISTS `user_accounts` (
   `id` int(10) unsigned NOT NULL,
   `email` varchar(256) NOT NULL,
   `password` varchar(77) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `user_data`
 --
 
+DROP TABLE IF EXISTS `user_data`;
 CREATE TABLE IF NOT EXISTS `user_data` (
   `id` int(11) unsigned NOT NULL,
   `first_name` varchar(255) NOT NULL,
@@ -154,19 +226,25 @@ CREATE TABLE IF NOT EXISTS `user_data` (
   `permission` tinyint(1) NOT NULL DEFAULT '2'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `user_meta`
 --
 
+DROP TABLE IF EXISTS `user_meta`;
 CREATE TABLE IF NOT EXISTS `user_meta` (
   `id` int(11) unsigned NOT NULL,
   `verified` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `user_sessions`
 --
 
+DROP TABLE IF EXISTS `user_sessions`;
 CREATE TABLE IF NOT EXISTS `user_sessions` (
   `id` varchar(64) NOT NULL,
   `uid` int(11) unsigned NOT NULL,
@@ -175,10 +253,13 @@ CREATE TABLE IF NOT EXISTS `user_sessions` (
   `ip` varchar(16) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `votes`
 --
 
+DROP TABLE IF EXISTS `votes`;
 CREATE TABLE IF NOT EXISTS `votes` (
   `id` int(11) unsigned NOT NULL,
   `ctype` enum('PROBLEM','SOLUTION','THREAD','POST') NOT NULL,
@@ -188,68 +269,8 @@ CREATE TABLE IF NOT EXISTS `votes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Table structure for table `tags`
---
-
-CREATE TABLE IF NOT EXISTS `tags` (
-  `id` int(11) unsigned NOT NULL,
-  `identifier` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
---
--- Table structure for table `tag_associations`
---
-
-CREATE TABLE IF NOT EXISTS `tag_associations` (
-  `id` int(11) unsigned NOT NULL,
-  `tag_id` int(11) unsigned NOT NULL,
-  `associate` int(11) unsigned NOT NULL,
-  `type` enum('PROBLEM', 'SOLUTION') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Table structure for table `threads`
---
-
-CREATE TABLE IF NOT EXISTS `threads` (
-  `id` int(11) unsigned NOT NULL, 
-  `op_id` int(11) unsigned NOT NULL,
-  `date` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Table structure for table `posts`
---
-
-CREATE TABLE IF NOT EXISTS `posts` (
-  `id` int(11) unsigned NOT NULL, 
-  `uid` int(11) unsigned NOT NULL,
-  `thread` int(11) unsigned NOT NULL,
-  `body` int(11) unsigned NOT NULL,
-  `date` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
---
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `contributors`
---
-ALTER TABLE `contributors`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `media`
---
-ALTER TABLE `media`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `media_extensions`
---
-ALTER TABLE `media_extensions`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `problems`
@@ -261,12 +282,6 @@ ALTER TABLE `problems`
 -- Indexes for table `solutions`
 --
 ALTER TABLE `solutions`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `status`
---
-ALTER TABLE `status`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -294,140 +309,11 @@ ALTER TABLE `user_sessions`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `votes`
---
-ALTER TABLE `votes`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `tags`
---
-ALTER TABLE `tags`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `tags`
---
-ALTER TABLE `tag_associations`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `categories`
---
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `threads`
---
-ALTER TABLE `threads`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `posts`
---
-ALTER TABLE `posts`
-  ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
 
---
--- AUTO_INCREMENT for table `media`
---
-ALTER TABLE `media`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `media_extensions`
---
-ALTER TABLE `media_extensions`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `media`
---
-ALTER TABLE `problems`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `solutions`
---
-ALTER TABLE `solutions`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `user_accounts`
 --
 ALTER TABLE `user_accounts`
   MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `votes`
---
-ALTER TABLE `votes`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `tags`
---
-ALTER TABLE `tags`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `tags`
---
-ALTER TABLE `tag_associations`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `categories`
---
-ALTER TABLE `categories`
-  MODIFY `id` int(2) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `status`
---
-ALTER TABLE `status`
-  MODIFY `id` int(2) unsigned NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `threads`
---
-ALTER TABLE `threads`
-  MODIFY `id` int(2) unsigned NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `posts`
---
-ALTER TABLE `posts`
-  MODIFY `id` int(2) unsigned NOT NULL AUTO_INCREMENT;
-
-
-
--- --------------------------------------------------------
-
---
--- Default table entries
---
-
---
--- Problem/solution statuses
---
-
-INSERT INTO `status` (`value`) VALUES
-('ACTIVE'),
-('INACTIVE'),
-('HIDDEN'),
-('LOCKED');
-
---
--- Problem/project categories
---
-
-INSERT INTO `categories` (`name`) VALUES
-('art'),
-('automotive'),
-('education'),
-('electronics'),
-('entertainment'),
-('food'),
-('household'),
-('medical'),
-('music'),
-('science'),
-('society'),
-('sustainability');

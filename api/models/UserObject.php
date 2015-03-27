@@ -61,9 +61,6 @@ class UserObject
 
 		$this->uid = $this->_mysqli->insert_id;
 
-		// reuse same stmt var
-		$stmt->close();
-
 		// Submit user data
 		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `year`, `join_date`) VALUES (?, ?, ?, ?, ?)")) {
 			throw new UserException($this->_mysqli->error, "REGISTER");
@@ -79,6 +76,9 @@ class UserObject
 
 		$stmt->bind_param('i', $this->uid);
 		$stmt->execute();
+
+		// reuse same stmt var
+		$stmt->close();
 
 		// Return true on success
 		return true;
