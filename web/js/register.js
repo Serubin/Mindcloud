@@ -23,6 +23,13 @@ function register(){
 		}
 	});
 
+	//TODO why no work
+
+	$("#reload-captcha").click(function(){
+		d = new Date();
+		$("#captcha-img").attr("src","/assets/images/captcha.php?"+d);
+	});
+
 	 // Foundation form abide
 	$("#registration_form").on('valid', function() {
 		processRegistration();
@@ -44,6 +51,7 @@ function register(){
 				password:hex_sha512($("#register_password").val()),
 				gender:$("#register_gender").val(),
 				year:$("#register_year").val(),
+				captcha:$("#register_captcha").val(),
 			};
 
 		// React on the response from the server
@@ -57,11 +65,17 @@ function register(){
 				
 			}
 			else {
-				$("#reg_error_alert").text(result);
-				$("#reg_error_alert").css("display", "block");
-				//$("#popup_msg").text(result);
-				//$("#err_popup").popup("open
-				console.log(result);		
+				if(result == "captcha-mismatch") {
+					console.log("merp");
+					new alertHandler("alert", "You're captcha code couldn't be verified. Are you human?");
+					return;
+				}
+				if(result == "duplicate-email") {
+					new alertHandler("alert", "This email has already been registered");
+					return;
+				} else {
+					new alertHandler("alert", "There was an error processing your request. Pleast try again later");
+				}	
 			}
 		});
 	}

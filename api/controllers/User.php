@@ -32,9 +32,14 @@ class User
 		try {
 			// Checks that all required post variables are set
 			if (!isset($this->_params['email'], $this->_params['password'], $this->_params['first_name'], 
-				$this->_params['last_name'], $this->_params['year'], $this->_params['gender'])) {
+				$this->_params['last_name'], $this->_params['year'], $this->_params['gender'], $this->_params['captcha'])) {
 				error_log(json_encode($this->_params));
 				throw new UserException("Unset vars", __FUNCTION__);
+			}
+
+			if($this->_params['captcha'] != $_SESSION['captcha']) {
+				return "captcha-mismatch";
+				//throw new UserException("Captcha mismatch. Are you a Robot?", __FUNCTION__);
 			}
 
 			// Register new user
@@ -61,7 +66,8 @@ class User
 			$new_user->email = $email;
 
 			if(!$new_user->checkEmail()){
-				throw new UserException("Duplicate email.", __FUNCTION__);
+				return "duplicate-email";
+				//throw new UserException("Duplicate email.", __FUNCTION__);
 			}
 
 			// ensure valid password
@@ -116,11 +122,37 @@ class User
 					"Password: " . $this->_params['password'],
 					__FUNCTION__);
 			}
+			// require captcha match if more than 3 attempts
+			if(isset($_SESSION['login-attempts']) && $_SESSION['login-attempts'] > 3) {
+				if(!isset($this->_params['login_captcha']))
+					return "captcha";
+				// Checks for captcha consistency
+				if($this->_params['login_captcha'] != $_SESSION['captcha'])
+					return "captcha";
+			}
 
 			$user = new UserObject($this->_mysqli);
 			$user->email = $this->_params['email'];
 			$user->password = $this->_params['password'];
-			return $user->login();
+			
+			$result = $user->login();
+			// track login attempts 
+			if(!$result) {
+				if(!isset($_SESSION['login-attempts'])) 
+					$_SESSION['login-attempts'] = 1;
+				else
+					$_SESSION['login-attempts'] += 1;
+
+				// if login attempts is greater than 3, tell client to require captcha
+				if($_SESSION['login-attempts'] > 3)
+					$result = "captcha";
+			} else {
+				unset($_SESSION['login-attempts']);
+			}
+
+			$_SESSION['uid'] = $user->uid;
+
+			return $result;
 		} catch (Exception $e){
 			return $e;
 		}
@@ -208,11 +240,11 @@ class User
 	 */
 	public function updateUser(){
 		try {
-			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'])) {
+			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'],$this->_params['password'])) {
 				return $this->updateInfo();
 			}
 
-			if(isset($_SESSION['uid'], $this->_params['password'])){
+			if(isset($_SESSION['uid'], $this->_params['password'], $this->_params['new_password'])){
 				return $this->updatePassword();
 			}
 
@@ -227,6 +259,11 @@ class User
 		$user = new UserObject();
 
 		$user->uid = $_SESSION['uid'];
+		$user->password = $this->_params['password'];
+
+		if(!$this->verifyPassword())
+			return false;
+
 		$user->first_name = filter_var($this->_params['first_name'], FILTER_SANITIZE_STRING);
 		$user->last_name = filter_var($this->_params['last_name'], FILTER_SANITIZE_STRING);
 		$user->gender = filter_var($this->_params['gender'], FILTER_SANITIZE_STRING);
@@ -240,6 +277,10 @@ class User
 		$user->uid = $_SESSION['uid'];
 		$user->password = $this->_params['password'];
 
+		if(!$this->verifyPassword())
+			return false;
+
+		$user->password = $this->_params['new_password'];
 		return $user->updatePassword();
 	}
 

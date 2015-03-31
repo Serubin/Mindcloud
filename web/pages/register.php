@@ -13,9 +13,6 @@
 	<div id="registration-pane" class="column small-10 small-offset-1 medium-8 medium-offset-2 large-6 large-offset-3" data-reveal>
 		
 		<p class="lead">Please fill all of these fields</p>
-		<div data-alert id="reg_error_alert" class="alert-box alert round">
-			<a href="#" class="close">&times;</a>
-		</div>
 
 
 		<form id="registration_form" data-abide="ajax">
@@ -71,6 +68,23 @@
 					<input type="radio" name="register_gender" value="M" id="register_gender" required><label for="male">Male
 					<input type="radio" name="register_gender" value="F" id="register_gender" required><label for="female">Female
 					<input type="radio" name="register_gender" value="O" id="register_gender" required><label for="other">Other
+			</div>
+			<div class="captcha">
+				<label for="captcha"><span class="label">Human?</span></label>
+				<div class="row">
+					<div class="large-2 medium-2 small-6 columns">
+						<img src="/assets/images/captcha.php" id="captcha-img" />
+					</div>
+					<div class="large-2 medium-2 small-4 columns" id="c_input">
+						<input type="text" name="register_captcha" id="register_captcha" required />
+					</div>
+					<div class="large-2 large-offset-6 medium-2 medium-offset-6 small-1 columns">
+						<a class="keep-native" id="reload-captcha">
+							<span class="show-for-medium-up">reload captcha</span>
+							<i class="show-for-small-only fi-loop icon-medium"></i>
+						</a>
+					</div>
+				</div>
 			</div>
 			<br/>
 			<button type="submit">register</button>
