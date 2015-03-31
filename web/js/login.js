@@ -67,6 +67,14 @@ function login(){
 
 function prelogin(){
 
+
+	//Redirect user to the app if already logged in
+	var req = new APICaller("user", "check");
+	req.send({}, function (result) {
+		if (result)
+			ph.pageRequest("dashboard"); // loads dash
+	});
+	
 	// Reloads topbar for consistenacy
 	tp.reload();
 
