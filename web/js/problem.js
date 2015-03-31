@@ -5,7 +5,6 @@
  * Javascript for problem pages
  *****************************************************************************/
 function problem(url){
-
 	// id var for access from all functions
 	var id;
 
@@ -27,15 +26,15 @@ function problem(url){
 		}
 		// if the problem wasn't found, redirect to dashboard
 		else {
-			ph.pageRequest("dashboard");
+			ph.pageRequest("/dashboard");
 			alertHandler("alert", "Sorry, we couldn't find that problem.");
 		}
-	});
+	}
 
 	// new thread listener
 	$("#submit_thread").submit( function (event) {
 
-		console.log("submitting thread");
+		log.debug("submitting thread", problem);
 
 		// prevent default submission
 		event.preventDefault();

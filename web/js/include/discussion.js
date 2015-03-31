@@ -150,7 +150,7 @@
 				// create an array with just this new thread to append
 				var thread = {id: result['thread_id'], subject:title, body:body};
 
-				var new_threads = {thread};
+				var new_threads = [thread];
 
 				$.fn.Discussion.addPreviews(ids, new_threads);
 			}
