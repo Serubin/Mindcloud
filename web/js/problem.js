@@ -13,9 +13,17 @@ function problem(url){
 	$discussions.Discussion();
 
 	// populate problem data
-	var req = new APICaller('problem', 'load');
-	var params = {identifier: url[1]};
-	req.send(params, function (result) {
+	var req = new APICaller('problem', 'getId');
+	var params = {shorthand: url[1]};
+	req.send(params, function(result){
+		log.debug("Requesting ID", "Problem");
+		var req = new APICaller('problem', 'load');
+		var params = {id: result};
+		req.send(params, onDataLoad);
+	});
+
+
+	function onDataLoad (result) {
 
 		if (result) {
 			// set id
@@ -60,15 +68,28 @@ function problem(url){
 	})*/
 }
 
-function preproblem(){
+function preproblem(url){
 	// Checks for user login
 	var req = new APICaller('user', 'check');
-	req.send({}, function(result){
+	req.send({}, function(result) {
 		if(!result) {
-			ph.pageRequest("login");
+			ph.pageRequest("/login");
 			alertHandler("alert", "Please log in.");
 		}
 	});
+
+	if($.isNumeric(url[1])) {
+		var req = new APICaller('problem', 'getShorthand');
+		var params = {id:url[1]};
+		req.send(params, function(result) {
+			log.debug("result of getShorthand: " + result, "problem");
+			if(!result)
+				ph.pageRequest("/dashboard");
+
+			ph.pageRequest("/problem/" + result);
+		});
+		// fetch shorthand from id
+	}
 }
 
 /**
