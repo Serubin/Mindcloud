@@ -174,7 +174,7 @@ class ProblemObject {
 
 		$this->shorthand = strtolower($this->shorthand);
 
-		$stmt->bind_param("i", $this->shorthand);
+		$stmt->bind_param("s", $this->shorthand);
 		$stmt->execute();
 		$stmt->store_result();
 
