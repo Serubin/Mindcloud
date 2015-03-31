@@ -202,6 +202,32 @@ class ProblemObject {
 	}
 
 	/**
+	 * getShorthand()
+	 * Gets shorthand from ID
+	 */
+	public function getShorthand(){
+		if(!isset($this->id))
+			throw new ProblemException("id not set", __FUNCTION__);
+		
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM `problems` WHERE `id`= ? LIMIT 1")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->store_result();
+
+		if($stmt->num_rows < 1) {
+			throw new ProblemException("Unable to fetch id, less than one row returned", __FUNCTION__);
+		}
+
+		$stmt->bind_result($db_id, $db_shorthand);
+		$stmt->fetch();
+		
+		$this->shorthand = $db_shorthand;		
+	}
+
+	/**
 	 * upvote
 	 * Enter an upvote for a problem
 	 */

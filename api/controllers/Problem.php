@@ -73,6 +73,23 @@ class Problem
 
 		return $problem->id;
 	}
+
+
+	/**
+	 * getShorthandProblem()
+	 * Loads shorthand from id
+	 */
+	public function getShorthandProblem(){
+		if (!isset($this->_params['id'])) {
+			throw new ProblemException("Could not load problem shorthand; no id provided.", __FUNCTION__);
+		}
+
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->id= $this->_params['id'];
+		$problem->getShorthand();
+
+		return $problem->shorthand;
+	}
 	/**
 	 * loadProblem()
 	 * Function for loading content of problem page.
