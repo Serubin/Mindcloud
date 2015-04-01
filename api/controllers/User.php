@@ -1,11 +1,10 @@
 <?php
 /******************************************************************************
  * User.php
- * Author: Michael Shullick
+ * Author: Michael Shullick, Solomon Rubin
  * ©mindcloud
  * 1 February 2015
  * Controller for User-related actions.
- * !!! NOT YET ADAPTED !!!
  ******************************************************************************/
 
 // relative to index.php
