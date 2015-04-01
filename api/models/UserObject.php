@@ -19,6 +19,7 @@ class UserObject
 	public $year;
 	public $join_date;
 	public $permission;
+	public $notification_hash;
 	public $verified;
 	private $_mysqli;
 
@@ -70,11 +71,13 @@ class UserObject
 		$stmt->execute();
 		
 		// Submit user data
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_meta` (`id`) VALUES (?)")) {
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_meta` (`id`,`notification_hash`) VALUES (?,?)")) {
 			throw new UserException($this->_mysqli->error, "REGISTER");
 		}
 
-		$stmt->bind_param('i', $this->uid);
+		$this->notification_hash = hash('sha256', $this->uid . $this->email . time());
+
+		$stmt->bind_param('i', $this->uid, $this->notification_hash);
 		$stmt->execute();
 
 		// reuse same stmt var
@@ -396,7 +399,7 @@ class UserObject
 		if($stmt->num_rows < 1)
 			throw new UserException("User not found", __FUNCTION__);
 
-		$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_permission, $db_id, $db_verified);
+		$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_permission, $db_id, $db_verified, $db_notification_hash);
 		$stmt->fetch();
 
 		// Will not store email for user privacy
@@ -407,6 +410,7 @@ class UserObject
 		$this->join_date = $db_join_date;
 		$this->permission = $db_permission;
 		$this->verified = $db_verified;
+		$this->notification_hash = $db_notification_hash;
 
 		return true;
 	}
