@@ -50,9 +50,9 @@
 	 * Checks if user is logged in and creates links based on login status
 	 */
 	function checkUser(){
-		var req = new APICaller("user", "getCurrent");
+		var req = new APICaller("user", "check");
 		req.send({}, function(result){
-			if(result < 1){
+			if(!result){
 				log.debug("Topbar","User not logged in creating default links");
 				defaultLinks($navLinks);
 				return;
