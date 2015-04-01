@@ -244,7 +244,7 @@ class UserObject
 		$this->uid = $db_uid;
 
 		// If the user hasn't been initalized, do that now
-		if ($this->checkVerified()) 
+		if (!$this->checkVerified()) 
 			return "unverified";
 		// All checks out
 		return true;
