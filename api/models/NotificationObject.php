@@ -3,7 +3,7 @@
  * NotificationObject.php
  * @author Michael Shullick, Solomon Rubin
  * 28 February 2015
- * Model representation of a discussion thread.
+ * Model representation of a notifcation.
  *****************************************************************************/
 
 class NotificationObject {
@@ -88,6 +88,22 @@ class NotificationObject {
 			throw new UserException("Unset vars: uid", __FUNCTION__);
 		}
 
-		//TODO
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid` FROM `user_notifications` WHERE `uid` = ?")) {
+			throw new UserException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("i", $this->uid);
+		$stmt->execute();
+		$stmt->store_result();
+
+		$stmt->bind_result($db_id, $db_uid);
+
+		$notifications = Array();
+
+		while($stmt->fetch()){
+			array_push($notifications, $db_id);
+		}
+
+		return $notifications;
 	}
 }
