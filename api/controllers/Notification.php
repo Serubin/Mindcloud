@@ -60,7 +60,7 @@ class Notification
 	 * createStreamNotification()
 	 * Creates a new pusher stream based on users unique notification hash.
 	 */
-	public function createStreamNotification(){
+	private function createStreamNotification(){
 
 	}
 	public function fetchAllUserNotification(){

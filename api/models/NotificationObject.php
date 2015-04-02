@@ -104,6 +104,8 @@ class NotificationObject {
 			array_push($notifications, $db_id);
 		}
 
+		$stmt->close();
+
 		return $notifications;
 	}
 }
