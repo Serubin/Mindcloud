@@ -34,9 +34,13 @@ function connectNotifications(){
 		var socket = io('http://mindcloud.loc:8000', {
 	        transports: ['websocket']
 	    });
-	 
+
 	    socket.on(user.notification_hash, function (data) {
-	        console.log(data);
+	    	var $notificationHTML = $("<a></a>");
+	    	$notificationHTML.attr("href", data.url);
+	    	$notificationHTML.html("<p>" + message + "</p>");
+	    	
+	        new alertHandler("info", $notificationHTML);
 	    });
 	});
 }
