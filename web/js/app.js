@@ -21,7 +21,22 @@ $(function(){
 		ph.pageRequest("/welcome");
 		return;
 	}
+
 	// loads page
 	ph.pageRequest( ph.parseUrl(), false );
-	
+
 })
+
+function connectNotifications(){
+
+	var req = new APICaller("user", "loadConfidential");
+	req.send({}, function(user){
+		var socket = io('http://mindcloud.loc:8000', {
+	        transports: ['websocket']
+	    });
+	 
+	    socket.on(user.notification_hash, function (data) {
+	        console.log(data);
+	    });
+	});
+}
