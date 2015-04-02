@@ -9,7 +9,9 @@
  ******************************************************************************/
 
 // relative to index.php
+require_once "models/NotificationObject.php";
 require_once "models/UserObject.php";
+require_once "include/socket/Emitter.php";
 
 class Notification
 {
@@ -46,6 +48,7 @@ class Notification
 			$notif->create();
 
 			// TODO create stream
+			$this->createStreamNotification($notif);
 
 		} catch (Exception $e){
 			return $e;
@@ -53,14 +56,25 @@ class Notification
 	}
 
 	public function loadNotification(){
-
+	
 	}
 
 	/**
 	 * createStreamNotification()
 	 * Creates a new pusher stream based on users unique notification hash.
 	 */
-	private function createStreamNotification(){
+	private function createStreamNotification($notif){
+
+		$user = new UserObject($this->_mysqli);
+		$user->uid = $notif->uid;
+
+		$user->load();
+
+		$redis = new \Redis(); // Using the Redis extension provided client
+		$redis->connect('127.0.0.1', '6379');
+
+		$emitter = new SocketIO\Emitter($redis);
+		$emitter->emit($user->notification_hash, array('url' => $notif->url, 'message' => $notif->message));
 
 	}
 	public function fetchAllUserNotification(){
