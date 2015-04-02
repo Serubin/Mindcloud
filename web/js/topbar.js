@@ -90,12 +90,19 @@
 			$links.html(""); // clears current link
 			$links.append(createTopbarItem("#","pose a problem")); //TODO attach/create global pose problem context
 			$links.append(createTopbarItem("#","pose a solution")); //TODO attach/create global pose solution context
+			
+			//Notifications
+			$links.append(createTopbarItem("#","0"));
+			//TODO fetch these
+
 			// formats name
 			result.first_name = result.first_name.toLowerCase();
 			result.last_name = result.last_name.toLowerCase()
+			
 			// Creates dropdown
 			var $dropdownWrapper = createTopbarItem("users/" + result.first_name + "-" + result.last_name, result.first_name + " " + result.last_name);
 			$dropdownWrapper.addClass("has-dropdown"); // foundation dropdown class
+			
 			// List for actual dropdown
 			var $dropdown = $("<ul class='dropdown'><ul>");
 			$dropdown.append(createTopbarItem("/user/settings", "account settings"));
