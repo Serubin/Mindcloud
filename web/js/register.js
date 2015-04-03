@@ -49,7 +49,7 @@ function register(){
 				last_name:$("#register_lastname").val(),
 				email:$("#register_email").val(),
 				password:hex_sha512($("#register_password").val()),
-				gender:$("#register_gender").val(),
+				gender:$("#register_gender-m").val() || $("#register_gender-f").val() || $("#register_gender-o").val(),
 				year:$("#register_year").val(),
 				captcha:$("#register_captcha").val(),
 			};
