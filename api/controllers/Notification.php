@@ -33,9 +33,9 @@ class Notification
 			if(!isset($this->_params['uid'], $this->_params['url'], $this->_params['message'])) {
 				throw new UserException("unset vars: uid, url, message", __FUNCTION__);
 			}
-
-			$uid = filter_var($this->_params['uid'], FILTER_SANITIZE_NUMBER_INT)
-
+			
+			$uid = filter_var($this->_params['uid'], FILTER_SANITIZE_NUMBER_INT);
+			
 			$url = filter_var($this->_params['url'], FILTER_SANITIZE_URL);
 
 			$message = filter_var($this->_params['message'], FILTER_SANITIZE_STRING);
@@ -47,9 +47,10 @@ class Notification
 
 			$notif->create();
 
-			// TODO create stream
+			// create stream
 			$this->createStreamNotification($notif);
 
+			return true;
 		} catch (Exception $e){
 			return $e;
 		}
