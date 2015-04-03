@@ -33,3 +33,21 @@ var log = function(){
  		}
  	}
  }();
+
+/* color
+ *
+ * Array of mindcloud colors
+ */
+ var color = {
+ 	primary: '#4754a4', // blue
+ 	primary_light_2: '#707ab8',
+ 	primary_light: '#5b67ae',
+ 	primary_dark: '#3f4b92',
+ 	primary_dark_2: '#374180',
+
+ 	secondary: '#ff7600', // orange
+ 	secondary_light_2: '#ff9132',
+ 	secondary_light: '#ff8319',
+ 	secondary_dark: '#e56a00',
+ 	secondary_dark_2: '#cc5e00'
+ }
