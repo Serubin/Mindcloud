@@ -141,31 +141,47 @@ var notificationTopbar;
 
 	function notificationElement(){
 		var __this = this;
-		var $notificationEl;
+		var $notificationEl; // topbar item
+		var $notificationNum  // number item
 
+		// public functions
 		var getElement;
 		var recount;
 		var open;
 
 		function construct(){
+			// create topbar item
 			$notificationEl = createTopbarItem("#","0");
+			// adds id to number element
 			$notificationEl.children().attr("id", "notification_number");
+			// saves element
+			$notificationNum = $('#notification_number');
 			// Fetch notification number
 			__this.recount();
 		}
 		
+		/* getelement()
+		 * returns topbar item element
+		 */
 		this.getElement = function(){
 			return $notificationEl;
 		}
 
+		/* recount()
+		 * recounts notifications
+		 * handles animation
+		 */
 		this.recount = function(){
-			var $notificationNum = $('#notification_number');
 			var req = new APICaller("notification", "fetchAllUser");
 			var params = {uid: "SESSION"};
+			
+			// adds hover class to begin animation
 			$notificationNum.addClass("hover");
-			console.log($notificationEl);
+
 			req.send(params, function(result){
+				// sets new number
 				$notificationNum.html(result.length);
+				// waits 1/4 of a second to complete animation
 				setTimeout(function(){$notificationNum.removeClass("hover");}, 250);
 			});
 		}
