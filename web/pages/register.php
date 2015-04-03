@@ -66,12 +66,9 @@
 				<!-- gender -->
 				<div class="gender-field">
 						<label for="register_gender"><span class="label">gender</span>		<small>required</small></label>
-						<input type="radio" name="register_gender" value="M" id="register_gender-m" required>
-						<label for="register_gender-m">Male</label>
-						<input type="radio" name="register_gender" value="F" id="register_gender-f" required>
-						<label for="register_gender-f">Female</label>
-						<input type="radio" name="register_gender" value="O" id="register_gender-o" required>
-						<label for="register_gender-o">Other</label>
+						<input type="radio" name="register_gender" value="M" id="register_gender-m" required><label for="register_gender-m">Male</label>
+						<input type="radio" name="register_gender" value="F" id="register_gender-f" required><label for="register_gender-f">Female</label>
+						<input type="radio" name="register_gender" value="O" id="register_gender-o" required><label for="register_gender-o">Other</label>
 				</div>
 				<div class="captcha">
 					<label for="captcha"><span class="label">Human?</span></label>
