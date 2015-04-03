@@ -79,7 +79,21 @@ class Notification
 
 	}
 	public function fetchAllUserNotification(){
+		try {
+			if(!isset($this->_params['uid'])) {
+				throw new UserException("unset vars: uid ", __FUNCTION__);
+			}
 
+			$uid = filter_var($this->_params['uid'], FILTER_SANITIZE_NUMBER_INT);
+			
+			$notif = new NotificationObject($this->_mysqli);
+			$notif->uid = $uid;
+		
+			return $notif->fetchNotifications();
+
+		} catch (Exception $e){
+			return $e;
+		}
 	}
 }
 
