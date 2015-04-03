@@ -99,6 +99,7 @@ var notificationTopbar;
 			//Notifications
 			notificationTopbar = new notificationElement();
 			 $links.append(notificationTopbar.getElement());
+			 notificationTopbar.recount();
 
 			// formats name
 			result.first_name = result.first_name.toLowerCase();
@@ -141,8 +142,9 @@ var notificationTopbar;
 
 	function notificationElement(){
 		var __this = this;
+
 		var $notificationEl; // topbar item
-		var $notificationNum  // number item
+		var $notificationNum;  // number item
 
 		// public functions
 		var getElement;
@@ -154,10 +156,6 @@ var notificationTopbar;
 			$notificationEl = createTopbarItem("#","0");
 			// adds id to number element
 			$notificationEl.children().attr("id", "notification_number");
-			// saves element
-			$notificationNum = $('#notification_number');
-			// Fetch notification number
-			__this.recount();
 		}
 		
 		/* getelement()
@@ -172,9 +170,11 @@ var notificationTopbar;
 		 * handles animation
 		 */
 		this.recount = function(){
+			console.log("CALLED");
 			var req = new APICaller("notification", "fetchAllUser");
 			var params = {uid: "SESSION"};
 			
+			$notificationNum = $('#notification_number');
 			// adds hover class to begin animation
 			$notificationNum.addClass("hover");
 
