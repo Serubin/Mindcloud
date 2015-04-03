@@ -1,9 +1,19 @@
 @import "settings";
 @import "foundation";
-@import "mindcloud";
 @import "splash";
 @import "dashboard";
 @import "foundation-icons";
+
+// fonts
+//@import url(http://openfontlibrary.org/face/unique);
+//@import url(http://openfontlibrary.org/face/gen-light);
+
+@font-face {
+		font-family: $primary-font;
+			src: url('/assets/fonts/GenW-Light.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
+}
 
 body{
 	min-width: 350px;
@@ -23,4 +33,29 @@ body{
 
 #alert-wrapper span{
 	cursor: pointer;
+}
+
+/* Topbar */
+.top-bar {
+	a, li {
+		transition: background-color 300ms ease-out;
+	}
+
+	.hover{
+		background-color: #555555 !important;
+  		background: $primary-color-light !important;
+	}
+}
+
+/* other */
+
+#main {
+
+	h1 {
+		color: white;
+	}
+
+	.accordion {
+		padding: 2%;
+	}
 }
