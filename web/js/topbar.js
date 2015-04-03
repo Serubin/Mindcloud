@@ -88,7 +88,7 @@ var notificationTopbar;
 		var req = new APICaller("user", "load");
 		var params = {uid: "SESSION"};
 		req.send(params, function(result){
-			console.log(result);
+			
 			// Sets home link to dashboard
 			$("#home-link").attr("href", "/dashboard");
 
@@ -170,7 +170,6 @@ var notificationTopbar;
 		 * handles animation
 		 */
 		this.recount = function(){
-			console.log("CALLED");
 			var req = new APICaller("notification", "fetchAllUser");
 			var params = {uid: "SESSION"};
 			
