@@ -229,7 +229,7 @@ class User
 			}
 
 			$user = new UserObject($this->_mysqli);
-			$user->uid = $this->$_SESSION['uid'];
+			$user->uid = $_SESSION['uid'];
 			$user->load();
 
 			return Array (

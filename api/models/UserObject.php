@@ -77,7 +77,7 @@ class UserObject
 
 		$this->notification_hash = hash('sha256', $this->uid . $this->email . time());
 
-		$stmt->bind_param('i', $this->uid, $this->notification_hash);
+		$stmt->bind_param('is', $this->uid, $this->notification_hash);
 		$stmt->execute();
 
 		// reuse same stmt var
@@ -393,8 +393,6 @@ class UserObject
 		$stmt->bind_param("i", $this->uid);
 		$stmt->execute();
 		$stmt->store_result();
-		
-		error_log($stmt->num_rows);
 
 		if($stmt->num_rows < 1)
 			throw new UserException("User not found", __FUNCTION__);

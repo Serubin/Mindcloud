@@ -68,12 +68,12 @@ class NotificationObject {
 			throw new UserException("unset vars: uid, url, message, time");
 		}
 
-		if($stmt = $this->_mysqli->prepare("INSERT INTO `user_notifications` (`uid`, `url`, `message`) VALUES (?,?,?)")){
+		if(!$stmt = $this->_mysqli->prepare("INSERT INTO `user_notifications` (`uid`, `url`, `message`) VALUES (?,?,?)")){
 			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
 
 		$stmt->bind_param("iss", $this->uid, $this->url, $this->message);
-		$this->execute();
+		$stmt->execute();
 
 		$this->id = $this->_mysqli->insert_id;
 		$stmt->close();
