@@ -85,3 +85,12 @@ function register(){
 		$("#register_year").append("<option value=\"" + y + "\">" + y + "</option>");
 	}
 }
+
+function preregister(){
+	//Redirect user to the app if already logged in
+	var req = new APICaller("user", "check");
+	req.send({}, function (result) {
+		if (result)
+			ph.pageRequest("dashboard"); // loads dash
+	});
+}
