@@ -75,7 +75,7 @@ class Notification
 		$redis->connect('127.0.0.1', '6379');
 
 		$emitter = new SocketIO\Emitter($redis);
-		$emitter->emit($user->notification_hash, array('url' => $notif->url, 'message' => $notif->message));
+		$emitter->emit($user->notification_hash, array('id' => $notif->id, 'url' => $notif->url, 'message' => $notif->message));
 
 	}
 	public function fetchAllUserNotification(){
