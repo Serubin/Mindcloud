@@ -4,12 +4,16 @@
  * 13 Febuary 2015
  * Javascript for topbar
  *****************************************************************************/
+// App Global
+var notificationTopbar;
+
  function topBar(){
  	var _this = this;
 
  	// public functions
  	var load;
  	var reload;
+ 	var notificationElement;
 
  	// vars
  	var navLoader;
@@ -82,8 +86,9 @@
 	 */
 	function userLinks(uid, $links){
 		var req = new APICaller("user", "load");
-		var params = {"uid": uid};
+		var params = {uid: "SESSION"};
 		req.send(params, function(result){
+			console.log(result);
 			// Sets home link to dashboard
 			$("#home-link").attr("href", "/dashboard");
 
@@ -92,8 +97,8 @@
 			$links.append(createTopbarItem("#","pose a solution")); //TODO attach/create global pose solution context
 			
 			//Notifications
-			$links.append(createTopbarItem("#","0"));
-			//TODO fetch these
+			notificationTopbar = new notificationElement();
+			 $links.append(notificationTopbar.getElement());
 
 			// formats name
 			result.first_name = result.first_name.toLowerCase();
@@ -132,5 +137,41 @@
 
 		return $li;
 	}
+
+
+	function notificationElement(){
+		var __this = this;
+		var $notificationEl;
+
+		var getElement;
+		var recount;
+		var open;
+
+		function construct(){
+			$notificationEl = createTopbarItem("#","0");
+			$notificationEl.children().attr("id", "notification_number");
+			// Fetch notification number
+			__this.recount();
+		}
+		
+		this.getElement = function(){
+			return $notificationEl;
+		}
+
+		this.recount = function(){
+			var $notificationNum = $('#notification_number');
+			var req = new APICaller("notification", "fetchAllUser");
+			var params = {uid: "SESSION"};
+			$notificationNum.addClass("hover");
+			console.log($notificationEl);
+			req.send(params, function(result){
+				$notificationNum.html(result.length);
+				setTimeout(function(){$notificationNum.removeClass("hover");}, 250);
+			});
+		}
+
+		construct();
+	}
+
 	construct();
  }
