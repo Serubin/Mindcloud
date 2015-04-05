@@ -6,3 +6,4 @@ web/grunt/bower_components/*
 web/grunt/node_modules/*
 api/node/bower_components/*
 api/node/node_modules/*
+*.rdb
