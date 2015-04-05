@@ -48,7 +48,7 @@ class Notification
 			$notif->create();
 
 			// create stream
-			$this->createStreamNotification($notif);
+			$this->pushNotification($notif);
 
 			return true;
 		} catch (Exception $e){
@@ -56,15 +56,36 @@ class Notification
 		}
 	}
 
+	/* loadNotification()
+	 * Loads all data for specified notification
+	 */
 	public function loadNotification(){
-	
+		try {
+			if(!isset($this->_params['id'], $_SESSION['uid'])) {
+				throw new UserException("Unset vars: id, uid", __FUNCTION__);
+			}
+
+			$notification = new NotificationObject($this->_mysqli);
+			$notification->id = $this->_params['id'];
+			$notification->uid = $_SESSION['uid'];
+			$notification->load();
+
+			return Array(
+				"id" 		=> $notification->id,
+				"uid" 		=> $notification->uid,
+				"url" 		=> $notification->url,
+				"message" 	=> $notification->message,
+				"time" 		=> $notification->time
+			);
+		} catch(Exception $e) {
+			return $e;
+		}
 	}
 
-	/**
-	 * createStreamNotification()
+	/* pushNotification()
 	 * Creates a new pusher stream based on users unique notification hash.
 	 */
-	private function createStreamNotification($notif){
+	private function pushNotification($notif){
 
 		$user = new UserObject($this->_mysqli);
 		$user->uid = $notif->uid;
