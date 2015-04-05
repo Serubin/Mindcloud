@@ -99,13 +99,17 @@ class Notification
 		$emitter->emit($user->notification_hash, array('id' => $notif->id, 'url' => $notif->url, 'message' => $notif->message));
 
 	}
+
+	/* fetchAllUserNotification()
+	 * Fetchs all notification ids of the current user
+	 */
 	public function fetchAllUserNotification(){
 		try {
-			if(!isset($this->_params['uid'])) {
+			if(!isset($_SESSION['uid'])) {
 				throw new UserException("unset vars: uid ", __FUNCTION__);
 			}
 
-			$uid = filter_var($this->_params['uid'], FILTER_SANITIZE_NUMBER_INT);
+			$uid = filter_var($_SESSION['uid'], FILTER_SANITIZE_NUMBER_INT);
 			
 			$notif = new NotificationObject($this->_mysqli);
 			$notif->uid = $uid;

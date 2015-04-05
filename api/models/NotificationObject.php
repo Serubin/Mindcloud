@@ -31,15 +31,15 @@ class NotificationObject {
 	 * loads all fields for NotificationObjects
 	 */
 	public function load(){
-		if(!isset($this->id)) {
+		if(!isset($this->id, $this->uid)) {
 			throw new UserException("Unset vars: id", __FUNCTION__);
 		}
 
-		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `url`, `message`, `time` FROM `user_notifications` WHERE `id` = ? LIMIT 1")) {
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `url`, `message`, `time` FROM `user_notifications` WHERE `id` = ? AND `uid`=? LIMIT 1")) {
 			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("i", $this->id);
+		$stmt->bind_param("ii", $this->id, $this->uid);
 		$stmt->execute();
 		$stmt->store_result();
 
@@ -88,7 +88,7 @@ class NotificationObject {
 			throw new UserException("Unset vars: uid", __FUNCTION__);
 		}
 
-		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid` FROM `user_notifications` WHERE `uid` = ?")) {
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `time` FROM `user_notifications` WHERE `uid` = ? order by `time` desc")) {
 			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -96,7 +96,7 @@ class NotificationObject {
 		$stmt->execute();
 		$stmt->store_result();
 
-		$stmt->bind_result($db_id, $db_uid);
+		$stmt->bind_result($db_id, $db_uid, $db_time);
 
 		$notifications = Array();
 
