@@ -111,13 +111,16 @@ function pageHandler(args) {
 			$(document).foundation('reflow'); // Updates foundation stuff
 			// registers all a links to use js for redirection
 			if(registerEvents) {
-				$("a").not(".keep-native").unbind("click");
-				$("a").not(".keep-native").click(function() {
-					if($(this).attr("href").indexOf("#") > -1){
-						return true;
-					}
-					return linkHandler( $(this).attr("href") );
-				});
+				$("a").not(".keep-native").each(function(){
+					var $el = $(this);
+					if($el.attr("href").toLowerCase() == "javascript:void(0);" || 
+					   $el.attr("href").toLowerCase() == "#")
+							return;
+					$el.unbind("click");
+					$el.click(function() {
+						return linkHandler( $(this).attr("href") );
+					});
+				})
 			}
 		};
 
