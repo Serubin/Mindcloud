@@ -151,6 +151,7 @@ var notificationTopbar;
 		// data
 		var total = 0;
 		var notificationIds;
+		var notificationData;
 
 		var displayed = 0;
 
@@ -216,7 +217,7 @@ var notificationTopbar;
 				// saves
 				notificationIds = result;
 				
-				internalPopulate(5);
+				internalPopulate(25);
 
 				// waits 1/4 of a second to complete animation
 				setTimeout(function(){$notificationNum.removeClass("hover");}, 250);
@@ -224,20 +225,34 @@ var notificationTopbar;
 		}
 
 		function internalPopulate(population){
-			var req = new APICaller("notification", "load");
+			var req = new APICaller("notification", "loadArray");
+			var params = {ids: JSON.stringify(notificationIds)};
 
 			var $nfDropdown = $("#notification-dropdown");
-			$nfDropdown.html("");
-			console.log($nfDropdown.html());
-			for(var i = 0;i < displayed + population;i++){
-				if(typeof notificationIds[i] == "undefined")
-					continue;
 
-				console.log(notificationIds[i]);
-				var params = {id: notificationIds[i]};
-				req.send(params, function(data){
-					$nfDropdown.append(createTopbarItem(data.url, data.message));
-				});
+			$nfDropdown.html("");
+			req.send(params, function(data){
+				for(var i = 0;i < displayed + population;i++){
+					if(typeof data[i] == "undefined")
+						continue;
+
+					var $date = $("<small></small>").addClass("text-right time").html(new Date("2015-04-04 20:56:28").toLocaleString());
+					var $message = $("<p></p>").html(data[i].message).append($date);
+					$nfDropdown.append(createTopbarItem(data[i].url, $message));
+				}
+				displayed += population;
+				showMore();
+			});
+	
+			function showMore(){
+				displayed = population;
+				if(displayed < total) {
+					var $more = $("<li></li>").html("<a class='text-center'>Show more</a>");
+					$more.hover(function(){
+						notificationTopbar.repopulate(displayed + 20);
+					});
+					$nfDropdown.append($more);
+				}
 			}
 		}
 
