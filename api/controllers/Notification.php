@@ -82,6 +82,40 @@ class Notification
 		}
 	}
 
+	/* loadArrayNotification()
+	 * Loads all data for a list notifications
+	 */
+	public function loadArrayNotification(){
+		try {
+			if(!isset($this->_params['ids'], $_SESSION['uid'])) {
+				throw new UserException("Unset vars: ids, uid", __FUNCTION__);
+			}
+
+			$ids = json_decode($this->_params['ids']);
+
+			$result = Array();
+
+			foreach ($ids as $key => $value){
+				$notification = new NotificationObject($this->_mysqli);
+				$notification->id = $value;
+				$notification->uid = $_SESSION['uid'];
+				$notification->load();
+
+				$result[$key] = Array(
+					"id" 		=> $notification->id,
+					"uid" 		=> $notification->uid,
+					"url" 		=> $notification->url,
+					"message" 	=> $notification->message,
+					"time" 		=> $notification->time
+				);
+			}
+
+			return $result;
+		} catch(Exception $e) {
+			return $e;
+		}
+	}
+
 	/* pushNotification()
 	 * Creates a new pusher stream based on users unique notification hash.
 	 */
