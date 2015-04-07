@@ -119,7 +119,11 @@ var notificationTopbar;
 			// Adds bar to page and allows foundation to do it's magic.
 			$links.append($dropdownWrapper);
 			$(document).foundation('topbar', 'reflow');
-			//$(".parent-link").css("display", "none", "important"); // Fixes magic
+
+
+			setTimeout(function(){
+				$(".back h5").css("display", "none", "important"); 
+			}, 1000);// Fixes magic
 
 			notificationTopbar.recount();
 		});
@@ -167,8 +171,6 @@ var notificationTopbar;
 
 			var $dropdown = $("<ul><ul>").addClass("dropdown").attr("id", "notification-dropdown");
 			$notificationEl.append($dropdown);
-
-			internalRecount();
 		}
 		
 		/* getelement()
@@ -226,16 +228,15 @@ var notificationTopbar;
 
 			var $nfDropdown = $("#notification-dropdown");
 			$nfDropdown.html("");
+			console.log($nfDropdown.html());
 			for(var i = 0;i < displayed + population;i++){
 				if(typeof notificationIds[i] == "undefined")
 					continue;
 
+				console.log(notificationIds[i]);
 				var params = {id: notificationIds[i]};
 				req.send(params, function(data){
-					$li = $("<li></li>");
-					$a = $("<a></a>").attr("href", data.url).html(data.message);
-					$li.append($a)
-					$nfDropdown.append($li);
+					$nfDropdown.append(createTopbarItem(data.url, data.message));
 				});
 			}
 		}
