@@ -113,7 +113,8 @@ function pageHandler(args) {
 			if(registerEvents) {
 				$("a").not(".keep-native").each(function(){
 					var $el = $(this);
-					if($el.attr("href").toLowerCase() == "javascript:void(0);" || 
+					if(typeof $el.attr("href") == "undefined" ||
+					   $el.attr("href").toLowerCase() == "javascript:void(0);" || 
 					   $el.attr("href").toLowerCase() == "#")
 							return;
 					$el.unbind("click");
