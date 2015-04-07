@@ -38,7 +38,7 @@ class Notification
 			
 			$url = filter_var($this->_params['url'], FILTER_SANITIZE_URL);
 
-			$message = filter_var($this->_params['message'], FILTER_SANITIZE_STRING);
+			$message = $this->_params['message'];
 
 			$notif = new NotificationObject($this->_mysqli);
 			$notif->uid = $uid;
