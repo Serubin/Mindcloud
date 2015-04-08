@@ -49,7 +49,7 @@ function register(){
 				last_name:$("#register_lastname").val(),
 				email:$("#register_email").val(),
 				password:hex_sha512($("#register_password").val()),
-				gender:$("#register_gender").val(),
+				gender:$("#register_gender-m").val() || $("#register_gender-f").val() || $("#register_gender-o").val(),
 				year:$("#register_year").val(),
 				captcha:$("#register_captcha").val(),
 			};
@@ -84,4 +84,13 @@ function register(){
 	for (var y = 2014; y >= 1900; y--) {
 		$("#register_year").append("<option value=\"" + y + "\">" + y + "</option>");
 	}
+}
+
+function preregister(){
+	//Redirect user to the app if already logged in
+	var req = new APICaller("user", "check");
+	req.send({}, function (result) {
+		if (result)
+			ph.pageRequest("dashboard"); // loads dash
+	});
 }

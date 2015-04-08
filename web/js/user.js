@@ -14,6 +14,11 @@
  				ph.pageRequest("/login");
  			else
  				new alertHandler("alert", "There was an error logging you out. Please try again later or contact our support");
- 		})
+ 		});
+ 	}
+
+ 	if(url.length == 2 && url[1] == "settings"){
+ 		log.debug("User", "Launching settings");
+ 		ph.pageRequest("/user-settings", false);
  	}
  }

@@ -17,6 +17,7 @@ class ThreadObject {
 	public $status;
 	public $created;
 	public $problem_id;
+	public $first_post;
 
 	/**
 	 * Constructor
@@ -33,23 +34,31 @@ class ThreadObject {
 	 */
 	public function create() {
 		
-		if (!isset($this->op, $this->subject, $this->problem_id)) {
+		if (!isset($this->op, $this->subject, $this->problem_id, $this->body)) {
+				error_log(json_encode($this));
 				throw new ThreadException("unset vars", __FUNCTION__);
 			}
 
-		// prepate statement
+		// prepare statement
 		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `threads` (`op_id`, `subject`, `problem_id`) VALUES (?, ?, ?)")) {
-			throw new ThreadException("Insert failed: " + $this->_mysqli->error, __FUNCTION__);
+			throw new ThreadException("Insert failed: " . $this->_mysqli->error, __FUNCTION__);
 		}
 
 		$stmt->bind_param("isi", $this->op, $this->subject, $this->problem_id);
-		error_log("problem id:" . $this->problem_id);
 
 		// submit thread
 		$stmt->execute();
 
 		// store id
 		$this->id = $this->_mysqli->insert_id;
+
+		// create the inital post
+		$post = new PostObject($this->_mysqli);
+		$post->body = $this->body;
+		$post->thread_id = $this->id;
+		$post->uid = $_SESSION['uid'];
+		$post->create();
+		$this->first_post = $post;
 
 		// finish
 		return true;
@@ -70,11 +79,11 @@ class ThreadObject {
 
 			// Ensure that the idea exists
 			if (!$this->exists()) {
-				throw new ThreadException("thread doesn't exist", __FUNCTINO__);
+				throw new ThreadException("thread doesn't exist", __FUNCTION__);
 			}
 
-			if (!$stmt = $this->_mysqli->prepare("SELECT `subject` FROM `threads` WHERE `id` = ?")) {
-				throw new ThreadException("prepare failed", $this->_mysqli->error);
+			if (!$stmt = $this->_mysqli->prepare("SELECT `subject`, `created` FROM `threads` WHERE `id` = ?")) {
+				throw new ThreadException("prepare failed: " . $this->_mysqli->error, __FUNCTION__);
 			}
 
 			$stmt->bind_param("i", $this->id);
@@ -84,10 +93,19 @@ class ThreadObject {
 			if ($stmt->num_rows != 1) {
 				throw new ThreadException ("multiple threads found with that id", __FUNCTION__);
 			}
-			$stmt->bind_result($subject);
+			$stmt->bind_result($subject, $created);
 			$stmt->fetch();
+
+			// set instance vars
 			$this->subject = $subject;
-			error_log($subject);
+			$this->created = $created;
+
+			// load the first post as body of thread
+			$stmt->close();
+			$this->first_post = new PostObject($this->_mysqli);
+			$this->first_post->thread_id = $this->id;
+			$this->first_post->loadFromThreadId();
+
 
 		} catch (ThreadException $e) {
 			error_log("Getting thread preview failed: " . $e->getMessage());

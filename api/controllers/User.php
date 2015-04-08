@@ -1,11 +1,10 @@
 <?php
 /******************************************************************************
  * User.php
- * Author: Michael Shullick
+ * Author: Michael Shullick, Solomon Rubin
  * ©mindcloud
  * 1 February 2015
  * Controller for User-related actions.
- * !!! NOT YET ADAPTED !!!
  ******************************************************************************/
 
 // relative to index.php
@@ -219,8 +218,36 @@ class User
 	}
 
 	/*
+	 * loadConfidentialUser()
+	 * Sends to the client a json array of more private data such as email and notificaton id
+	 * along with normal load user info
+	 */
+	public function loadConfidentialUser() {
+		try{
+			if(!isset($_SESSION['uid'])) {
+				throw new UserException("Unset vars: server session uid", __FUNCTION__);
+			}
+
+			$user = new UserObject($this->_mysqli);
+			$user->uid = $_SESSION['uid'];
+			$user->load();
+
+			return Array (
+				"first_name" => $user->first_name,
+				"last_name" => $user->last_name,
+				"join_date" => $user->join_date,
+				"email" => $user->email,
+				"notification_hash" => $user->notification_hash,
+			);
+		} catch (Exception $e){
+			return $e;
+		}
+	}
+
+	/*
 	 * getCurrentUser()
 	 * retrieves the id of the current user from session var
+	 * TODO revaluate need. 
 	 */
 	public function getCurrentUser(){
 		try {

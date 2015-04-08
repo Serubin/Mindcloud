@@ -18,14 +18,12 @@
 	width: 100%;
 	height: 200px;
 
-	overflow-x: scroll;
-    overflow-y: hidden;
-  	white-space:nowrap;
+	//overflow: hidden;
 
 	.thread-btn {
 		background-color: $secondary-color;
 		width: 5%;
-		height: 100%;
+		//height: 100%;
 		color: white;
 		padding-top: 90px;
 		padding-bottom: 90px;
@@ -39,9 +37,9 @@
 	.thread-forms {
 
 		width: 0px;
-		height: 100%;
-		overflow: hidden;
+		//height: 100px;
 		float: left;
+		overflow-y: hidden;
 
 		input {
 			width: 70%; // will fit the button in on mobile
@@ -62,16 +60,44 @@
 		}
 	}
 
-	.thread-preview {
-		display: inline-block;
-		height: 95%;
-		width: 200px;
-		padding: 5px;
-		float: left;
-		box-shadow: 0px 0px 1px;
-		margin: 5px;
-		margin-bottom: 10px;
+	.threads-container {
+		display: flex;
+		flex-direction: row;
+		overflow-x: auto;
+		overflow-y: auto;
+
+		.thread-preview {
+			display: inline-block;
+			height: 200px;
+			padding: 5px;
+			box-shadow: 0px 0px 1px;
+			margin: 5px;
+			margin-bottom: 10px;
+
+			h4 {
+				width: 200px;
+			}
+		}
 	}
+
+	.thread-preview:hover {
+		background-color: gray;
+	}
+
+	.thread-viewer {
+		height:0;
+		-moz-box-shadow:    inset 0 0 5px #000000;
+		-webkit-box-shadow: inset 0 0 5px #000000;
+		box-shadow:         inset 0 0 5px #000000;
+		margin: 10px;
+
+		.post {
+
+			border: solid black 1px;
+
+		}
+	}
+
 }
 
 #info_container {

@@ -4,12 +4,16 @@
  * 13 Febuary 2015
  * Javascript for topbar
  *****************************************************************************/
+// App Global
+var notificationTopbar;
+
  function topBar(){
  	var _this = this;
 
  	// public functions
  	var load;
  	var reload;
+ 	var notificationElement;
 
  	// vars
  	var navLoader;
@@ -50,9 +54,9 @@
 	 * Checks if user is logged in and creates links based on login status
 	 */
 	function checkUser(){
-		var req = new APICaller("user", "getCurrent");
+		var req = new APICaller("user", "check");
 		req.send({}, function(result){
-			if(result < 1){
+			if(!result){
 				log.debug("Topbar","User not logged in creating default links");
 				defaultLinks($navLinks);
 				return;
@@ -82,20 +86,29 @@
 	 */
 	function userLinks(uid, $links){
 		var req = new APICaller("user", "load");
-		var params = {"uid": uid};
+		var params = {uid: "SESSION"};
 		req.send(params, function(result){
+			
 			// Sets home link to dashboard
 			$("#home-link").attr("href", "/dashboard");
 
 			$links.html(""); // clears current link
 			$links.append(createTopbarItem("#","pose a problem")); //TODO attach/create global pose problem context
 			$links.append(createTopbarItem("#","pose a solution")); //TODO attach/create global pose solution context
+			
+			//Notifications
+			notificationTopbar = new notificationElement();
+			 $links.append(notificationTopbar.getElement());
+			 notificationTopbar.recount();
+
 			// formats name
 			result.first_name = result.first_name.toLowerCase();
 			result.last_name = result.last_name.toLowerCase()
+			
 			// Creates dropdown
 			var $dropdownWrapper = createTopbarItem("users/" + result.first_name + "-" + result.last_name, result.first_name + " " + result.last_name);
 			$dropdownWrapper.addClass("has-dropdown"); // foundation dropdown class
+			
 			// List for actual dropdown
 			var $dropdown = $("<ul class='dropdown'><ul>");
 			$dropdown.append(createTopbarItem("/user/settings", "account settings"));
@@ -125,5 +138,55 @@
 
 		return $li;
 	}
+
+
+	function notificationElement(){
+		var __this = this;
+
+		var $notificationEl; // topbar item
+		var $notificationNum;  // number item
+
+		// public functions
+		var getElement;
+		var recount;
+		var open;
+
+		function construct(){
+			// create topbar item
+			$notificationEl = createTopbarItem("#","0");
+			// adds id to number element
+			$notificationEl.children().attr("id", "notification_number");
+		}
+		
+		/* getelement()
+		 * returns topbar item element
+		 */
+		this.getElement = function(){
+			return $notificationEl;
+		}
+
+		/* recount()
+		 * recounts notifications
+		 * handles animation
+		 */
+		this.recount = function(){
+			var req = new APICaller("notification", "fetchAllUser");
+			var params = {uid: "SESSION"};
+			
+			$notificationNum = $('#notification_number');
+			// adds hover class to begin animation
+			$notificationNum.addClass("hover");
+
+			req.send(params, function(result){
+				// sets new number
+				$notificationNum.html(result.length);
+				// waits 1/4 of a second to complete animation
+				setTimeout(function(){$notificationNum.removeClass("hover");}, 250);
+			});
+		}
+
+		construct();
+	}
+
 	construct();
  }

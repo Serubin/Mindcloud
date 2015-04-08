@@ -38,7 +38,9 @@ session_start();
 				throw new Exception('unauthorized request');
 			}
 
-			$params['uid'] = $user->uid;
+			if(isset($params['uid']) && $params['uid'] == "SESSION") {
+				$params['uid'] = $_SESSION['uid'];
+			}
 		}
 
 		// Check if the controller is valid

@@ -43,20 +43,14 @@ class Thread
 			$new_thread = new ThreadObject($this->_mysqli);
 			$new_thread->op = $_SESSION['uid'];
 			$new_thread->subject = $subject;
+			$new_thread->body = $body;
 			$new_thread->problem_id = $this->_params['problem_id'];
 			$new_thread->create();
-
-			// create first post
-			$new_post = new PostObject($this->_mysqli);
-			$new_post->uid = $_SESSION['uid'];
-			$new_post->thread_id = $new_thread->id;
-			$new_post->body = $body;
-			$new_post->create();
 
 			// return success
 			return array(
 				"thread_id" => $new_thread->id,
-				"post_id" => $new_post->id
+				"post_id" => $new_thread->first_post->id
 			);
 
 		} catch (ThreadException $e) {
@@ -84,13 +78,15 @@ class Thread
 				throw new ThreadException("Failed to load thead, no id provided", __FUNCTION__);
 			}
 
+			// load the thread
 			$thread = new ThreadObject($this->_mysqli);
 			$thread->id = $this->_params['id'];
 			$thread->loadPreview();
 
 			$result = Array (
 				"id" => $thread->id,
-				"subject" => $thread->subject
+				"subject" => $thread->subject,
+				"body" => $thread->first_post->body
 			);
 
 			return $result;

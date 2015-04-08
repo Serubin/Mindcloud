@@ -108,7 +108,7 @@ class ProblemObject {
 		$this->shorthand = $shorthand;
 		$this->title = $title;
 		$this->description = $description;
-		$this->created = $creation_datetime;
+		$this->created = $created;
 		$this->status = $status;
 		$this->trial_no = $current_trial;
 
@@ -287,7 +287,7 @@ class ProblemObject {
 		}
 
 		// prepare statement
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `threads` WHERE `problem_id` = ?")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `threads` WHERE `problem_id` = ? ORDER BY `created` DESC")) {
 			throw new ProblemException("Prepared failed: " . $this->_mysqli->error, __FUNCTION__);
 		}
 

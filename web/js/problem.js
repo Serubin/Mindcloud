@@ -12,11 +12,26 @@ function problem(url){
 	$discussions = $("#discussions_container");
 	$discussions.Discussion();
 
-	// populate problem data
+	// get the problem's numeric id
 	var req = new APICaller('problem', 'getId');
+	
+	if($.isNumeric(url[1])) {
+		var req = new APICaller('problem', 'getShorthand');
+		var params = {id:url[1]};
+		req.send(params, function(result) {
+			log.debug("result of getShorthand: " + result, "problem");
+			if(!result)
+				ph.pageRequest("/dashboard");
+
+			ph.pageRequest("/problem/" + result);
+		});
+		// fetch shorthand from id
+	}
+
+
 	var params = {shorthand: url[1]};
 	req.send(params, function(result){
-		log.debug("Requesting ID", "Problem");
+		// populate the problem data
 		var req = new APICaller('problem', 'load');
 		var params = {id: result};
 		req.send(params, onDataLoad);
@@ -78,18 +93,7 @@ function preproblem(url){
 		}
 	});
 
-	if($.isNumeric(url[1])) {
-		var req = new APICaller('problem', 'getShorthand');
-		var params = {id:url[1]};
-		req.send(params, function(result) {
-			log.debug("result of getShorthand: " + result, "problem");
-			if(!result)
-				ph.pageRequest("/dashboard");
 
-			ph.pageRequest("/problem/" + result);
-		});
-		// fetch shorthand from id
-	}
 }
 
 /**
@@ -106,6 +110,15 @@ function populatePage(data){
 
 	// set contributors
 	$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
+
+	// set vote count and vote status if set
+
+
+	// set popuate related projects
+
+
+	
+
 
 	// add threads and posts
 	$.each(data.threads, function(i, value) {

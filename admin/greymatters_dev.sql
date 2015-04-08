@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: dev_greymatters
 -- ------------------------------------------------------
--- Server version	5.6.23
+-- Server version 5.6.23
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -277,6 +277,7 @@ CREATE TABLE `threads` (
   `subject` varchar(255) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `problem_id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL,
   `status` tinyint(2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=latin1;
@@ -304,7 +305,7 @@ CREATE TABLE `user_accounts` (
   `email` varchar(256) NOT NULL,
   `password` varchar(77) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -313,7 +314,7 @@ CREATE TABLE `user_accounts` (
 
 LOCK TABLES `user_accounts` WRITE;
 /*!40000 ALTER TABLE `user_accounts` DISABLE KEYS */;
-INSERT INTO `user_accounts` VALUES (1,'serubin@serubin.net','sha256:1000:dGbgS48FrKO70NFVX3bXM+2H6lN2w4mF:QKMkwuBBhG7e4vji6g2ZyyV00hOnnA/E'),(2,'serubin323@gmail.com','sha256:1000:6a8IvbNwjTxYWX7kdgeYdUnksO3ZN+re:npGVtgvZ6JyLIpjUSZ55yI3XM1IejOVq'),(3,'admin@serubin.net','sha256:1000:sC9LSXiEggGVbgHCSRSJMTzCK5TeJGma:qYc+1YZ+enp8QqmG4UUmHcJK0ATQNw95'),(4,'test@serubin.net','sha256:1000:vn04JmRMzL7MtWBcUJtqFlli05nYg5Rh:MvMZrXayL6h7/pIzVR23gQdIlj8UaeC1');
+INSERT INTO `user_accounts` VALUES (2,'mshullick@icloud.com','sha256:1000:CH0+Xl9OKCx5a6hmGwKRx8TuZkYM/Bau:sRYnloa76tp448/cW0Nc6x6RZqEpUiIR'),(3,'serubin@serubin.net','sha256:1000:VVf2X1ZuoKDA3oOGh5r5J44xj5ejOC8X:bx8ETSt/3JJpWXINEoXNjjAdsdaUetyt');
 /*!40000 ALTER TABLE `user_accounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -342,7 +343,7 @@ CREATE TABLE `user_data` (
 
 LOCK TABLES `user_data` WRITE;
 /*!40000 ALTER TABLE `user_data` DISABLE KEYS */;
-INSERT INTO `user_data` VALUES (1,'Solomon','Rubin','O',1996,'2015-04-02',2),(2,'Solomon','Rubin','O',1996,'2015-04-02',2),(3,'Solomon','Rubin','O',1996,'2015-04-03',2),(4,'Solomon','Rubin','O',1996,'2015-04-03',2);
+INSERT INTO `user_data` VALUES (2,'Michael','Shullick','O',2005,'2015-03-12',2),(3,'Solomon','Rubin','O',1996,'2015-03-26',2);
 /*!40000 ALTER TABLE `user_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -367,7 +368,7 @@ CREATE TABLE `user_meta` (
 
 LOCK TABLES `user_meta` WRITE;
 /*!40000 ALTER TABLE `user_meta` DISABLE KEYS */;
-INSERT INTO `user_meta` VALUES (1,1,'d547567b3c2cf5f0afee2510f74fe24673fb735d579cf2f0f213bfc554adf289'),(2,1,'b3a9484e7494982a920ae135b9f01705d4a72c465f7e3cb690dca63f2e857f62'),(3,0,'e72e4fc6098215bd4926eaaabad4a6cf04f60f1d371fb9b5660c78df579bba2c'),(4,0,'615ca7cc98cff2e61a13496c61004ce42452e7b768ef97b62a781b77b592a8c1');
+INSERT INTO `user_meta` VALUES (2,1,''),(3,1,'');
 /*!40000 ALTER TABLE `user_meta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -383,10 +384,10 @@ CREATE TABLE `user_notifications` (
   `uid` int(11) unsigned NOT NULL,
   `url` varchar(255) NOT NULL,
   `message` text NOT NULL,
-  `seen` int(1) NOT NULL DEFAULT '0',
+  `read` int(1) NOT NULL DEFAULT '0',
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -395,7 +396,6 @@ CREATE TABLE `user_notifications` (
 
 LOCK TABLES `user_notifications` WRITE;
 /*!40000 ALTER TABLE `user_notifications` DISABLE KEYS */;
-INSERT INTO `user_notifications` VALUES (30,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:01:33'),(31,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:01:35'),(32,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:02:10'),(33,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:02:15'),(34,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:02:45'),(35,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:02:48'),(36,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:02:51'),(37,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:02:53'),(38,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:03:17'),(39,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:05:24'),(40,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:05:28'),(41,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 05:27:38'),(42,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 14:05:50'),(43,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 14:06:34'),(44,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 14:07:38'),(45,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-03 14:51:51'),(46,1,'/user/notifications','Please consider checking your notifications!',0,'2015-04-04 18:24:59'),(47,1,'/user/notifications','Michael has added a thread to your problem',0,'2015-04-04 18:25:47'),(48,1,'/user/notifications','Michael has added a thread to your problem',0,'2015-04-04 18:25:53');
 /*!40000 ALTER TABLE `user_notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -422,7 +422,7 @@ CREATE TABLE `user_sessions` (
 
 LOCK TABLES `user_sessions` WRITE;
 /*!40000 ALTER TABLE `user_sessions` DISABLE KEYS */;
-INSERT INTO `user_sessions` VALUES ('46119e58cc966ed402ad0965d2b27216edc3535bccbcdcbb2db41592197e6220',2,1428029399,1429238999,'127.0.0.1'),('79ebf49a64cb01e9783b5ebc1e0f32ef6237ef6f2dfd90b8542791c57bb4f378',1,1428085163,1429294763,'127.0.0.1');
+INSERT INTO `user_sessions` VALUES ('13f9aaa3244fcf94316dcb844c32013aec66186a8c04dfe9cc75693c7fec8a59',2,1427384294,1428593894,'fe80::1'),('1b683a75aa42f4da9d0f6d2a5ff38a71163116feddf3650ec9194e6f8a98e233',2,1427229030,1428438630,'::1'),('240d13535d8c9ad05d3277e822b6392e948c63846ecd048671cf10167ca87304',2,1426626858,1427836458,'::1'),('2e3d69552c2b5a452795bc5b00ff0817c5515a527ff75571c476aac4c3f08f7e',2,1426209860,1427419460,'127.0.0.1'),('3a0762b6061503c333fd4d0601397f53ede6aa32e79c01872315b19461c2de7f',2,1427215508,1428425108,'::1'),('412dee52ce9d292f3d864e6ffec0a983ae7ae59ee6f2eec8f08e750784956553',2,1427230500,1428440100,'fe80::1'),('497848dabe4603e3e3179543a211fdb6dfae3cf2602ddbb7b76bf83d14d7c678',2,1427230657,1428440257,'::1'),('4f2b5dbcc26334b919eff8dc0a8e53056aa33a6a9cd81cf0487e2cefcefea2f5',2,1427137927,1428347527,'::1'),('57f01cf92856adff8f17c1b4b3a3f507f20ef837023d44acd5420b4f372706d6',2,1427256478,1428466078,'::1'),('65156db437ce45f2aeb0e705e99e89e6ee54cc0c8ea60419ffd921f9c9136bb2',2,1427222577,1428432177,'::1'),('67f02d691bd67abb8588f40797f965ea499b85605e9c529a3770826600f1d57d',2,1427228468,1428438068,'fe80::1'),('6d9587b955de2388990c5bf04af3630076202270e96ed751285a509def82c986',2,1426358649,1427568249,'127.0.0.1'),('77f21ea9f729883ea26f51113dc2731ed6b720f127787b062222a719383080b2',2,1426628605,1427838205,'::1'),('88833be6318d9b342487bcdf934f7b47edfe9462f5239179900b5b1b997e5836',2,1426207051,1427416651,'::1'),('9b80d243807765109de9a2e045a47b3d37dd41ff9daf64f10968702d755e1b22',2,1427384756,1428594356,'::1'),('ad1beb5d553bf3794105fe05d1fc9c91ffe5b01c7346636b69810a1646e4ecd5',3,1427858083,1429067683,'127.0.0.1');
 /*!40000 ALTER TABLE `user_sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -461,4 +461,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-04-04 14:40:47
+-- Dump completed on 2015-04-02  9:30:05

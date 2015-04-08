@@ -7,7 +7,7 @@
 
 	var forms ='<form id="submit_thread">' +
 						'<p>stir the pot.</p>' +
-						'<input type="text" id="new_thread_title" class="thread-subject" placeholder="What would you like to say?" required/>' +
+						'<input type="text" id="new_thread_subject" class="thread-subject" placeholder="What would you like to say?" required/>' +
 						'<input type="text" id="new_thread_body" class="thread-desc" style="height:100px" placeholder="Elaborate on that?" required/>' +
 						'<button id="submit_thread_btn" class="button btn-login">create</button>' +
 				'</form>';
@@ -36,7 +36,11 @@
 		// create forms
 		var $forms = $('<div></div>', {id: ids.forms, class: 'thread-forms'}).html(forms);
 
-		// create initial forms instance
+		// create div for threads
+		var $thread_container = $('<div></div>', {id: ids.thread_container, class: 'threads-container'});
+
+		// create viewer for threads
+		var $thread_viewer = $('<div></div>', {id: ids.thread_viewer, class: 'thread-viewer'});
 
 		// setup the create new thread prompt
 		// thread_toggle is the entire div that grows to contain forms, or stays small to contain a button div
@@ -60,13 +64,19 @@
 
 		});
 
-		// add the toggle button
+		// add each element to the parent
 		$(id).append($forms);
 		$(id).append($thread_toggle);
+		$(id).append($thread_container);
+		$(id).append($thread_viewer);
 
-		// Add the threads
-		// TODO
+		// create listener for showing threads
+		$(id).on("click", ".thread-preview", function() {
 
+			$("#" + ids.thread_viewer).animate({
+				height: "200px"
+			}, "fast");
+		});
 
 	};
 
@@ -93,7 +103,9 @@
 			self: id,
 			toggle: id + "_toggle", // button for showing forms or threads
 			forms: id + "_forms", // threads for submitting a new form
-			thread: id + "_thread_" // existing threads, append id of thread to end
+			thread_container: id + "_thread_container",
+			thread: id + "_thread_", // existing threads, append id of thread to end
+			thread_viewer: id + "_thread_viewer"
 		};
 
 		return ids;
@@ -105,7 +117,6 @@
 	 $.fn.showForms = function() {
 
 	 	var ids = $.fn.getIds($(this).attr('id'));
-
 
 	 	var forms_width = $(document).width() - $('#' + ids.toggle).width();
 
@@ -131,6 +142,10 @@
 
 	}
 
+	$.fn.loadThreadPosts = function () {
+		
+	}
+
 	/*
 	 * Adding a new thread
 	 */
@@ -141,7 +156,7 @@
 		var req = new APICaller("thread", "create");
 		var params = {
 			problem_id : problem_id,
-			title : title,
+			subject : title,
 			body : body
 		};
 		req.send(params, function(result) {
@@ -164,20 +179,21 @@
 	 	var ids = $.fn.getIds($(this).selector);
 
 	 	// add a thread container with a loading icon identified by the id
-	 	$(this).append($.fn.Discussion.loadingFormatter(ids, thread_id));
+	 	var $new_thread = $.fn.Discussion.loadingFormatter(ids, thread_id);
+	 	var $thread_container = $("#" + ids.thread_container);
+	 	$thread_container.append($.fn.Discussion.loadingFormatter(ids, thread_id));
+	 	//$thread_container.width($thread_container.width() + $new_thread.css('width'));
 
 	 	// request the content of this thread and replace the loading sign with its content when it loads
 	 	var req = new APICaller('thread', 'load');
 	 	req.send({ id : thread_id }, function (result) {
 	 		if (result) {
-	 			console.log("#" + ids.thread + thread_id);
+	 			//console.log("#" + ids.thread + thread_id);
 	 			$("#" + ids.thread + thread_id).replaceWith($.fn.Discussion.threadPrevFormatter(ids, result.id, result.subject, result.body));
 	 		} else {
 	 			alertHandler("alert", "<p>Failed to load thread</p>");
 	 		}
 	 	});
-
-
 	}
 
 	/*
@@ -187,7 +203,7 @@
 	 $.fn.Discussion.addPreviews = function (ids,threads) {
 	 	$.each(threads, function (i, value) {
 
-			$("#" + ids.self).append($.fn.Discussion.threadPrevFormatter(value.id, value.subject, value.body));
+			$("#" + ids.thread_container).prepend($.fn.Discussion.threadPrevFormatter(ids, value.id, value.subject, value.body));
 
 	 	});
 	 }
@@ -215,9 +231,8 @@
 	  * format a thread element for loading
 	  */
 	 $.fn.Discussion.loadingFormatter = function(ids, thread_id) {
-	 	var result = '<div class="thread-preview" id="' + ids.thread + thread_id + '">' +
-	 				 	'<img src="/assets/images/ajax-loader.gif">'+
-	 				'</div>';
+
+	 	var result = $('<div></div>', {id:ids.thread + thread_id, class: "thread-preview"}).html('<img src="/assets/images/ajax-loader.gif">');
 	 	return result;
 	 } 
 
@@ -234,7 +249,9 @@
 	   * returns a div for the preview of a thread
 	   */
 	   $.fn.Discussion.threadPrevFormatter = function(ids, id, subject, body) {
-	   	return $("<div></div>", {id: ids.thread + id, class: "thread-preview"}).append($("<h4></h4>").text(subject)).append($("<p></p>").text(body));
+	   	return $("<div></div>", {id: ids.thread + id, class: "thread-preview"})
+	   	.append($("<h4></h4>").html(subject))
+	   	.append($("<p></p>").text(body));
 	   }
 
 })(jQuery);

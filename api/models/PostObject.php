@@ -33,7 +33,8 @@ class PostObject {
 	public function create() {
 
 		// check that we have everything we need 
-		if (!isset($this->uid, $this->thread_id, $this->body)) {
+		if (!isset($this->uid, $this->body)) {
+			error_log(json_encode($this));
 			throw new PostException("Unset vars in post creation", __FUNCTION__);
 		}
 
@@ -52,6 +53,74 @@ class PostObject {
 		// finish
 		return true;
 
+	}
+
+	/**
+	 * load the information of this post based on its id
+	 */
+	public function load() {
+		if (!isset($this->id)) {
+			throw new PostException("Cannot load post, no id provided.", __FUNCTION__);
+		}
+
+		// prepare sql
+		if (!$stmt = $this->_mysqli->prepare("SELECT * FROM `posts` WHERE `id` = ?")) {
+			throw new PostException("Cannot load post: " . $this->_mysqli->error);
+		}
+
+		// bind
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->store_result();
+
+		// check for a single post returned, not 0 or multiple
+		if ($stmt->num_rows != 1) {
+			throw new PostException("Cannot load post: " . $stmt->num_rows . "returned", __FUNCTION__);
+		}
+
+		// store results
+		$stmt->bind_result($uid, $thread_id, $body, $created, $status);
+		$stmt->fetch();
+		$this->uid = $uid;
+		$this->thread_id = $thread_id;
+		$this->body = $body;
+		$this->created = $created;
+		$this->status = $status;
+
+		return true;
+
+	}
+
+	public function loadFromThreadId() {
+		if (!isset($this->thread_id)) {
+			throw new PostException("Could not first post: thread id not set");
+		}
+
+		// prepare statement to find id to load from
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `body`, `created`, `status` FROM `posts` WHERE `thread_id` = ? ORDER BY `created` ASC LIMIT 1")) {
+			throw new PostException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		// bind
+		$stmt->bind_param("i", $this->thread_id);
+		$stmt->execute();
+		$stmt->store_result();
+
+		// check for a single post returned, not 0 or multiple
+		if ($stmt->num_rows != 1) {
+			throw new PostException("Cannot load post: " . $stmt->num_rows . "returned", __FUNCTION__);
+		}
+
+		// store results
+		$stmt->bind_result($id, $uid, $body, $created, $status);
+		$stmt->fetch();
+		$this->id = $id;
+		$this->uid = $uid;
+		$this->body = $body;
+		$this->created = $created;
+		$this->status = $status;
+
+		return true;
 	}
 
 	/**
