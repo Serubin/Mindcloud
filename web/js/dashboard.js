@@ -168,11 +168,14 @@ function dashboard() {
 	$(document).foundation('reflow');
 }
 
-function predashboard(){
+function predashboard(url){
+	var _this = this;
 	// Checks for user login
 	var req = new APICaller('user', 'check');
 	req.send({}, function(result){
-		if(!result)
+		if(!result){ 
+			$.xhrPool.abortAll();
 			ph.pageRequest("/login");
+		}
 	});
 }
