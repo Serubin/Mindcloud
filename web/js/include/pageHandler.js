@@ -142,12 +142,9 @@ function pageHandler(args) {
 
 		// Pre load script
 		var page = page.replace("/", "");
-		log.debug("Checking for pre" + page + "(): " + typeof window["pre" + page])
+		log.debug("Pagehandler", "Checking for pre" + page + "(): " + typeof window["pre" + page])
 		if(typeof window["pre" + page] != "undefined"){
 				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
-			if(preloadStatus === false){
-				return false;
-			}
 		}
 
 
