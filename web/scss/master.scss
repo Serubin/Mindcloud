@@ -52,6 +52,34 @@ body{
 		background-color: #555555 !important;
   		background: $primary-color-light !important;
 	}
+
+	#notification-dropdown{
+		//color: $white;
+
+		@media #{$medium-up} { 
+			width: 300px;
+		}
+
+		li a{
+			white-space: normal;
+			line-height: 1.5rem;
+			border-top: 1px solid $primary-color-dark-2;
+			padding-top: .5rem;
+			padding-bottom: 1.3rem;
+		}
+
+		p{
+			margin-bottom: 0 !important;
+			font-size: .8rem !important;
+		}
+
+		.time{
+			float: right;
+			font-size: .6rem;
+			padding-top: .6rem;
+		}
+	}
+
 }
 
 /* other */

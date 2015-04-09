@@ -108,30 +108,46 @@ function pageHandler(args) {
 		 */
 		function process(result) {
 			$content.html(result); // Changes content
-			if(typeof window[page] != "undefined")
-				window[page](ph.parseUrl()); // calls loader for page
+			if(typeof window[page] != "undefined") {
+
+
+				/**
+				 * calls itself recursively every 500ms
+				 * until preloadStatus is true
+				 */
+				function callOnLoad(){
+					if(preloadStatus != false)
+						// calls loader for page
+						window[page](ph.parseUrl());
+					else
+						setTimeout(callOnLoad, 500);
+				}
+
+				callOnLoad(); // Calls loader function
+			}
 
 			$(document).foundation('reflow'); // Updates foundation stuff
 			// registers all a links to use js for redirection
 			if(registerEvents) {
-				$("a").not(".keep-native").unbind("click");
-				$("a").not(".keep-native").click(function() {
-					if($(this).attr("href").indexOf("#") > -1){
-						return true;
-					}
-					return linkHandler( $(this).attr("href") );
-				});
+				$("a").not(".keep-native").each(function(){
+					var $el = $(this);
+					if(typeof $el.attr("href") == "undefined" ||
+					   $el.attr("href").toLowerCase() == "javascript:void(0);" || 
+					   $el.attr("href").toLowerCase() == "#")
+							return;
+					$el.unbind("click");
+					$el.click(function() {
+						return linkHandler( $(this).attr("href") );
+					});
+				})
 			}
 		};
 
 		// Pre load script
 		var page = page.replace("/", "");
-		log.debug("Checking for pre" + page + "(): " + typeof window["pre" + page])
+		log.debug("Pagehandler", "Checking for pre" + page + "(): " + typeof window["pre" + page])
 		if(typeof window["pre" + page] != "undefined"){
 				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
-			if(preloadStatus === false){
-				return false;
-			}
 		}
 
 

@@ -38,7 +38,7 @@ class Notification
 			
 			$url = filter_var($this->_params['url'], FILTER_SANITIZE_URL);
 
-			$message = filter_var($this->_params['message'], FILTER_SANITIZE_STRING);
+			$message = $this->_params['message'];
 
 			$notif = new NotificationObject($this->_mysqli);
 			$notif->uid = $uid;
@@ -48,7 +48,7 @@ class Notification
 			$notif->create();
 
 			// create stream
-			$this->createStreamNotification($notif);
+			$this->pushNotification($notif);
 
 			return true;
 		} catch (Exception $e){
@@ -56,15 +56,70 @@ class Notification
 		}
 	}
 
+	/* loadNotification()
+	 * Loads all data for specified notification
+	 */
 	public function loadNotification(){
-	
+		try {
+			if(!isset($this->_params['id'], $_SESSION['uid'])) {
+				throw new UserException("Unset vars: id, uid", __FUNCTION__);
+			}
+
+			$notification = new NotificationObject($this->_mysqli);
+			$notification->id = $this->_params['id'];
+			$notification->uid = $_SESSION['uid'];
+			$notification->load();
+
+			return Array(
+				"id" 		=> $notification->id,
+				"uid" 		=> $notification->uid,
+				"url" 		=> $notification->url,
+				"message" 	=> $notification->message,
+				"time" 		=> $notification->time
+			);
+		} catch(Exception $e) {
+			return $e;
+		}
 	}
 
-	/**
-	 * createStreamNotification()
+	/* loadArrayNotification()
+	 * Loads all data for a list notifications
+	 */
+	public function loadArrayNotification(){
+		try {
+			if(!isset($this->_params['ids'], $_SESSION['uid'])) {
+				throw new UserException("Unset vars: ids, uid", __FUNCTION__);
+			}
+
+			$ids = json_decode($this->_params['ids']);
+
+			$result = Array();
+
+			foreach ($ids as $key => $value){
+				$notification = new NotificationObject($this->_mysqli);
+				$notification->id = $value;
+				$notification->uid = $_SESSION['uid'];
+				$notification->load();
+
+				$result[$key] = Array(
+					"id" 		=> $notification->id,
+					"uid" 		=> $notification->uid,
+					"url" 		=> $notification->url,
+					"message" 	=> $notification->message,
+					"time" 		=> $notification->time
+				);
+			}
+
+			return $result;
+		} catch(Exception $e) {
+			return $e;
+		}
+	}
+
+	/* pushNotification()
 	 * Creates a new pusher stream based on users unique notification hash.
 	 */
-	private function createStreamNotification($notif){
+	private function pushNotification($notif){
 
 		$user = new UserObject($this->_mysqli);
 		$user->uid = $notif->uid;
@@ -78,13 +133,17 @@ class Notification
 		$emitter->emit($user->notification_hash, array('id' => $notif->id, 'url' => $notif->url, 'message' => $notif->message));
 
 	}
+
+	/* fetchAllUserNotification()
+	 * Fetchs all notification ids of the current user
+	 */
 	public function fetchAllUserNotification(){
 		try {
-			if(!isset($this->_params['uid'])) {
+			if(!isset($_SESSION['uid'])) {
 				throw new UserException("unset vars: uid ", __FUNCTION__);
 			}
 
-			$uid = filter_var($this->_params['uid'], FILTER_SANITIZE_NUMBER_INT);
+			$uid = filter_var($_SESSION['uid'], FILTER_SANITIZE_NUMBER_INT);
 			
 			$notif = new NotificationObject($this->_mysqli);
 			$notif->uid = $uid;

@@ -13,6 +13,7 @@ var notificationTopbar;
  	// public functions
  	var load;
  	var reload;
+ 	var repopulate;
  	var notificationElement;
 
  	// vars
@@ -99,18 +100,18 @@ var notificationTopbar;
 			//Notifications
 			notificationTopbar = new notificationElement();
 			 $links.append(notificationTopbar.getElement());
-			 notificationTopbar.recount();
+
 
 			// formats name
 			result.first_name = result.first_name.toLowerCase();
 			result.last_name = result.last_name.toLowerCase()
 			
 			// Creates dropdown
-			var $dropdownWrapper = createTopbarItem("users/" + result.first_name + "-" + result.last_name, result.first_name + " " + result.last_name);
+			var $dropdownWrapper = createTopbarItem("javascript:void(0);", result.first_name + " " + result.last_name);
 			$dropdownWrapper.addClass("has-dropdown"); // foundation dropdown class
 			
 			// List for actual dropdown
-			var $dropdown = $("<ul class='dropdown'><ul>");
+			var $dropdown = $("<ul><ul>").addClass("dropdown");
 			$dropdown.append(createTopbarItem("/user/settings", "account settings"));
 			$dropdown.append(createTopbarItem("/user/logout", "log out"));
 			$dropdownWrapper.append($dropdown);
@@ -118,7 +119,13 @@ var notificationTopbar;
 			// Adds bar to page and allows foundation to do it's magic.
 			$links.append($dropdownWrapper);
 			$(document).foundation('topbar', 'reflow');
-			$(".parent-link").css("display", "none", "important"); // Fixes magic
+
+
+			setTimeout(function(){
+				$(".back h5").css("display", "none", "important"); 
+			}, 1000);// Fixes magic
+
+			notificationTopbar.recount();
 		});
 	}
 
@@ -129,11 +136,9 @@ var notificationTopbar;
 	 */
 	function createTopbarItem(link, text){
 		var $li = $("<li class=''></li>");
-		var $a = $("<a></a>");
+		var $a = $("<a></a>").attr("href", link);
 
-		$a.attr("href", link);
 		$a.append(text);
-
 		$li.append($a);
 
 		return $li;
@@ -143,6 +148,14 @@ var notificationTopbar;
 	function notificationElement(){
 		var __this = this;
 
+		// data
+		var total = 0;
+		var notificationIds;
+		var notificationData;
+
+		var displayed = 0;
+
+		// Dom
 		var $notificationEl; // topbar item
 		var $notificationNum;  // number item
 
@@ -153,9 +166,12 @@ var notificationTopbar;
 
 		function construct(){
 			// create topbar item
-			$notificationEl = createTopbarItem("#","0");
+			$notificationEl = createTopbarItem("javascript:void(0);","0");
 			// adds id to number element
-			$notificationEl.children().attr("id", "notification_number");
+			$notificationEl.children().attr("id", "notification_number")
+
+			var $dropdown = $("<ul><ul>").addClass("dropdown").attr("id", "notification-dropdown");
+			$notificationEl.append($dropdown);
 		}
 		
 		/* getelement()
@@ -166,10 +182,19 @@ var notificationTopbar;
 		}
 
 		/* recount()
-		 * recounts notifications
+		 * recounts notifications and saves all ids
 		 * handles animation
 		 */
 		this.recount = function(){
+			return internalRecount();
+		}
+
+
+		this.repopulate = function(population){
+			return internalPopulate(population);
+		};
+
+		function internalRecount(){
 			var req = new APICaller("notification", "fetchAllUser");
 			var params = {uid: "SESSION"};
 			
@@ -178,11 +203,57 @@ var notificationTopbar;
 			$notificationNum.addClass("hover");
 
 			req.send(params, function(result){
+
 				// sets new number
-				$notificationNum.html(result.length);
+				total = result.length
+				$notificationNum.html(total);
+
+				// adds/removes dropdown ability
+				if(total > 0)
+					$notificationEl.addClass("has-dropdown");
+				else
+					$notificationEl.removeClass("has-dropdown");
+
+				// saves
+				notificationIds = result;
+				
+				internalPopulate(25);
+
 				// waits 1/4 of a second to complete animation
 				setTimeout(function(){$notificationNum.removeClass("hover");}, 250);
 			});
+		}
+
+		function internalPopulate(population){
+			var req = new APICaller("notification", "loadArray");
+			var params = {ids: JSON.stringify(notificationIds)};
+
+			var $nfDropdown = $("#notification-dropdown");
+
+			$nfDropdown.html("");
+			req.send(params, function(data){
+				for(var i = 0;i < displayed + population;i++){
+					if(typeof data[i] == "undefined")
+						continue;
+
+					var $date = $("<small></small>").addClass("text-right time").html(new Date("2015-04-04 20:56:28").toLocaleString());
+					var $message = $("<p></p>").html(data[i].message).append($date);
+					$nfDropdown.append(createTopbarItem(data[i].url, $message));
+				}
+				displayed += population;
+				showMore();
+			});
+	
+			function showMore(){
+				displayed = population;
+				if(displayed < total) {
+					var $more = $("<li></li>").html("<a class='text-center'>Show more</a>");
+					$more.hover(function(){
+						notificationTopbar.repopulate(displayed + 20);
+					});
+					$nfDropdown.append($more);
+				}
+			}
 		}
 
 		construct();
