@@ -105,8 +105,23 @@ function pageHandler(args) {
 		 */
 		function process(result) {
 			$content.html(result); // Changes content
-			if(typeof window[page] != "undefined")
-				window[page](ph.parseUrl()); // calls loader for page
+			if(typeof window[page] != "undefined") {
+
+
+				/**
+				 * calls itself recursively every 500ms
+				 * until preloadStatus is true
+				 */
+				function callOnLoad(){
+					if(preloadStatus != false)
+						// calls loader for page
+						window[page](ph.parseUrl());
+					else
+						setTimeout(callOnLoad, 500);
+				}
+
+				callOnLoad(); // Calls loader function
+			}
 
 			$(document).foundation('reflow'); // Updates foundation stuff
 			// registers all a links to use js for redirection
