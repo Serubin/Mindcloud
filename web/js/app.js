@@ -45,7 +45,8 @@ function connectNotifications(){
 	req.send({}, function(user){
 		log.debug("Notification Listener", "Started!");
 		var socket = io('http://mindcloud.loc:8000', {
-	        transports: ['websocket']
+	        transports: ['websocket'],
+	        reconnection: false
 	    });
 
 	    socket.on(user.notification_hash, function (data) {
@@ -56,6 +57,10 @@ function connectNotifications(){
 	        new alertHandler("info", $notificationHTML);
 
 	        notificationTopbar.recount();
+	    });
+
+	    socket.on("connect_error", function(data){
+	    	new alertHandler("alert", "Could not fetch realtime notifications. This is common if you are using an older browser, please update your browser.")
 	    });
 	});
 }
