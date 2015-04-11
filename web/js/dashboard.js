@@ -173,9 +173,9 @@ function predashboard(url){
 	// Checks for user login
 	var req = new APICaller('user', 'check');
 	req.send({}, function(result){
-		if(!result){ 
-			$.xhrPool.abortAll();
+		if(!result){
 			ph.pageRequest("/login");
 		}
 	});
+
 }
