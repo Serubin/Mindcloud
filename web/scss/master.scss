@@ -20,15 +20,25 @@ body{
 }
 
 /* Alert wrapper */
-#alert-wrapper{
+#alert-wrapper {
 	position: fixed;
 	width: 30%;
 	z-index: 55;
 	text-align: center;
-}
 
-#alert-wrapper .alert-box{
-	margin: 1.25rem 0;
+	.alert-box {
+		margin: 1.25rem 0;
+
+		.alert-inner {
+			p{
+				font-size: .8rem !important;
+			}
+		}
+	}
+
+	span {
+		cursor: pointer;
+	}
 }
 
 #alert-wrapper span{
@@ -51,6 +61,8 @@ body{
 
 		@media #{$medium-up} { 
 			width: 300px;
+			height: 400px !important;
+  			overflow-y: scroll;
 		}
 
 		li a{
