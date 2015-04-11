@@ -8,27 +8,8 @@ function problem(url){
 	// id var for access from all functions
 	var id;
 
-	// initialize discussion container
-	$discussions = $("#discussions_container");
-	$discussions.Discussion();
-
 	// get the problem's numeric id
 	var req = new APICaller('problem', 'getId');
-	
-	if($.isNumeric(url[1])) {
-		var req = new APICaller('problem', 'getShorthand');
-		var params = {id:url[1]};
-		req.send(params, function(result) {
-			log.debug("result of getShorthand: " + result, "problem");
-			if(!result)
-				ph.pageRequest("/dashboard");
-
-			ph.pageRequest("/problem/" + result);
-		});
-		// fetch shorthand from id
-	}
-
-
 	var params = {shorthand: url[1]};
 	req.send(params, function(result){
 		// populate the problem data
@@ -36,7 +17,10 @@ function problem(url){
 		var params = {id: result};
 		req.send(params, onDataLoad);
 	});
-
+	
+	// initialize discussion container
+	$discussions = $("#discussions_container");
+	$discussions.Discussion();
 
 	function onDataLoad (result) {
 
@@ -94,6 +78,19 @@ function preproblem(url){
 	});
 
 
+	if($.isNumeric(url[1])) {
+		console.log(url[1])
+		var req = new APICaller('problem', 'getShorthand');
+		var params = {id:url[1]};
+		req.send(params, function(result) {
+			log.debug("result of getShorthand: " + result, "problem");
+			if(!result)
+				ph.pageRequest("/dashboard");
+
+			ph.pageRequest("/problem/" + result);
+		});
+		// fetch shorthand from id
+	}
 }
 
 /**
@@ -109,6 +106,7 @@ function populatePage(data){
 	$("#description").html(data.description);
 
 	// set contributors
+	$("#contributors").html("");
 	$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
 
 	// set vote count and vote status if set
