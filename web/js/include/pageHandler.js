@@ -26,6 +26,7 @@ function pageHandler(args) {
 	// public functions
 	var pageRequest;
 	var parseUrl;
+	var setPreloadStatus;
 
 	// class options
 	var pageLoc;
@@ -58,6 +59,8 @@ function pageHandler(args) {
 	}
 
 	this.pageRequest = function(page, historypush, callback){
+		preloadStatus = undefined;
+
 		if(typeof page == "string"){
 			if(page.indexOf("/") == 0)
 				page = page.slice(1,page.length);
@@ -116,14 +119,21 @@ function pageHandler(args) {
 				 * until preloadStatus is true
 				 */
 				function callOnLoad(){
-					if(preloadStatus != false)
-						// calls loader for page
-						window[page](ph.parseUrl());
-					else
+					/**
+					for later use
+					if(typeof preloadStatus != "undefined") { 
+						if(preloadStatus == true) { 
+							// calls loader for page
+							window[page](ph.parseUrl());
+						}
+					} else { 
 						setTimeout(callOnLoad, 500);
+					}*/
+
+					window[page](ph.parseUrl());
 				}
 
-				callOnLoad(); // Calls loader function
+				return callOnLoad(); // Calls loader function
 			}
 
 			$(document).foundation('reflow'); // Updates foundation stuff
@@ -210,6 +220,10 @@ function pageHandler(args) {
 			var params = _this.parseUrl(location.href);
 			_this.pageRequest(params);
 		}
+	}
+
+	this.setPreloadStatus = function(status){
+		preloadStatus = status;
 	}
 
 	construct();
