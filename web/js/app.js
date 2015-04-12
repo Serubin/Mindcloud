@@ -18,7 +18,7 @@ $(function(){
 	// if index page
 	if(ph.parseUrl()[0] == ""){
 		log.debug("App", "No start page, redirecting");
-		ph.pageRequest("/welcome");
+		ph.pageRequest("/login");
 		return;
 	}
 
