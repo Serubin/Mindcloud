@@ -84,7 +84,19 @@ function pageHandler(args) {
 	 * @param page - the pages url (excluding pages/)
 	 */
 	function pageLoad(page, callback) {
-	 	var $content = $(contentDiv);		
+	 	var $content = $(contentDiv);
+
+
+		function processError(xhr, ajaxOptions, thrownError){
+			if(xhr.status==404) {
+				_this.pageRequest("error-404", false);
+			} else if(xhr.status==403) {
+				_this.pageRequest("error-403", false);
+			} else if(xhr.status==500) {
+				_this.pageRequest("error-500", false);
+			}
+		}
+
 		/*
 		 * success()
 		 * Handles pre-process (animate vs no animate)
@@ -154,14 +166,15 @@ function pageHandler(args) {
 		var page = page.replace("/", "");
 		log.debug("Pagehandler", "Checking for pre" + page + "(): " + typeof window["pre" + page])
 		if(typeof window["pre" + page] != "undefined"){
-				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
+				preloadStatus = window["pre" + page](_this.parseUrl()); // calls loader for page
 		}
 
 
 		// Ajax call
 		$.ajax({
 			url: pageLoc + page + ".php",
-			success: success
+			success: success,
+			error: processError
 		});
 
 	}
