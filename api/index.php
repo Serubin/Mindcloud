@@ -8,15 +8,19 @@ session_start();
  * Index of api.mindcloud.io which handles requests made to the API.
  ******************************************************************************/
 
-	// Check that the user is logged in
+	// sessions
+	//require_once "include/utils.php";
+	//sec_session_start();
+
+	// include db and errors
 	require_once "include/db_config.php";
 	require_once "include/error.php";
-	require_once "include/utils.php";
 
 	// include user object
 	require_once "models/UserObject.php";
 
 	try {
+
 		$params = $_REQUEST;
 
 		// Check that the request data is valid

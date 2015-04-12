@@ -44,15 +44,7 @@
 		display: none;
 	}
 
-	// Login forms
-	#login-pane, #registration-pane {
-
-		// layout and position
-		/*width: 40%;
-		height: 20%;
-		position: absolute;
-		margin-left: 35%;
-		margin-top: auto;*/
+	.floating-pane{
 		padding: 30px;
 
 		// appearance
@@ -60,6 +52,10 @@
 		//@include border-radius($radius);
 		box-shadow: 0px 0px $radius #888888;
 		background-color: white;
+	}
+
+	// Login forms
+	#login-pane, #registration-pane {
 
 		// contents
 		p {
