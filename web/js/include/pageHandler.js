@@ -133,13 +133,13 @@ function pageHandler(args) {
 					if(typeof preloadStatus != "undefined") { 
 						if(preloadStatus == true) { 
 							// calls loader for page
-							window[page](ph.parseUrl());
+							window[page](_this.parseUrl());
 						}
 					} else { 
 						setTimeout(callOnLoad, 500);
 					}*/
 
-					window[page](ph.parseUrl());
+					window[page](_this.parseUrl());
 				}
 
 				return callOnLoad(); // Calls loader function
