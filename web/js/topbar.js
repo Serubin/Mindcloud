@@ -144,8 +144,11 @@ var notificationTopbar;
 		return $li;
 	}
 
-
+	/* notificationElement()
+	 * handles notification menu and counter
+	 */
 	function notificationElement(){
+		//TODO move to it's own class. Isolate from foundation and topbar
 		var __this = this;
 
 		// data
