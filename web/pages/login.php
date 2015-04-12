@@ -10,7 +10,7 @@
 	</div>
 			
 	<div class="row">
-		<div class="small-10 medium-4 column small-offset-1 medium-offset-4" id="login-pane">
+		<div id="login-pane" class="floating-pane small-10 medium-4 column small-offset-1 medium-offset-4">
 			<p>Please log in.</p>
 			<form id="login_form" data-abide="ajax">
 				<!-- email -->
