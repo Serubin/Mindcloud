@@ -38,6 +38,27 @@ function problem(url){
 		}
 	}
 
+	// downvote listener
+	$("#problem_downvotes").click(function(){
+		var req = new APICaller("problem", "vote");
+		var params = {pid: id, vote: -1};
+		req.send(params, function(){
+			log.debug("Problem", "User down voted problem " + id);
+			$("#problem_upvotes").removeClass("problem_vote_hover");
+			$("#problem_downvotes").addClass("problem_vote_hover");
+		});
+	});
+	
+	// upvote listener
+	$("#problem_upvotes").click(function(){
+		var req = new APICaller("problem", "vote");
+		var params = {pid: id, vote: 1};
+		req.send(params, function(){
+			log.debug("Problem", "User up voted problem " + id);
+			$("#problem_downvotes").removeClass("problem_vote_hover");
+			$("#problem_upvotes").addClass("problem_vote_hover");
+		});
+	})
 	// new thread listener
 	$("#submit_thread").submit( function (event) {
 
@@ -111,7 +132,12 @@ function populatePage(data){
 	$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
 
 	// set vote count and vote status if set
-
+	log.debug("problem", data.current_user_vote);
+	if(data.current_user_vote < 0) {
+		$("#problem_downvotes").addClass("problem_vote_hover");
+	} else if(data.current_user_vote > 0) { 
+		$("#problem_upvotes").addClass("problem_vote_hover");
+	}
 
 	// set popuate related projects
 

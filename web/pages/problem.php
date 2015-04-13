@@ -12,13 +12,13 @@
 
 <!-- meta action bar -->
 <div class="icon-bar three-up" id="#meta_action_menu">
-	<a class="item">
+	<a class="item" id="problem_upvotes">
 		<i class="fi-like"></i>
-		<label class="problem_downvotes">Upvote</label>
+		<label>Upvote</label>
 	</a>
-	<a class="item">
+	<a class="item" id="problem_downvotes">
 		<i class="fi-dislike"></i>
-		<label class="problem_downvotes">Downvote</label>
+		<label >Downvote</label>
 	</a>
 	<a class="item">
 		<i class="fi-flag"></i>
