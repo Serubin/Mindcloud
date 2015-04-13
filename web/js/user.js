@@ -18,7 +18,8 @@
  	}
 
  	if(url.length == 2 && url[1] == "settings"){
+
  		log.debug("User", "Launching settings");
- 		ph.pageRequest("/user-settings", false);
+ 		ph.pageRequest("/user_settings", false);
  	}
  }
