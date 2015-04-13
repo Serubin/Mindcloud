@@ -94,8 +94,10 @@ var notificationTopbar;
 			$("#home-link").attr("href", "/dashboard");
 
 			$links.html(""); // clears current link
-			$links.append(createTopbarItem("#","pose a problem")); //TODO attach/create global pose problem context
-			$links.append(createTopbarItem("#","pose a solution")); //TODO attach/create global pose solution context
+			var $problem = createTopbarItem("#","pose a problem");
+			$problem.attr("data-reveal-id", "pose_problem_modal")
+			$links.append($problem); //TODO attach/create global pose problem context
+			$links.append(createTopbarItem("#","create a solution")); //TODO attach/create global pose solution context
 			
 			//Notifications
 			notificationTopbar = new notificationElement();
@@ -119,6 +121,7 @@ var notificationTopbar;
 			// Adds bar to page and allows foundation to do it's magic.
 			$links.append($dropdownWrapper);
 			$(document).foundation('topbar', 'reflow');
+			$(document).foundation('reveal', 'reflow');
 
 
 			setTimeout(function(){
