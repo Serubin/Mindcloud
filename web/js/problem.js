@@ -100,6 +100,7 @@ function preproblem(url){
 function populatePage(data){
 	//console.log(data);
 	// set subject
+	window.document.title = "Problem: " + data.title;
 	$("#banner #title").html(data.title);
 
 	// set description
