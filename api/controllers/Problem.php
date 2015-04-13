@@ -37,13 +37,13 @@ class Problem
 	public function createProblem() {
 		
 		try {
-			if (!isset($this->_params['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
+			if (!isset($_SESSION['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
 				error_log(json_encode($this->_params));
 				throw new ProblemException("Unset vars.", __FUNCTION__);
 			}
 
 			$problem = new ProblemObject($this->_mysqli);
-			$problem->creator = $this->_params['uid'];
+			$problem->creator = $_SESSION['uid'];
 			$problem->title = $this->_params['title'];
 			$problem->description = $this->_params['description'];
 			$problem->tags = $this->_params['tags'];

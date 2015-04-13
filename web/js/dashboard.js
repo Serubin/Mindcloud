@@ -8,7 +8,7 @@
 function dashboard() {
 
 	// handle on content container
-	var $problems = $('#container');
+	var $problems = $("#problems");
 
 	// initial load
 	loadDashboard();
@@ -90,6 +90,17 @@ function dashboard() {
 		   $this.addClass('selected'); 
 		});*/
 
+		$problems.gridalicious({
+			animate: true,
+			animationOptions: {
+				queue: true,
+				speed: 200,
+				duration: 300,
+				effect: 'fadeInOnAppear',
+				complete: onComplete
+				}
+		});
+
 		// initial load
 		var req = new APICaller("dashboard", "load");
 
@@ -108,6 +119,11 @@ function dashboard() {
 				repopulateProblems(result.problems);
 
 		});
+	}
+
+	function onComplete() {
+
+		$(document).foundation('reflow');
 	}
 
 	function reloadProblems() {
@@ -135,45 +151,28 @@ function dashboard() {
 
 		// append new problems		
 		$.each(new_problems, function(i, value) {
-			new_problems[i] = 
-				"<div class='isotope-item' datetime='" + value[2] + "' id=" + value[0] + ">" + 
-					"<div class='row'>" +
-						"<div class='small-9 column problem-statement'>" +
-							"<span text-left'>" + 
-								value[1] + 
-							"</span>" +
-						"</div>" +
-						"<div class='small-3 column voter'>" +
-							"<div class='arrow'><i class='fi-arrow-up'></i></div>" +
-							"<div class='arrow'><i class='fi-arrow-down'></i></div>" +
-						"</div>" +
-					"<div>" + // end row
-				"</div>";
+			// overall container
+			new_problems[i] = $('<div></div>', {id: value[0], datetime: value[2], class: 'problem'}).append(
+				// row div 
+				$('<div></div>', {class: 'row'}).append(
+					// description, etc. container
+					$('<div></div>', {class: 'small-9 column problem-statement'}).append(
+						$('<span></span>', {class: 'text-left'}).text(value[1])
+					)).append(
+					// vote button containers
+					$('<div></div>', {class: 'small-3 column voter'})
+					.append(
+							$("<div></div>", {class:'arrow'}).html("<i class='fi-arrow-up'>")).
+					append(
+							$("<div></div>", {class:'arrow'}).html("<i class='fi-arrow-down'></i></div>")
+						)
+					)
+				)
+			;
 		});
 
-		$problems.isotope('appended', new_problems);
+		$problems.gridalicious('append', new_problems);
 	}
-
-
-	/** TEMPORARY 
-	 * test for discussion div
-	 */
-	 var problem_id = 0;
-
-	 var $disc_container = $("#discussion_container");
-	 $disc_container.Discussion();
-
-	 // set up thread creator
-	 $("#create_thread").click(function (event) {
-	 	if ($("#thread_test_title").val().length > 0 && $("#thread_test_body").val().length > 0)
-	 	$disc_container.addThread(problem_id, $("#thread_test_title").val(), $("#thread_test_body").val());
-	 });
-	 $("#create_post").click(function (event) {
-	 	if ($("#post_test").val() > 0 ) {
-	 		$disc_container.addPost(problem_id, $("#post_test").val());
-	 	}
-	 });
-
 
 	// Problem create form
 	$(document).foundation({
@@ -185,7 +184,6 @@ function dashboard() {
 			}
 		}
 	});
-	$(document).foundation('reflow');
 }
 
 function predashboard(url){

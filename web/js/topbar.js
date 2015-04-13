@@ -94,7 +94,9 @@ var notificationTopbar;
 			$("#home-link").attr("href", "/dashboard");
 
 			$links.html(""); // clears current link
-			$links.append(createTopbarItem("#","pose a problem")); //TODO attach/create global pose problem context
+			$poseProblem = createTopbarItem("#","pose a problem");
+			$poseProblem.children().attr("data-reveal-id", "create_problem_modal");
+			$links.append($poseProblem); //TODO attach/create global pose problem context
 			$links.append(createTopbarItem("#","pose a solution")); //TODO attach/create global pose solution context
 			
 			//Notifications
