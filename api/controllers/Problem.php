@@ -118,7 +118,8 @@ class Problem
 				"tags" => $problem->tags,
 				"trial_no" => $problem->trial_no,
 				"score" => $problem->score,
-				"threads" => $problem->threads
+				"threads" => $problem->threads,
+				"current_user_vote" => $problem->current_user_vote
 			);
 
 		} catch (ProblemException $e) {
@@ -135,21 +136,21 @@ class Problem
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSON['uid'])) {
-				throw new Exception("No problem id given", __FUNCTION__);
+			if (!isset($this->_params['pid'], $this->_params['vote'], $_SESSION['uid'])) {
+				throw new ProblemException("Unset vars: pid, vote", __FUNCTION__);
 			}
 
+			error_log("Problem vote: " . $this->_params['vote'] . " " . json_encode(Array($this->_params['vote'] != UPVOTE, $this->_params['vote'] != DOWNVOTE)));
 			// validate vote value by taking absolute value
-			if (abs($this->_params['vote']) != UPVOTE) {
-				throw new Exception("Invalid vote passed", __FUNCTION__);
+			if ($this->_params['vote'] != UPVOTE && $this->_params['vote'] != DOWNVOTE) {
+				throw new ProblemException("Invalid vote passed", __FUNCTION__);
 			}
 
 			// submit vote
-			$problem = new ProblemObject($_mysqli);
-			$problem->id = $this->_params['problem_id'];
-			$problem->creator = $_SESSION['uid'];
-			$problem->vote(UPVOTE);
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['pid'];
 
+			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
 		} catch (ProblemException $e) {
 			return $e;
 		}

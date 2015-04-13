@@ -20,6 +20,7 @@ class ProblemObject {
 	public $tags;
 	public $trial_no;
 	public $score;
+	public $current_user_vote;
 	// TODO: activity
 	public $threads;
 
@@ -85,8 +86,9 @@ class ProblemObject {
 	public function loadFull() {
 
 		// try to load problem with an id
-		if (!isset($this->id))
+		if (!isset($this->id, $_SESSION['uid'])) {
 			throw new ProblemException("Unset variable: ID", __FUNCTION__);
+		}
 
 		// fetch from the db the information about this problem based on its id
 		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand`, `title`, `description`, `created`, `creator`, `status`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
@@ -119,6 +121,8 @@ class ProblemObject {
 
 		// set score
 		$this->getScore();
+
+		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "PROBLEM", $this->id, $_SESSION['uid']);
 
 		// get array of afficiliated thread ids
 		$this->getThreads();
@@ -218,12 +222,17 @@ class ProblemObject {
 	 * upvote
 	 * Enter an upvote for a problem
 	 */
-	public function vote($val) {
-		if (!isset($this->id, $this->creator))
+	public function vote($user, $val) {
+		if (!isset($this->id))
 			throw new ProblemException("Id or creator not set", __FUNCTION__);
 
+		error_log("problemObject vote: " . $val);
 		// submit vote
-		return Vote::addVote($this->_mysqli, "PROBLEM", $this->id, $this->creator, $val);
+		$voteResult = Vote::addVote($this->_mysqli, "PROBLEM", $this->id, $user, $val);
+		if($voteResult)
+			return $val;
+
+		return false;
 	}
 
 	/**
