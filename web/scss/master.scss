@@ -44,6 +44,10 @@ body{
 
 /* Topbar */
 .top-bar {
+
+	// box shadow for seperation
+	box-shadow: #333 0px 1px 6px;
+	
 	a, li {
 		transition: background-color 300ms ease-out;
 	}
