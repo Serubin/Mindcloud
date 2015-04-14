@@ -154,21 +154,32 @@ function dashboard() {
 			// overall container
 			new_problems[i] = $('<div></div>', {id: value[0], datetime: value[2], class: 'problem'}).append(
 				// row div 
-				$('<div></div>', {class: 'row'}).append(
-					// description, etc. container
-					$('<div></div>', {class: 'small-9 column problem-statement'}).append(
-						$('<span></span>', {class: 'text-left'}).text(value[1])
-					)).append(
+				$('<div></div>', {class: 'row'})
+				.append(
 					// vote button containers
-					$('<div></div>', {class: 'small-3 column voter'})
-					.append(
-							$("<div></div>", {class:'arrow'}).html("<i class='fi-arrow-up'>")).
-					append(
-							$("<div></div>", {class:'arrow'}).html("<i class='fi-arrow-down'></i></div>")
-						)
+					$('<div></div>', {class: 'small-2 column voter'})
+						.append( $("<div></div>", {class:'problem-btn'}).html("<i class='fi-arrow-up'>"))
+						.append( $("<div></div>", {class:'problem-btn'}).html("<i class='fi-flag'></i></div>"))
+						.append( $("<div></div>", {class:'problem-btn'}).html("<i class='fi-arrow-down'></i></div>"))
 					)
+				.append(
+					// description, etc. container
+					$('<div></div>', {class: 'small-9 column problem-statement'})
+						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
 				)
-			;
+				.append( $('<div></div>', {class: 'small-1 column problem-btn'}).html(
+
+
+							'<button href="#" data-dropdown="drop1" aria-controls="drop1" aria-expanded="false" class="button dropdown"></button><br>' +
+							'<ul id="drop1" data-dropdown-content class="f-dropdown" aria-hidden="true">' +
+								'<li><a href="#">This is a link</a></li>' +
+								'<li><a href="#">This is another</a></li>' +
+								'<li><a href="#">Yet another</a></li>' +
+							'</ul>'
+
+
+							))
+			);
 		});
 
 		$problems.gridalicious('append', new_problems);

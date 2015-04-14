@@ -54,20 +54,8 @@ $problem-height: 80px;
   padding: 2px;
 }
 
-
-
 .selected {
   border-bottom: 2px solid $primary-color;
-
-}
-
-.voter {
-  line-height: $problem-height / 2; 
-  text-align: center;
-
-  .arrow {    
-    font: 32px !important;
-  }
 
 }
 
@@ -177,5 +165,28 @@ div.tagsinput div {
 .problem {
   background-color: $secondary-color;
   color: white;
-  padding-top: 5px;
+  //padding: 5px;
+
+  .column {
+    padding: 0px;
+  }
+
+  .problem-statement {
+    padding: 12px;
+  }
+
+
+  .voter {
+    line-height: $problem-height / 2; 
+    text-align: center;
+  }
+
+  .problem-button {    
+    font: 32px !important;
+  }
+
+  .problem-btn:hover {
+    background: $secondary-color-dark;
+  }
+
 }
