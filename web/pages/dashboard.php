@@ -1,5 +1,12 @@
 <h1>dashboard, yo</h1>
 
+<button href="#" data-dropdown="drop1" aria-controls="drop1" aria-expanded="false" class="button dropdown"></button><br>
+<ul id="drop1" data-dropdown-content class="f-dropdown" aria-hidden="true">
+	<li><a href="#">This is a link</a></li>
+	<li><a href="#">This is another</a></li>
+	<li><a href="#">Yet another</a></li>
+</ul>
+
 <div id="problems">
 
 </div>

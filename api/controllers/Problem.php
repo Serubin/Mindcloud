@@ -135,20 +135,22 @@ class Problem
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSON['uid'])) {
-				throw new Exception("No problem id given", __FUNCTION__);
+			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSION['uid'])) {
+				throw new ProblemException("unset parameters", __FUNCTION__);
 			}
 
 			// validate vote value by taking absolute value
 			if (abs($this->_params['vote']) != UPVOTE) {
-				throw new Exception("Invalid vote passed", __FUNCTION__);
+				throw new ProblemException("Invalid vote passed", __FUNCTION__);
 			}
 
 			// submit vote
-			$problem = new ProblemObject($_mysqli);
+			$problem = new ProblemObject($this->_mysqli);
 			$problem->id = $this->_params['problem_id'];
 			$problem->creator = $_SESSION['uid'];
-			$problem->vote(UPVOTE);
+			$problem->vote($this->_params['vote']);
+
+			return true;
 
 		} catch (ProblemException $e) {
 			return $e;

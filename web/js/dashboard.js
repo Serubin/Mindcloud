@@ -158,15 +158,17 @@ function dashboard() {
 				.append(
 					// vote button containers
 					$('<div></div>', {class: 'small-2 column voter'})
-						.append( $("<div></div>", {class:'problem-btn'}).html("<i class='fi-arrow-up'>"))
-						.append( $("<div></div>", {class:'problem-btn'}).html("<i class='fi-flag'></i></div>"))
-						.append( $("<div></div>", {class:'problem-btn'}).html("<i class='fi-arrow-down'></i></div>"))
+						.append( $("<div></div>", {class:'problem-btn vote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
+						.append( $("<div></div>", {class:'problem-btn flag'}).html("<i class='fi-flag'></i></div>"))
+						.append( $("<div></div>", {class:'problem-btn vote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
 					)
 				.append(
 					// description, etc. container
 					$('<div></div>', {class: 'small-9 column problem-statement'})
 						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
 				)
+
+				/** SOLOMON LOOK HERE **/
 				.append( $('<div></div>', {class: 'small-1 column problem-btn'}).html(
 
 
@@ -194,6 +196,25 @@ function dashboard() {
 				}
 			}
 		}
+	});
+
+	/** 
+	* problem events
+	*/
+	$(document).on("click", ".vote", function (event) {
+		console.log("voting for " + $(this).parent().parent().parent().attr('id') + " ...");
+		var req = new APICaller("problem", "vote");
+		req.send({
+			vote: $(this).attr("data-value"),
+			problem_id: $(this).parent().parent().parent().attr('id')
+		}, function (result) {
+			if (result) {
+				$(this).css("background-color", "black");
+			}
+			else {
+				alert("failed");
+			}
+		});	
 	});
 }
 
