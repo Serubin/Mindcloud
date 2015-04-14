@@ -79,6 +79,12 @@ class NotificationObject {
 		$stmt->close();
 	}
 
+	public function updateSeen(){
+		if(!isset($this->uid, $this->url, $this->message)) {
+			throw new UserException("unset vars: uid, url, message, time");
+		}
+	}
+
 	/**
 	 * fetchNotifications()
 	 * returns a list of ids for a notification that is attached to a user

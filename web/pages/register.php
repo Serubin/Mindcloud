@@ -11,7 +11,7 @@
 	</div>
 	</div>
 	<div class="row">
-		<div id="registration-pane" class="column small-10 small-offset-1 medium-8 medium-offset-2 large-6 large-offset-3" data-reveal>
+		<div id="registration-pane" class="floating-pane column small-10 small-offset-1 medium-8 medium-offset-2 large-6 large-offset-3" data-reveal>
 			
 			<p class="lead">Please fill all of these fields</p>
 

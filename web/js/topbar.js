@@ -125,7 +125,7 @@ var notificationTopbar;
 
 
 			setTimeout(function(){
-				$(".back h5").css("display", "none", "important"); 
+				$(".back h5").css("display", "none", "!important"); 
 			}, 1000);// Fixes magic
 
 			notificationTopbar.recount();
@@ -147,8 +147,11 @@ var notificationTopbar;
 		return $li;
 	}
 
-
+	/* notificationElement()
+	 * handles notification menu and counter
+	 */
 	function notificationElement(){
+		//TODO move to it's own class. Isolate from foundation and topbar
 		var __this = this;
 
 		// data
@@ -238,8 +241,9 @@ var notificationTopbar;
 				for(var i = 0;i < displayed + population;i++){
 					if(typeof data[i] == "undefined")
 						continue;
-
-					var $date = $("<small></small>").addClass("text-right time").html(new Date("2015-04-04 20:56:28").toLocaleString());
+						var dashFind = new RegExp("-", 'g');
+						var time = data[i].time.replace(dashFind, "/");
+					var $date = $("<small></small>").addClass("text-right time").html(new Date(time).toLocaleString());
 					var $message = $("<p></p>").html(data[i].message).append($date);
 					$nfDropdown.append(createTopbarItem(data[i].url, $message));
 				}
