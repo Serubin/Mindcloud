@@ -97,7 +97,11 @@ var notificationTopbar;
 			var $problem = createTopbarItem("#","pose a problem");
 			$problem.attr("data-reveal-id", "pose_problem_modal")
 			$links.append($problem); //TODO attach/create global pose problem context
-			$links.append(createTopbarItem("#","create a solution")); //TODO attach/create global pose solution context
+
+
+			var $solution = createTopbarItem("#","create a solution");
+			$solution.attr("id", "create_solution").css("display", "none");
+			$links.append($solution); //TODO attach/create global pose solution context
 			
 			//Notifications
 			notificationTopbar = new notificationElement();
