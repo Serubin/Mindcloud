@@ -68,7 +68,7 @@
 
 					<!-- tags -->
 					<div class="tag-field">
-						<label>tags
+						<label>tags <small>use commas to seperate</small>
 							<input name="tag_container" id="tag_container" value="" required data-abide-validator="tagsValid"/>
 						</label>
 					 	<small class="error">Please include at least 5 tags</small>

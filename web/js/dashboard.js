@@ -138,18 +138,6 @@ function dashboard() {
 	 	}
 	 });
 
-
-	// Problem create form
-	$(document).foundation({
-		abide: {
-			validators: {
-				tagsValid: function(el, required, parent) {
-					return el.value.split(",").length >= 5;
-				}
-			}
-		}
-	});
-	$(document).foundation('reflow');
 }
 
 function predashboard(url){

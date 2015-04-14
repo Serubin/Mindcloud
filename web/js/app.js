@@ -99,11 +99,23 @@ $(function(){
 					if (result) {
 						$("#create_problem_modal").foundation('reveal', 'close');
 						loadDashboard();
-
 					}
 				});
 		}).on('invalid', function() {
 			//problem_tags.getAllTags();
 		});
+
+			// Problem create form
+	$(document).foundation({
+		abide: {
+			validators: {
+				tagsValid: function(el, required, parent) {
+					return el.value.split(",").length >= 5;
+				}
+			}
+		}
+	});
+	
+	$(document).foundation('reflow');
 	}
 });
