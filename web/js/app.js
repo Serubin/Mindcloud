@@ -98,6 +98,7 @@ $(function(){
 			req.send(params, function(result) {
 					if (result) {
 						$("#pose_problem_modal").foundation('reveal', 'close');
+						$("#submit_problem").trigger("reset");
 						ph.pageRequest("/problem/" + result);
 					}
 				});
