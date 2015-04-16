@@ -154,7 +154,6 @@ class Problem
 				throw new ProblemException("Unset vars: pid, vote", __FUNCTION__);
 			}
 
-			error_log("Problem vote: " . $this->_params['vote'] . " " . json_encode(Array($this->_params['vote'] != UPVOTE, $this->_params['vote'] != DOWNVOTE)));
 			// validate vote value by taking absolute value
 			if ($this->_params['vote'] != UPVOTE && $this->_params['vote'] != DOWNVOTE) {
 				throw new ProblemException("Invalid vote passed", __FUNCTION__);
