@@ -119,6 +119,7 @@ function preproblem(url){
  * Dynamicaly adds in data to page
  */
 function populatePage(data){
+	console.log(data);
 	// show create solution
 	$("#create_solution").css("display", "");
 

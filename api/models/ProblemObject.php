@@ -43,12 +43,16 @@ class ProblemObject {
 	 */
 	public function create() {
 
-		if (!isset($this->title, $this->creator, $this->description, $this->tags, $this->category)) {
+		if (!isset($this->title, $this->shorthand, $this->creator, $this->description, $this->tags, $this->category)) {
+			error_log(json_encode(Array(
+					"title" => $this->title,
+					"shorthand" => $this->shorthand,
+					"creator" => $this->creator,
+					"description" => $this->description,
+					"tags" => $this->tags,
+					"category" => $this->category
+				)));
 			throw new ProblemException("Unset required instance vars", __FUNCTION__);
-		}
-
-		if (!isset($this->shorthand)) {
-			// TODO: create random shorthand for url / mentions, maximum length?
 		}
 
 		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `title`, `description`, `shorthand`, `category`) VALUES (?, ?, ?, ?, ?)")) {
@@ -57,12 +61,15 @@ class ProblemObject {
 
 		// sanitize strings
 		$this->title = filter_var($this->title, FILTER_SANITIZE_STRING);
-		$this->description = strip_tags($this->title);
+		$this->description = strip_tags($this->description);
+		$this->description = str_replace('\n', '<br />', $this->description); //TODO make spacing work better
 		$this->shorthand = filter_var($this->shorthand, FILTER_SANITIZE_STRING);
 
 		// insert problem into db
 		$stmt->bind_param('isssi', $this->creator, $this->title, $this->description, $this->shorthand, $this->category);
 		$stmt->execute();
+
+		error_log("SQL: " . $this->_mysqli->error);
 
 		$this->id = $this->_mysqli->insert_id;
 

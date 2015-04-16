@@ -49,9 +49,23 @@ class Problem
 			$problem->tags = $this->_params['tags'];
 			$problem->category = $this->_params['category'];
 
-			// only set the shorthand if given
-			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
-			return $problem->create();
+			if (isset($this->_params['shorthand'])) {
+				$problem->shorthand = $this->_params['shorthand']; // Uses user shorthand
+				if(!$problem->validateShorthand()){
+					throw new ProblemException("shorthand unavalible", __FUNCTION__);
+				}
+			} else { 
+				// Creates shorthand
+				$problem->shorthand = preg_replace("/[^ \w]+/", "", $this->_params['title']); // Removes scary characters
+				$problem->shorthand = str_replace(" ", "-", $problem->shorthand); // Removes spacy characters (always forgettin')
+				$problem->shorthand = strtolower($problem->shorthand); // Get's ride of those cocky captials.
+				$problem->shorthand = substr($problem->shorthand,0 ,200); // Shortens the fatter of the bunch.
+				if(!$problem->validateShorthand()){
+					$problem->shorthand = $problem->shorthand . substr(md5($problem->shorthand),0, 4); // Makes unquif if not?
+				}
+			}
+			
+			return $return = $problem->create() ? $problem->shorthand : false;;
 
 		} catch (ProblemException $e) {
 			return $e;

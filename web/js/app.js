@@ -90,6 +90,7 @@ $(function(){
 			$("#tag_container").getAllTags();
 			var req = new APICaller('problem', 'create');
 			var params = {
+				uid: "SESSION",
 				title: $("#form_problem_statement").val(), 
 				description:$("#form_problem_desc").val(), 
 				tags: $("#tag_container").getAllTags(),
@@ -97,8 +98,8 @@ $(function(){
 			};
 			req.send(params, function(result) {
 					if (result) {
-						$("#create_problem_modal").foundation('reveal', 'close');
-						loadDashboard();
+						$("#pose_problem_modal").foundation('reveal', 'close');
+						ph.pageRequest("/problem/" + result);
 					}
 				});
 		}).on('invalid', function() {
