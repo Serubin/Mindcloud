@@ -54,6 +54,7 @@ function pageHandler(args) {
 
 		// registers popstate event
 		if(registerEvents) {
+			log.debug(pkg, "Registering pop events");
 			$(window).on("popstate", popHandler);
 		}
 	}
@@ -66,7 +67,7 @@ function pageHandler(args) {
 				page = page.slice(1,page.length);
 			page = page.split("/");
 		}
-		console.log(page);
+
 		if(historypush || typeof historypush == "undefined"){
 			var joinedPage = page;
 			if(typeof page == "object")

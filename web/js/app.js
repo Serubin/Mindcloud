@@ -79,7 +79,6 @@ $(function(){
 					identifier: tag
 				}, function (result) {
 					// set the retrieved id as the element id of the tag
-					console.log(result);
 					$('#tag_container').setId(tag, result);
 				});
 			}
