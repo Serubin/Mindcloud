@@ -163,7 +163,11 @@ class User
 	public function checkUser() {
 		try {
 			$user = new UserObject($this->_mysqli);
-			return $user->loginCheck();
+			$result = $user->loginCheck();
+
+			$_SESSION['uid'] = $user->uid;
+			
+			return $result;
 		} catch (Exception $e){
 			return $e;
 		}
