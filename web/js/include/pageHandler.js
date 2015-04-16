@@ -125,33 +125,15 @@ function pageHandler(args) {
 		function process(result) {
 			$content.html(result); // Changes content
 			if(typeof window[page] != "undefined") {
-
-
-				/**
-				 * calls itself recursively every 500ms
-				 * until preloadStatus is true
-				 */
-				function callOnLoad(){
-					/**
-					for later use
-					if(typeof preloadStatus != "undefined") { 
-						if(preloadStatus == true) { 
-							// calls loader for page
-							window[page](_this.parseUrl());
-						}
-					} else { 
-						setTimeout(callOnLoad, 500);
-					}*/
-
-					window[page](_this.parseUrl());
-				}
-
-				return callOnLoad(); // Calls loader function
+				window[page](_this.parseUrl());
 			}
 
 			$(document).foundation('reflow'); // Updates foundation stuff
-			// registers all a links to use js for redirection
+
 			if(registerEvents) {
+				log.debug(pkg, "Registering link events");
+
+				// Gets all a tags that don't have "keep-native" class
 				$("a").not(".keep-native").each(function(){
 					var $el = $(this);
 					if(typeof $el.attr("href") == "undefined" ||
@@ -230,10 +212,9 @@ function pageHandler(args) {
 	 * @param e - event
 	 */
 	function popHandler(e) {
-		if (e.originalEvent.state !== null) {
-			var params = _this.parseUrl(location.href);
-			_this.pageRequest(params);
-		}
+		log.debug(pkg, "Handling pop change");
+		var params = _this.parseUrl(location.href);
+		_this.pageRequest(params);
 	}
 
 	this.setPreloadStatus = function(status){
