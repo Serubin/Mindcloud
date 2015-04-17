@@ -198,8 +198,8 @@ var notificationTopbar;
 		};
 
 		function internalRecount(){
-			var req = new APICaller("notification", "fetchAllUser");
-			var params = {uid: "SESSION"};
+			var req = new APICaller("notification", "fetchAllId");
+			var params = {seen: 0, uid: "SESSION"};
 			
 			$notificationNum = $('#notification_number');
 			// adds hover class to begin animation
@@ -229,7 +229,7 @@ var notificationTopbar;
 
 		function internalPopulate(population){
 			var req = new APICaller("notification", "loadArray");
-			var params = {ids: JSON.stringify(notificationIds)};
+			var params = {ids: JSON.stringify(notificationIds), seen: 0};
 
 			var $nfDropdown = $("#notification-dropdown");
 
@@ -242,7 +242,7 @@ var notificationTopbar;
 						var time = data[i].time.replace(dashFind, "/");
 					var $date = $("<small></small>").addClass("text-right time").html(new Date(time).toLocaleString());
 					var $message = $("<p></p>").html(data[i].message).append($date);
-					$nfDropdown.append(createTopbarItem(data[i].url, $message));
+					$nfDropdown.append(createTopbarItem("/user/notification/" + data[i].id, $message));
 				}
 				displayed += population;
 				showMore();
