@@ -23,12 +23,16 @@ function register(){
 		}
 	});
 
+	//TODO why no work
+
+	$("#reload-captcha").click(function(){
+		d = new Date();
+		$("#captcha-img").attr("src","/assets/images/captcha.php?"+d);
+	});
+
 	 // Foundation form abide
 	$("#registration_form").on('valid', function() {
-
-		alert("forms look good; registering");
 		processRegistration();
-
 	});
 	
 	/**
@@ -45,26 +49,33 @@ function register(){
 				last_name:$("#register_lastname").val(),
 				email:$("#register_email").val(),
 				password:hex_sha512($("#register_password").val()),
-				gender:$("#register_gender").val(),
+				gender:$("#register_gender-m").val() || $("#register_gender-f").val() || $("#register_gender-o").val(),
 				year:$("#register_year").val(),
+				captcha:$("#register_captcha").val(),
 			};
 
 		// React on the response from the server
 		req.send(params, function(result) {
 			console.log(result);
 			if (result == true) {
-				alert("yer good");
+				new alertHandler("info","<p>You've been registered! Check your email to confirm your account</p>");
 				
 				// Redirect browser page
 				ph.pageRequest("login");
 				
 			}
 			else {
-				$("#reg_error_alert").text(result);
-				$("#reg_error_alert").css("display", "block");
-				//$("#popup_msg").text(result);
-				//$("#err_popup").popup("open
-				console.log(result);		
+				if(result == "captcha-mismatch") {
+					console.log("merp");
+					new alertHandler("alert", "You're captcha code couldn't be verified. Are you human?");
+					return;
+				}
+				if(result == "duplicate-email") {
+					new alertHandler("alert", "This email has already been registered");
+					return;
+				} else {
+					new alertHandler("alert", "There was an error processing your request. Pleast try again later");
+				}	
 			}
 		});
 	}
@@ -73,4 +84,13 @@ function register(){
 	for (var y = 2014; y >= 1900; y--) {
 		$("#register_year").append("<option value=\"" + y + "\">" + y + "</option>");
 	}
+}
+
+function preregister(){
+	//Redirect user to the app if already logged in
+	var req = new APICaller("user", "check");
+	req.send({}, function (result) {
+		if (result)
+			ph.pageRequest("dashboard"); // loads dash
+	});
 }

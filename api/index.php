@@ -1,4 +1,5 @@
 <?php
+session_start();
 /******************************************************************************
  * index.php
  * Author: Solomon Rubin, Michael Shullick
@@ -7,15 +8,19 @@
  * Index of api.mindcloud.io which handles requests made to the API.
  ******************************************************************************/
 
-	// Check that the user is logged in
+	// sessions
+	//require_once "include/utils.php";
+	//sec_session_start();
+
+	// include db and errors
 	require_once "include/db_config.php";
 	require_once "include/error.php";
-	require_once "include/utils.php";
 
 	// include user object
 	require_once "models/UserObject.php";
 
 	try {
+
 		$params = $_REQUEST;
 
 		// Check that the request data is valid
@@ -32,12 +37,14 @@
 		// authenticate requests that aren't for loggin in or registration
 		// do it before $controller is still a string
 		$user = new UserObject($mysqli);
-		if (!($controller == "User" && ($params['action'] == "create" || $params['action'] == "login" || $params['action'] == "check" || $params['action'] == "verify"))) {
+		if (!(strtolower($controller) == "user" && ($params['action'] == "create" || $params['action'] == "login" || $params['action'] == "check" || $params['action'] == "verify"))) {
 			if (!$user->loginCheck()) {
 				throw new Exception('unauthorized request');
 			}
 
-			$params['uid'] = $user->uid;
+			if(isset($params['uid']) && $params['uid'] == "SESSION") {
+				$params['uid'] = $_SESSION['uid'];
+			}
 		}
 
 		// Check if the controller is valid

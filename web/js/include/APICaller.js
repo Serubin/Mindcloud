@@ -22,7 +22,7 @@ function APICaller (controller, action) {
 					callback(result['data']);
 				}
 				else {
-					console.log("Failure: " + result['error']);
+					log.warning("APICaller", "Failure: " + result['error']);
 					callback(false);
 				}
 		};
@@ -45,3 +45,24 @@ function APICaller (controller, action) {
 		this.act = action;
 	}
 }
+
+$.xhrPool = [];
+$.xhrPool.abortAll = function() {
+	log.debug("APICaller", "Aborting all calls");
+    $(this).each(function(idx, jqXHR) {
+        jqXHR.abort();
+    });
+    $.xhrPool = [];
+};
+
+$.ajaxSetup({
+    beforeSend: function(jqXHR) {
+        $.xhrPool.push(jqXHR);
+    },
+    complete: function(jqXHR) {
+        var index = $.xhrPool.indexOf(jqXHR);
+        if (index > -1) {
+            $.xhrPool.splice(index, 1);
+        }
+    }
+});

@@ -19,6 +19,7 @@ class UserObject
 	public $year;
 	public $join_date;
 	public $permission;
+	public $notification_hash;
 	public $verified;
 	private $_mysqli;
 
@@ -61,9 +62,6 @@ class UserObject
 
 		$this->uid = $this->_mysqli->insert_id;
 
-		// reuse same stmt var
-		$stmt->close();
-
 		// Submit user data
 		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_data` (`id`, `first_name`, `last_name`, `year`, `join_date`) VALUES (?, ?, ?, ?, ?)")) {
 			throw new UserException($this->_mysqli->error, "REGISTER");
@@ -73,12 +71,17 @@ class UserObject
 		$stmt->execute();
 		
 		// Submit user data
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_meta` (`id`) VALUES (?)")) {
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `user_meta` (`id`,`notification_hash`) VALUES (?,?)")) {
 			throw new UserException($this->_mysqli->error, "REGISTER");
 		}
 
-		$stmt->bind_param('i', $this->uid);
+		$this->notification_hash = hash('sha256', $this->uid . $this->email . time());
+
+		$stmt->bind_param('is', $this->uid, $this->notification_hash);
 		$stmt->execute();
+
+		// reuse same stmt var
+		$stmt->close();
 
 		// Return true on success
 		return true;
@@ -130,6 +133,16 @@ class UserObject
 			return "unverified"; // TODO how to specify the need to verify? should we use this guy or the one below
 		}
 
+		$stmt->close();
+
+		// Deletes previous sessions
+		if(!$stmt = $this->_mysqli->prepare("DELETE FROM `user_sessions` WHERE `uid`=? AND `ip` = ?")){
+			throw new UserException($this->_mysqli->error, "LOGIN");
+		}
+
+		$stmt->bind_param('is', $uid, $_SERVER['REMOTE_ADDR']);
+		$stmt->execute();
+
 		// Calculates login length - 2 weeks (unix timestamp)
 		$expire = time() + (60*60*24*7*2);
 		$sid = hash('sha256', $uid . $this->email . time()); 
@@ -145,7 +158,7 @@ class UserObject
 		// Store user id, verified status
 		$this->uid = $uid;
 		$this->verified = $verified;
-	
+
 		// create session identification
 		if (!setcookie('stoken', $sid, $expire, "/", DOMAIN, SECURE, true)) {
 			throw new UserException ("Failed to set ctoken cookie.", "LOGIN");
@@ -164,6 +177,40 @@ class UserObject
 		return true;
 	}
 	
+	/* verifyPassword()
+	 * Verifies that password is correct
+	 * Returns true or false;
+	 */
+	public function verifyPassword(){
+		if(!isset($this->uid, $this->password)){
+			throw new UserException("Unset vars: UID, Password", __FUNCTION__);
+		}
+
+		// Fetch password from database
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `password` FROM `user_accounts` WHERE `id` = ? LIMIT 1")) {
+			throw new UserException("Prepare failed." . $this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param('i', $this->uid); // puts the email in place of the '?'
+		$stmt->execute();
+		$stmt->store_result();
+		
+		// stores results from query in variables corresponding to statement
+		$stmt->bind_result($db_uid, $db_password);
+		$stmt->fetch();
+
+		// TODO Defense against brute-force attacks
+
+		if ($stmt->num_rows != 1) {
+			return false; // if there is 0 results
+		}
+
+		// Compare the submitted password to the stored password
+		if (!validate_password($this->password, $db_password)) {
+			return false; // Password is incorrect
+		}
+		return true;
+	}
 	/* loginCheck()
 	 * Verify whether this given user is logged in
 	 * Returns true or false depending on whether the user is presently logged in,
@@ -196,11 +243,8 @@ class UserObject
 		// Save retreived info
 		$this->uid = $db_uid;
 
-		// Save in session
-		$_SESSION['uid'] = $this->uid;
-
 		// If the user hasn't been initalized, do that now
-		if ($this->checkVerified()) 
+		if (!$this->checkVerified()) 
 			return "unverified";
 		// All checks out
 		return true;
@@ -216,6 +260,8 @@ class UserObject
 			throw new UserException("Unset vars", __FUNCTION__);
 		}
 
+		// "UPDATE M SET M.`verified`=? FROM user_meta as M INNER JOIN user_accounts AS A ON A.`id`=M.`id` WHERE `email` = ?"
+		
 		if(!$stmt = $this->_mysqli->prepare("UPDATE user_meta SET `verified`=? WHERE `id` = ?")) {
 			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
@@ -347,13 +393,11 @@ class UserObject
 		$stmt->bind_param("i", $this->uid);
 		$stmt->execute();
 		$stmt->store_result();
-		
-		error_log($stmt->num_rows);
 
 		if($stmt->num_rows < 1)
 			throw new UserException("User not found", __FUNCTION__);
 
-		$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_permission, $db_id, $db_verified);
+		$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_permission, $db_id, $db_verified, $db_notification_hash);
 		$stmt->fetch();
 
 		// Will not store email for user privacy
@@ -364,28 +408,62 @@ class UserObject
 		$this->join_date = $db_join_date;
 		$this->permission = $db_permission;
 		$this->verified = $db_verified;
+		$this->notification_hash = $db_notification_hash;
 
 		return true;
 	}
 
+	/*
+	 * getIdFromEmail()
+	 * retreives id from
+	 */
+	public function getIdFromEmail(){
+		if (!isset($this->email)) {
+			throw new UserException("Unset vars: email", __FUNCTION__);
+		}
+
+		// Fetches ID. Work around for inner join
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `email` FROM user_accounts WHERE `email` = ? LIMIT 1")) {
+			throw new UserException($this->_mysqli->error);
+		}
+
+		$stmt->bind_param('s', $this->email);
+		$stmt->execute();
+		$stmt->store_result(); // DO THIS FUCKER.
+
+		// if a user already exists with this email
+		if ($stmt->num_rows > 1) {
+			return false;
+		}
+
+		// Bind/Fetch results
+		$stmt->bind_result($db_uid, $db_email);
+		$stmt->fetch();
+
+		$this->uid = $db_uid;
+
+		$stmt->close();
+
+		return true;
+	}
 	/* logout()
 	 * Deletes the session and cookie arrays, the cookies, and 
 	 * destroys the session.
 	 */
 	public function logout() {
-		if(!isset($_COOKIE['sid'])){
+		if(!isset($_COOKIE['stoken'])){
 			throw new UserException("Unset vars", __FUNCTION__);
 		}
 		// Remove from database
-		if(!$stmt = $this->_mysqli->prepared("DELETE FROM `user_sessions` WHERE id = ?")) {
-			throw new UserException($this->_mysqli->error, "LOGIN");
+		if(!$stmt = $this->_mysqli->prepare("DELETE FROM `user_sessions` WHERE id = ?")) {
+			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
 		
-		$stmt->bind_param('i', $sid);
+		$stmt->bind_param('i', $_COOKIE['stoken']);
 		$stmt->execute();
 
 		// Nullify cookie
-		setcookie('stoken', "", time()-9999999, "/", "minecloud.io", $secure, true);
+		setcookie('stoken', "", time()-9999999, "/", DOMAIN, SECURE, true);
 
 		return true;
 	}

@@ -37,7 +37,7 @@ class Problem
 	public function createProblem() {
 		
 		try {
-			if (!isset($this->_params['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'])) {
+			if (!isset($this->_params['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
 				error_log(json_encode($this->_params));
 				throw new ProblemException("Unset vars.", __FUNCTION__);
 			}
@@ -47,8 +47,11 @@ class Problem
 			$problem->title = $this->_params['title'];
 			$problem->description = $this->_params['description'];
 			$problem->tags = $this->_params['tags'];
-			// only set the shorthand if given //TODO make sure it's not already taken
+			$problem->category = $this->_params['category'];
+
+			// only set the shorthand if given
 			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
+			
 			return $problem->create();
 
 		} catch (ProblemException $e) {

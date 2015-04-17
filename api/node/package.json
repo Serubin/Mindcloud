@@ -1,0 +1,16 @@
+{
+  "name": "redis-to-web",
+  "version": "1.0.0",
+  "description": "Adapts redis to websockets",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Solomon Rubin",
+  "license": "ISC",
+  "private": true,
+    "devDependencies": {
+      "socket.io": "^1.3.5",
+      "socket.io-redis": "^0.1.4"
+  }
+}

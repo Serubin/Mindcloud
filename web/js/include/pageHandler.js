@@ -24,6 +24,7 @@ function pageHandler(args) {
 	// public functions
 	var pageRequest;
 	var parseUrl;
+	var setPreloadStatus;
 
 	// class options
 	var pageLoc;
@@ -55,32 +56,54 @@ function pageHandler(args) {
 		}
 	}
 
-	this.pageRequest = function(page, historypush){
+	this.pageRequest = function(page, historypush, callback){
+		preloadStatus = undefined;
+
+		if(typeof page == "string"){
+			if(page.indexOf("/") == 0)
+				page = page.slice(1,page.length);
+			page = page.split("/");
+		}
+		console.log(page);
 		if(historypush || typeof historypush == "undefined"){
 			var joinedPage = page;
 			if(typeof page == "object")
 				joinedPage = page.join("/");
 
-			history.pushState({}, '', joinedPage);
+			history.pushState({}, '', "/" + joinedPage);
 		}
 		if(typeof page == "object")
 			page = page[0];
 
-		pageLoad(page);
+		log.info("PageHandler", "Loading " + page);
+		pageLoad(page, callback);
 	}
 	/**
 	 * pageLoad()
 	 * Page requests dynamicly loads in a new content
 	 * @param page - the pages url (excluding pages/)
 	 */
-	function pageLoad(page) {
-	 	var $content = $(contentDiv);			
+	function pageLoad(page, callback) {
+	 	var $content = $(contentDiv);
+
+
+		function processError(xhr, ajaxOptions, thrownError){
+			if(xhr.status==404) {
+				_this.pageRequest("error-404", false);
+			} else if(xhr.status==403) {
+				_this.pageRequest("error-403", false);
+			} else if(xhr.status==500) {
+				_this.pageRequest("error-500", false);
+			}
+		}
+
 		/*
 		 * success()
 		 * Handles pre-process (animate vs no animate)
 		 * @param result - results of ajax
 		 */
 		function success(result){
+			log.debug("PageHandler", "Loaded " + page);
 			if(!animations)
 				return process(result);
 
@@ -97,33 +120,61 @@ function pageHandler(args) {
 		 */
 		function process(result) {
 			$content.html(result); // Changes content
-			if(typeof window[page] != "undefined")
-				window[page](ph.parseUrl()); // calls loader for page
+			if(typeof window[page] != "undefined") {
+
+
+				/**
+				 * calls itself recursively every 500ms
+				 * until preloadStatus is true
+				 */
+				function callOnLoad(){
+					/**
+					for later use
+					if(typeof preloadStatus != "undefined") { 
+						if(preloadStatus == true) { 
+							// calls loader for page
+							window[page](_this.parseUrl());
+						}
+					} else { 
+						setTimeout(callOnLoad, 500);
+					}*/
+
+					window[page](_this.parseUrl());
+				}
+
+				return callOnLoad(); // Calls loader function
+			}
 
 			$(document).foundation('reflow'); // Updates foundation stuff
 			// registers all a links to use js for redirection
 			if(registerEvents) {
-				$("a").not(".keep-native").unbind("click");
-				$("a").not(".keep-native").click(function() {
-					return linkHandler( $(this).attr("href") );
-				});
+				$("a").not(".keep-native").each(function(){
+					var $el = $(this);
+					if(typeof $el.attr("href") == "undefined" ||
+					   $el.attr("href").toLowerCase() == "javascript:void(0);" || 
+					   $el.attr("href").toLowerCase() == "#")
+							return;
+					$el.unbind("click");
+					$el.click(function() {
+						return linkHandler( $(this).attr("href") );
+					});
+				})
 			}
 		};
 
 		// Pre load script
 		var page = page.replace("/", "");
+		log.debug("Pagehandler", "Checking for pre" + page + "(): " + typeof window["pre" + page])
 		if(typeof window["pre" + page] != "undefined"){
-				preloadStatus = window["pre" + page](ph.parseUrl()); // calls loader for page
-			if(preloadStatus === false){
-				return false;
-			}
+				preloadStatus = window["pre" + page](_this.parseUrl()); // calls loader for page
 		}
 
 
 		// Ajax call
 		$.ajax({
 			url: pageLoc + page + ".php",
-			success: success
+			success: success,
+			error: processError
 		});
 
 	}
@@ -139,7 +190,13 @@ function pageHandler(args) {
 	this.parseUrl = function(aURL) {
 	 
 		aURL = aURL || window.location.href;
-	
+		// Removes hash
+		aURL = aURL.split("#");
+		aURL = aURL[0];
+		// Removes ?
+		aURL = aURL.split("?");
+		aURL = aURL[0];
+
 		// remove prefix and suffix
 
 		aURL = aURL.slice(aURL.indexOf('.loc') + 5)
@@ -173,6 +230,10 @@ function pageHandler(args) {
 			var params = _this.parseUrl(location.href);
 			_this.pageRequest(params);
 		}
+	}
+
+	this.setPreloadStatus = function(status){
+		preloadStatus = status;
 	}
 
 	construct();

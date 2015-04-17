@@ -1,11 +1,10 @@
 <?php
 /******************************************************************************
  * User.php
- * Author: Michael Shullick
+ * Author: Michael Shullick, Solomon Rubin
  * ©mindcloud
  * 1 February 2015
  * Controller for User-related actions.
- * !!! NOT YET ADAPTED !!!
  ******************************************************************************/
 
 // relative to index.php
@@ -32,9 +31,14 @@ class User
 		try {
 			// Checks that all required post variables are set
 			if (!isset($this->_params['email'], $this->_params['password'], $this->_params['first_name'], 
-				$this->_params['last_name'], $this->_params['year'], $this->_params['gender'])) {
+				$this->_params['last_name'], $this->_params['year'], $this->_params['gender'], $this->_params['captcha'])) {
 				error_log(json_encode($this->_params));
 				throw new UserException("Unset vars", __FUNCTION__);
+			}
+
+			if($this->_params['captcha'] != $_SESSION['captcha']) {
+				return "captcha-mismatch";
+				//throw new UserException("Captcha mismatch. Are you a Robot?", __FUNCTION__);
 			}
 
 			// Register new user
@@ -61,7 +65,8 @@ class User
 			$new_user->email = $email;
 
 			if(!$new_user->checkEmail()){
-				throw new UserException("Duplicate email.", __FUNCTION__);
+				return "duplicate-email";
+				//throw new UserException("Duplicate email.", __FUNCTION__);
 			}
 
 			// ensure valid password
@@ -92,7 +97,7 @@ class User
 					  We've noticed that you created an account! We're very excited to have you! All you have left todo is verify your account by clicking the link below! <br/>
 					  See you on the other side!<br />
 
-					  <a href='http://mindcloud.io/web/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "/" . $new_user->uid . "'>Validate your account!</a> <br/>
+					  <a href='https://mindcloud.io/login/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "/" . str_replace(".", "-", $new_user->email) . "'>Validate your account!</a> <br/>
 
 					  -- The Mindcloud team! </p>";
 
@@ -116,11 +121,37 @@ class User
 					"Password: " . $this->_params['password'],
 					__FUNCTION__);
 			}
+			// require captcha match if more than 3 attempts
+			if(isset($_SESSION['login-attempts']) && $_SESSION['login-attempts'] > 3) {
+				if(!isset($this->_params['login_captcha']))
+					return "captcha";
+				// Checks for captcha consistency
+				if($this->_params['login_captcha'] != $_SESSION['captcha'])
+					return "captcha";
+			}
 
 			$user = new UserObject($this->_mysqli);
 			$user->email = $this->_params['email'];
 			$user->password = $this->_params['password'];
-			return $user->login();
+			
+			$result = $user->login();
+			// track login attempts 
+			if(!$result) {
+				if(!isset($_SESSION['login-attempts'])) 
+					$_SESSION['login-attempts'] = 1;
+				else
+					$_SESSION['login-attempts'] += 1;
+
+				// if login attempts is greater than 3, tell client to require captcha
+				if($_SESSION['login-attempts'] > 3)
+					$result = "captcha";
+			} else {
+				unset($_SESSION['login-attempts']);
+			}
+
+			$_SESSION['uid'] = $user->uid;
+
+			return $result;
 		} catch (Exception $e){
 			return $e;
 		}
@@ -130,17 +161,22 @@ class User
 	 * Checks whether the user is logged in.
 	 */
 	public function checkUser() {
-		$user = new UserObject($this->_mysqli);
-		return $user->loginCheck();
+		try {
+			$user = new UserObject($this->_mysqli);
+			return $user->loginCheck();
+		} catch (Exception $e){
+			return $e;
+		}
 	}
 
 	public function verifyUser(){
 		try{
-			if(!isset($this->_params['uid'], $this->_params['hash'])){
+			if(!isset($this->_params['email'], $this->_params['hash'])){
 				throw new UserException("Unset vars", __FUNCTION__);
 			}
 				$user = new UserObject($this->_mysqli);
-				$user->uid = filter_var($this->_params['uid'], FILTER_SANITIZE_STRING);
+				$user->email = filter_var($this->_params['email'], FILTER_SANITIZE_STRING);
+				$user->getIdFromEmail();
 				$user->load();
 
 				$local_hash = hash('sha512', $user->uid . $user->first_name . $user->last_name . $user->email);
@@ -158,12 +194,11 @@ class User
 
 	/*
 	 * loadUser()
-	 * Sends to the client a json array of the current list name and contents,
+	 * Sends to the client a json array of the current list name and join_date,
 	 * as well as the user's other lists.
 	 */
 	public function loadUser() {
 		try {
-
 			if(!isset($this->_params['uid'])) {
 				throw new UserException("Unset vars", __FUNCTION__);
 			}
@@ -173,26 +208,70 @@ class User
 			$user->load();
 
 			return Array ( 
-				"email" => $this->email,
-				"first_name" => $this->first_name,
-				"last_name" => $this->last_name,
-				"year" => $this->year,
-				"join_date" => $this->join_date,
-				"permission" => $this->permission,
-				"verified" => $this->verified
+				"first_name" => $user->first_name,
+				"last_name" => $user->last_name,
+				"join_date" => $user->join_date,
 			);
 		} catch (Exception $e) {
 			return $e;
 		}
 	}
 
+	/*
+	 * loadConfidentialUser()
+	 * Sends to the client a json array of more private data such as email and notificaton id
+	 * along with normal load user info
+	 */
+	public function loadConfidentialUser() {
+		try{
+			if(!isset($_SESSION['uid'])) {
+				throw new UserException("Unset vars: server session uid", __FUNCTION__);
+			}
+
+			$user = new UserObject($this->_mysqli);
+			$user->uid = $_SESSION['uid'];
+			$user->load();
+
+			return Array (
+				"first_name" => $user->first_name,
+				"last_name" => $user->last_name,
+				"join_date" => $user->join_date,
+				"email" => $user->email,
+				"notification_hash" => $user->notification_hash,
+			);
+		} catch (Exception $e){
+			return $e;
+		}
+	}
+
+	/*
+	 * getCurrentUser()
+	 * retrieves the id of the current user from session var
+	 * TODO revaluate need. 
+	 */
+	public function getCurrentUser(){
+		try {
+			if(!isset($_SESSION['uid'])) {
+				throw new UserException("User not logged in", __FUNCTION__);
+			}
+
+			return $_SESSION['uid'];
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	/*
+	 * updateUser()
+	 * updates either password or basic info of current user 
+	 */
 	public function updateUser(){
 		try {
-			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'])) {
+			if(isset($_SESSION['uid'], $this->_params['first_name'], $this->_params['last_name'], $this->_params['gender'],$this->_params['password'])) {
 				return $this->updateInfo();
 			}
 
-			if(isset($_SESSION['uid'], $this->_params['password'])){
+			if(isset($_SESSION['uid'], $this->_params['password'], $this->_params['new_password'])){
 				return $this->updatePassword();
 			}
 
@@ -207,6 +286,11 @@ class User
 		$user = new UserObject();
 
 		$user->uid = $_SESSION['uid'];
+		$user->password = $this->_params['password'];
+
+		if(!$this->verifyPassword())
+			return false;
+
 		$user->first_name = filter_var($this->_params['first_name'], FILTER_SANITIZE_STRING);
 		$user->last_name = filter_var($this->_params['last_name'], FILTER_SANITIZE_STRING);
 		$user->gender = filter_var($this->_params['gender'], FILTER_SANITIZE_STRING);
@@ -220,6 +304,10 @@ class User
 		$user->uid = $_SESSION['uid'];
 		$user->password = $this->_params['password'];
 
+		if(!$this->verifyPassword())
+			return false;
+
+		$user->password = $this->_params['new_password'];
 		return $user->updatePassword();
 	}
 

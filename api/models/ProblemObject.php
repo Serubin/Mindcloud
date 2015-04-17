@@ -41,8 +41,7 @@ class ProblemObject {
 	 * 
 	 */
 	public function create() {
-
-		if (!isset($this->title, $this->creator, $this->description, $this->tags)) {
+		if (!isset($this->title, $this->creator, $this->description, $this->tags, $this->category)) {
 			throw new ProblemException("Unset required instance vars", __FUNCTION__);
 		}
 
@@ -50,7 +49,7 @@ class ProblemObject {
 			// TODO: create random shorthand for url / mentions, maximum length?
 		}
 
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `title`, `description`, `shorthand`) VALUES (?, ?, ?, ?)")) {
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `title`, `description`, `shorthand`, `category`) VALUES (?, ?, ?, ?, ?)")) {
 			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -74,6 +73,7 @@ class ProblemObject {
 
 		// associate tags
 		//error_log(json_encode($this->tags));
+
 		foreach ($this->tags as $tag_id) {
 			$tag_object = new TagObject($this->_mysqli);
 			$tag_object->id = $tag_id;
@@ -116,9 +116,10 @@ class ProblemObject {
 		$this->shorthand = $shorthand;
 		$this->title = $title;
 		$this->description = $description;
-		$this->created = $created;
+		$this->created = $creation_datetime;
 		$this->status = $status;
 		$this->trial_no = $current_trial;
+
 
 		// fetch creator info
 		$this->creator = new UserObject($this->_mysqli);
@@ -228,7 +229,6 @@ class ProblemObject {
 		if (!isset($this->shorthand)) {
 			throw new ProblemsException("Couldn't validate, shorthand not set.", __FUNCTION__);
 		}
-
 		// Prepares variables
 		$this->shorthand = strtolower($this->shorthand);
 
@@ -252,5 +252,4 @@ class ProblemObject {
 
 		return true;
 	}
-
 }

@@ -1,0 +1,1 @@
+//TODO create notifications sot that when clicked it will redirect (silently) to the user/notifications/id page mark the notification as read and then redirect to the url.

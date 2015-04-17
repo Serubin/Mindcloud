@@ -56,7 +56,6 @@
 
 // Allows the use of rem-calc() or lower-bound() in your settings
 @import "foundation/functions";
-@import "mindcloud";
 
 // The default font-size is set to 100% of the browser style sheet (usually 16px)
 // for compatibility with browser-based text zoom or user-set defaults.
@@ -73,6 +72,9 @@
 $include-html-classes: true;
 // $include-print-styles: true;
 $include-html-global-classes: $include-html-classes;
+// font names
+$title-font: 'GenW01Light';
+$primary-font: 'GenW01Light';
 
 // b. Grid
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -119,8 +121,10 @@ $snow        : #F9F9F9;
 
 // We use these as default colors throughout
  $primary-color: #4754a4; // blue
- $primary-color-light: #5965ad;
- $primary-color-dark: #3f4b93;
+ $primary-color-light-2: #707ab8;
+ $primary-color-light: #5b67ae;
+ $primary-color-dark: #3f4b92;
+ $primary-color-dark-2: #374180;
 
 
  $secondary-color: #ff7600; // orange
@@ -247,7 +251,7 @@ $body-font-family: $primary-font;
 // We use these to style paragraphs
 // $paragraph-font-family: inherit;
 // $paragraph-font-weight: $font-weight-normal;
-// $paragraph-font-size: 1rem;
+// $paragraph-font-size: .8 rem;
 // $paragraph-line-height: 1.6;
 // $paragraph-margin-bottom: rem-calc(20);
 // $paragraph-aside-font-size: rem-calc(14);
