@@ -216,10 +216,16 @@
                     if (itemCount >= cols) itemCount = 0;
                     if (appendCount >= cols) appendCount = (appendCount - cols);
                 }
-            });
+            }
+            );
+
+
+            // reflow
+            $(document).foundation('reflow');
 
             this.appendCount = appendCount;
             this.itemCount = itemCount;
+
 
             if (method == "append" || method == "prepend") {
                 if (method == "prepend") { 
@@ -228,6 +234,7 @@
                 }
                 this._renderItem(items);
                 this.isPrepending = false;
+
             } else {
                 this._renderItem(this.gridArr);
             }

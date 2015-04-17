@@ -7,9 +7,8 @@
 	<li><a href="#">Yet another</a></li>
 </ul>
 
-<div id="problems">
-
-</div>
+<ul id="problems" class="small-block-grid-1 medium-block-grid-2 large-block-grid-4">
+</ul>
 
 <!-- pose-a-problem modal -->
 <div id="create_problem_modal" class="reveal-modal" data-reveal>

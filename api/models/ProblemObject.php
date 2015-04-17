@@ -222,6 +222,8 @@ class ProblemObject {
 		if (!isset($this->id, $this->creator))
 			throw new ProblemException("Id or creator not set", __FUNCTION__);
 
+		
+
 		// submit vote
 		return Vote::addVote($this->_mysqli, "PROBLEM", $this->id, $this->creator, $val);
 	}

@@ -56,17 +56,6 @@ function dashboard() {
 	 */
 	function loadDashboard() {
 
-		// initialize isotope
-		/*$problems.isotope({
-
-		  itemSelector : '.isotope-item',
-		  layoutMode : 'masonry',
-		  masonry: {
-		  	columnWidth: 50
-		  }
-		  // options...
-		});*/
-
 		// TODO: This stuff will be useful for sorting problems
 		// filter items when filter link is clicked
 		/*$('#filters a').click(function(){
@@ -90,17 +79,6 @@ function dashboard() {
 		   $this.addClass('selected'); 
 		});*/
 
-		$problems.gridalicious({
-			animate: true,
-			animationOptions: {
-				queue: true,
-				speed: 200,
-				duration: 300,
-				effect: 'fadeInOnAppear',
-				complete: onComplete
-				}
-		});
-
 		// initial load
 		var req = new APICaller("dashboard", "load");
 
@@ -123,7 +101,7 @@ function dashboard() {
 
 	function onComplete() {
 
-		$(document).foundation('reflow');
+		//$(document).resize();
 	}
 
 	function reloadProblems() {
@@ -151,8 +129,9 @@ function dashboard() {
 
 		// append new problems		
 		$.each(new_problems, function(i, value) {
+
 			// overall container
-			new_problems[i] = $('<div></div>', {id: value[0], datetime: value[2], class: 'problem'}).append(
+			new_problems[i] = $('<li></li>', {id: value[0], datetime: value[2], class: 'problem'}).append(
 				// row div 
 				$('<div></div>', {class: 'row'})
 				.append(
@@ -167,24 +146,25 @@ function dashboard() {
 					$('<div></div>', {class: 'small-9 column problem-statement'})
 						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
 				)
+				/*.append( $('<div></div>', {class: 'small-1 column problem-btn'}).html(
 
-				/** SOLOMON LOOK HERE **/
-				.append( $('<div></div>', {class: 'small-1 column problem-btn'}).html(
-
-
-							'<button href="#" data-dropdown="drop1" aria-controls="drop1" aria-expanded="false" class="button dropdown"></button><br>' +
-							'<ul id="drop1" data-dropdown-content class="f-dropdown" aria-hidden="true">' +
+							'<a href="#" data-dropdown="drop_' + value[0] + '" aria-controls="drop_' + value[0] + '" aria-expanded="false" class="button dropdown"></button><br>' +
+							'<ul id="drop_' + value[0] + '" data-dropdown-content class="f-dropdown" aria-hidden="true">' +
 								'<li><a href="#">This is a link</a></li>' +
 								'<li><a href="#">This is another</a></li>' +
 								'<li><a href="#">Yet another</a></li>' +
 							'</ul>'
 
 
-							))
+							)
+				)*/
 			);
+
+			$problems.append(new_problems[i]);
+
 		});
 
-		$problems.gridalicious('append', new_problems);
+		//$problems.append(new_problems);
 	}
 
 	// Problem create form

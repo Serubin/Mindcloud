@@ -162,10 +162,17 @@ div.tagsinput div {
   content: '3 .column.size-1of3';
 }
 
+#problems {
+  margin: 0px;
+}
+
 .problem {
-  background-color: $secondary-color;
   color: white;
   //padding: 5px;
+
+  .row {
+    background-color: $secondary-color;
+  }
 
   .column {
     padding: 0px;
@@ -189,8 +196,12 @@ div.tagsinput div {
     background: $secondary-color-dark;
   }
 
+  button {
+    padding: 0px;
+    margin: 0px;
+  }
+
   ul {
     width: 15%;
   }
-
 }
