@@ -81,9 +81,17 @@ class NotificationObject {
 	}
 
 	public function updateSeen(){
-		if(!isset($this->uid, $this->url, $this->message)) {
-			throw new UserException("unset vars: uid, url, message, time");
+		if(!isset($this->id, $this->seen, $_SESSION['uid'])) {
+			throw new UserException("unset vars: id, seen");
 		}
+
+		if(!$stmt = $this->_mysqli->prepare("UPDATE `user_notifications` SET `seen`=? WHERE `id`=? AND `uid`=?")){
+			throw new UserException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("iii", $this->seen, $this->id, $_SESSION['uid']);
+		$stmt->execute();
+		$stmt->close();
 	}
 
 	/**

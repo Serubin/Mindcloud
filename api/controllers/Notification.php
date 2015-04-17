@@ -117,6 +117,29 @@ class Notification
 		}
 	}
 
+	/**
+	 * Updates seen flag
+	 * @param id notification id
+	 * @param seen - seen value
+	 */
+	public function updateNotification(){
+		try {
+
+			if(!isset($this->_params['id'], $this->_params['seen'])) {
+				throw new UserException("Unset vars: ids, uid", __FUNCTION__);
+			}
+			$notif = new NotificationObject($this->_mysqli);
+			$notif->id = $this->_params['id'];
+			$notif->seen = $this->_params['seen'];
+			$notif->updateSeen();
+
+			return true;
+
+		} catch(Exception $e){
+			return $e;
+		}
+	}
+
 	/* pushNotification()
 	 * Creates a new pusher stream based on users unique notification hash.
 	 */
