@@ -15,6 +15,10 @@ $(function(){
 	// Loads page handler
 	ph = new pageHandler({"pageLoc": "/pages/", "animations": true});
 
+	function page_handler_global(){
+		$("#create_solution").css("display", "none");
+	}
+
 	// if index page
 	if(ph.parseUrl()[0] == ""){
 		log.debug("App", "No start page, redirecting");
@@ -36,7 +40,7 @@ $(function(){
 	$(document).foundation({
 		topbar : {
     		mobile_show_parent_link: false,
-    		is_hover: true
+    		is_hover: false
   		}
 	});
 

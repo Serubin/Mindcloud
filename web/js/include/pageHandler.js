@@ -80,6 +80,11 @@ function pageHandler(args) {
 			page = page[0];
 
 		log.info("PageHandler", "Loading " + page);
+
+		// Temporary global function
+		if(typeof page_handler_global != "undefined")
+			page_handler_global();
+
 		pageLoad(page, callback);
 	}
 	/**
