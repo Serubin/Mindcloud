@@ -54,7 +54,7 @@ class Problem
 			// sanitize strings
 			$problem->title = filter_var($problem->title, FILTER_SANITIZE_STRING);
 			$problem->description = strip_tags($problem->description);
-			$problem->description = str_replace("\n\n", "<br />", $problem->description); //TODO make spacing work better
+			//$problem->description = str_replace("\n\n", "[[#line#end#]]", $problem->description); //TODO make spacing work better
 			$problem->shorthand = filter_var($problem->shorthand, FILTER_SANITIZE_STRING);
 			error_log($problem->description);
 
