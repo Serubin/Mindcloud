@@ -109,6 +109,7 @@ function populatePage(data){
 	$("#description").html(data.description);
 
 	// set contributors
+	$("#contributors").empty();
 	$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
 
 	// set vote count and vote status if set

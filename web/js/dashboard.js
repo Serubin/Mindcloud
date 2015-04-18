@@ -131,14 +131,22 @@ function dashboard() {
 		$.each(new_problems, function(i, value) {
 
 			// overall container
-			new_problems[i] = $('<li></li>', {id: value[0], datetime: value[2], class: 'problem'}).append(
+			new_problems[i] = $('<li></li>', {id: value[0], datetime: value[2], class: 'problem', 'data-title' : value[3]}).append(
 				// row div 
 				$('<div></div>', {class: 'row'})
 				.append(
 					// vote button containers
 					$('<div></div>', {class: 'small-2 column voter'})
 						.append( $("<div></div>", {class:'problem-btn vote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
-						.append( $("<div></div>", {class:'problem-btn flag'}).html("<i class='fi-flag'></i></div>"))
+						.append( $("<div></div>", {class:'problem-btn flag'}).html("<i class='fi-flag'></i></div>")
+							.append( $("<div></div>", {class: "dropdown"})
+								.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
+									.append($("<li></li>").html('<a class="flag-innapropro href="#">innapropriate</a>'))
+									.append($("<li></li>").html('<a class="flag-duplicate" href="#">duplicate</a>'))
+									.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
+									)
+							)
+						)
 						.append( $("<div></div>", {class:'problem-btn vote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
 					)
 				.append(
@@ -146,6 +154,7 @@ function dashboard() {
 					$('<div></div>', {class: 'small-9 column problem-statement'})
 						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
 				)
+				//.append($('<div></div>').html("...").append("<div></div>"))
 				/*.append( $('<div></div>', {class: 'small-1 column problem-btn'}).html(
 
 							'<a href="#" data-dropdown="drop_' + value[0] + '" aria-controls="drop_' + value[0] + '" aria-expanded="false" class="button dropdown"></button><br>' +
@@ -195,6 +204,27 @@ function dashboard() {
 				alert("failed");
 			}
 		});	
+	});
+
+	$(document).on("click", ".flag", function(event) {
+
+		$menu = $(this).children(".dropdown");
+		if (!$menu.hasClass('open')) {
+			$("body").append($("<div></div", {class: "overlay"}));
+			$menu.addClass("open");
+		}
+	});
+
+	$(document).on('click', ".overlay", function (event) {
+
+		console.log("overlay clicked");
+		$(".dropdown").removeClass('open');
+		$('.overlay').remove();
+	});
+
+	$(document).on('click', '.problem', function (event) {
+
+		ph.pageRequest("/problem/" + $(this).attr('data-title'));
 	});
 }
 
