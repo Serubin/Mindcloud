@@ -128,7 +128,7 @@ function populatePage(data){
 	$("#banner #title").html(data.title);
 
 	// set description
-	$("#description").html(data.description);
+	$("#description").html(wiky.process(data.description, {}));
 
 	// set contributors
 	$("#contributors").html("");
