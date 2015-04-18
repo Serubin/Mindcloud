@@ -19,7 +19,7 @@ class SolutionObject {
 	public $title;
 	public $description; // TODO strip tags on submit to filter out html
 	public $created;
-	public $creator; // TODO convert to contributors
+	public $creator;
 	public $status;
 
 	public $userVote;
@@ -248,7 +248,7 @@ class SolutionObject {
 
 		return true;
 	}
-
+	// TODO add constants for association
 	public function addContributor($uid, $association){
 		if(!isset($this->id)){
 			throw new SolutionException("Unset var: Id", __FUNCTION__);

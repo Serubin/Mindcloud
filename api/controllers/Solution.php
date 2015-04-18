@@ -7,7 +7,7 @@
  * Model for the object representation of a solution idea.
  ******************************************************************************/
 
-require_once "models/UserSolution.php";
+require_once "models/SolutionObject.php";
 require_once "include/vote.php";
 
 class Solution
@@ -21,7 +21,7 @@ class Solution
 		$this->_mysqli = $mysqli;
 	}
 
-
+	//TODO next up: make solution creation form.
 	/**
 	 * create()
 	 * Creates a new solution in the db and stores the assocated information.
@@ -31,32 +31,45 @@ class Solution
 		try {
 			// Checks that all required post variables are set
 			if (!isset($this->_params['problem_id'], $this->_params['shorthand'], $this->_params['title'], 
-				$this->_params['description'], $this->_params['creator']) {
+				$this->_params['description'], $this->_params['creator'])) {
 				error_log(json_encode($this->_params));
 				throw new SolutionException("Unset vars", __FUNCTION__);
 			}
 
-			$new_solution = new SolutionObject();
+			$solution = new SolutionObject();
 
-			$problemId = filter_var($this->_params['problemId'], FILTER_SANITIZE_NUMBER_INT);
-			$new_solution->problemId = $problem_id;
+			$problem_id = filter_var($this->_params['problem_id'], FILTER_SANITIZE_NUMBER_INT);
+			$solution->problem_id = $problem_id;
 
-			$shorthand = filter_var($this->_params['shorthand'], FILTER_SANITIZE_STRING);
-			$new_solution->shorthand = $shorthand;
+			if (isset($this->_params['shorthand'])) {
+				$solution->shorthand = $this->_params['shorthand']; // Uses user shorthand
+				if(!$solution->validateShorthand()){
+					throw new ProblemException("shorthand unavalible", __FUNCTION__);
+				}
+			} else { 
+				// Creates shorthand
+				$solution->shorthand = preg_replace("/[^ \w]+/", "", $solution->title); // Removes scary characters
+				$solution->shorthand = str_replace(" ", "-", $solution->shorthand); // Removes spacy characters (always forgettin')
+				$solution->shorthand = strtolower($solution->shorthand); // Get's ride of those cocky captials.
+				$solution->shorthand = substr($solution->shorthand,0 ,200); // Shortens the fatter of the bunch.
+				if(!$solution->validateShorthand()){
+					$solution->shorthand = $solution->shorthand . substr(md5($solution->shorthand),0, 4); // Makes unquif if not?
+				}
+			}
 
 			$title = filter_var($this->_params['title'], FILTER_SANITIZE_STRING);
-			$new_solution->title = $title;
+			$solution->title = $title;
 
 			$description = strip_tags($this->_params['description']);
-			$new_solution->description = $description;
+			$solution->description = strip_tags($solution->description);
 
 			$creator = filter_var($this->_params['creator'], FILTER_SANITIZE_NUMBER_INT);
-			$this->creator = $creator;
+			$solution->creator = $creator;
 
-			if(!$new_solution->validateShorthand())
+			if(!$solution->validateShorthand())
 				throw new SolutionException("Shorthand exists", __FUNCTION__);
 			
-			$new_solution->create();
+			$solution->create();
 
 			return true;
 		} catch (Exception $e) {
@@ -68,7 +81,7 @@ class Solution
 		try {
 			// Checks that all required post variables are set
 			if (!isset($this->_params['id'], $this->_params['shorthand'], $this->_params['title'], 
-				$this->_params['description'], $_SESSION['uid']) {
+				$this->_params['description'], $_SESSION['uid'])) {
 				error_log(json_encode($this->_params));
 				throw new SolutionException("Unset vars", __FUNCTION__);
 			}
@@ -94,27 +107,36 @@ class Solution
 			$solution->update();
 
 			return true;
-			}
+
 		} catch (Exception $e){
 			return $e;
 		}
 	}
 
-	public function voteSolution(){
+	/** 
+	 * upvoteSolution() 
+	 * Give the specified solution an upvote
+	 */
+	public function voteSolution() {
+
 		try {
-			// Checks that all required post variables are set
-			if (!isset($this->_params['id'], $this->_params['vote'],$_SESSION['uid'])) {
-				error_log(json_encode($this->_params));
-				throw new SolutionException("Unset vars", __FUNCTION__);
+			// check that we have the appropriate data
+			if (!isset($this->_params['pid'], $this->_params['vote'], $_SESSION['uid'])) {
+				throw new SolutionException("Unset vars: pid, vote", __FUNCTION__);
 			}
-			$vote = new Vote();
 
-			$vote->addVote( $this->_mysqli, "solution", $this->_params['id'], $_SESSION['uid'], $this->_params['vote'] ){
-			
-			return true;
+			// validate vote value by taking absolute value
+			if ($this->_params['vote'] != UPVOTE && $this->_params['vote'] != DOWNVOTE) {
+				throw new SolutionException("Invalid vote passed", __FUNCTION__);
+			}
 
-		} catch (Exception $e){
-			return $e
+			// submit vote
+			$solution = new SolutionObject($this->_mysqli);
+			$solution->id = $this->_params['pid'];
+
+			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
+		} catch (Exception $e) {
+			return $e;
 		}
 	}
 
@@ -125,14 +147,13 @@ class Solution
 				error_log(json_encode($this->_params));
 				throw new SolutionException("Unset vars", __FUNCTION__);
 			}
-			$vote = new Vote();
-
-			$return $vote->fetchScore( $_mysqli, "solution", $this->_params['id'] );
+			return Vote::fetchScore( $_mysqli, "solution", $this->_params['id'] );
 
 		} catch (Exception $e) {
-			return $e
+			return $e;
 		}
 	}
+
 	/**
 	 * load()
 	 * Load the associated content with the pre-set project id
@@ -169,4 +190,44 @@ class Solution
 		return $solutionData;
 	}
 
+	/**
+	 * getIdProblem()
+	 * Loads id from shorthand
+	 */
+	public function getIdSolution()){
+		try {
+			if (!isset($this->_params['shorthand'])) {
+				throw new SolutionException("Could not load problem id; no shorthand provided.", __FUNCTION__);
+			}
+
+			$solution = new SolutionObject($this->_mysqli);
+			$solution->shorthand = $this->_params['shorthand'];
+			$solution->getId();
+
+			return $solution->id;
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+
+	/**
+	 * getShorthandProblem()
+	 * Loads shorthand from id
+	 */
+	public function getShorthandSolution(){
+		try {
+			if (!isset($this->_params['id'])) {
+				throw new SolutionException("Could not load problem shorthand; no id provided.", __FUNCTION__);
+			}
+
+			$solution = new SolutionObject($this->_mysqli);
+			$solution->id = $this->_params['id'];
+			$solution->getShorthand();
+
+			return $problem->shorthand;
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
 }
