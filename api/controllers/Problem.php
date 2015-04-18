@@ -49,6 +49,15 @@ class Problem
 			$problem->tags = $this->_params['tags'];
 			$problem->category = $this->_params['category'];
 
+			error_log($problem->description);
+
+			// sanitize strings
+			$problem->title = filter_var($problem->title, FILTER_SANITIZE_STRING);
+			$problem->description = strip_tags($problem->description);
+			$problem->description = str_replace("\n\n", "<br />", $problem->description); //TODO make spacing work better
+			$problem->shorthand = filter_var($problem->shorthand, FILTER_SANITIZE_STRING);
+			error_log($problem->description);
+
 			if (isset($this->_params['shorthand'])) {
 				$problem->shorthand = $this->_params['shorthand']; // Uses user shorthand
 				if(!$problem->validateShorthand()){
@@ -56,7 +65,7 @@ class Problem
 				}
 			} else { 
 				// Creates shorthand
-				$problem->shorthand = preg_replace("/[^ \w]+/", "", $this->_params['title']); // Removes scary characters
+				$problem->shorthand = preg_replace("/[^ \w]+/", "", $problem->title); // Removes scary characters
 				$problem->shorthand = str_replace(" ", "-", $problem->shorthand); // Removes spacy characters (always forgettin')
 				$problem->shorthand = strtolower($problem->shorthand); // Get's ride of those cocky captials.
 				$problem->shorthand = substr($problem->shorthand,0 ,200); // Shortens the fatter of the bunch.

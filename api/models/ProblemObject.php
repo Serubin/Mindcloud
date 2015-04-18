@@ -59,12 +59,6 @@ class ProblemObject {
 			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		// sanitize strings
-		$this->title = filter_var($this->title, FILTER_SANITIZE_STRING);
-		$this->description = strip_tags($this->description);
-		$this->description = str_replace('\n', '<br />', $this->description); //TODO make spacing work better
-		$this->shorthand = filter_var($this->shorthand, FILTER_SANITIZE_STRING);
-
 		// insert problem into db
 		$stmt->bind_param('isssi', $this->creator, $this->title, $this->description, $this->shorthand, $this->category);
 		$stmt->execute();
