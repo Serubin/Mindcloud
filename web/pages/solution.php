@@ -1,4 +1,4 @@
-<div id="solution">
+<div class="project" id="solution">
 	<!-- begin head -->
 	<div class="row" id="header">
 		<div class="small-12 medium-8 columns" id="banner">

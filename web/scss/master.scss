@@ -6,12 +6,14 @@
 /* Mindcloud globals */
 @import "mindcloud";
 
+/* Includes */
+@import "discussion";
+@import "project";
 /* Pages */
 @import "splash";
 @import "dashboard";
 @import "problem";
 @import "solution";
-@import "foundation-icons";
 
 
 // fonts

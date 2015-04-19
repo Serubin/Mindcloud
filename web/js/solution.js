@@ -44,8 +44,8 @@ function solution(url){
 		var params = {pid: id, vote: -1};
 		req.send(params, function(){
 			log.debug("Problem", "User down voted problem " + id);
-			$("#problem_upvotes").removeClass("problem_vote_hover");
-			$("#problem_downvotes").addClass("problem_vote_hover");
+			$("#problem_upvotes").removeClass("project_vote_hover");
+			$("#problem_downvotes").addClass("project_vote_hover");
 		});
 	});
 	
@@ -55,8 +55,8 @@ function solution(url){
 		var params = {pid: id, vote: 1};
 		req.send(params, function(){
 			log.debug("Problem", "User up voted problem " + id);
-			$("#problem_downvotes").removeClass("problem_vote_hover");
-			$("#problem_upvotes").addClass("problem_vote_hover");
+			$("#problem_downvotes").removeClass("project_vote_hover");
+			$("#problem_upvotes").addClass("project_vote_hover");
 		});
 	})
 	// new thread listener
@@ -137,9 +137,9 @@ function populatePage(data){
 	// set vote count and vote status if set
 	log.debug("problem", data.current_user_vote);
 	if(data.current_user_vote < 0) {
-		$("#problem_downvotes").addClass("problem_vote_hover");
+		$("#problem_downvotes").addClass("project_vote_hover");
 	} else if(data.current_user_vote > 0) { 
-		$("#problem_upvotes").addClass("problem_vote_hover");
+		$("#problem_upvotes").addClass("project_vote_hover");
 	}
 
 	// set popuate related projects
