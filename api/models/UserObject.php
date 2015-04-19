@@ -302,6 +302,7 @@ class UserObject
 		if($stmt->num_rows != 1){
 			throw new UserException("More than one row returned", "VERIFY");
 		}
+
 		// Returns true false based on database
 		return ($verified === 1) ? true : false;
 	}

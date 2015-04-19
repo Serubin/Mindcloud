@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: dev_greymatters
 -- ------------------------------------------------------
--- Server version	5.6.23
+-- Server version 5.6.23
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -277,6 +277,7 @@ CREATE TABLE `threads` (
   `subject` varchar(255) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `problem_id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL,
   `status` tinyint(2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=latin1;

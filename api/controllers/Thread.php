@@ -8,6 +8,9 @@
  * to one forum.
  ******************************************************************************/
 
+require_once("models/ThreadObject.php");
+require_once("models/PostObject.php");
+
 class Thread
 {
 	private $_params;
@@ -27,21 +30,32 @@ class Thread
 		try {
 
 			// check for required parameters
-			if (!isset($this->_params['header'], $this->_params['body'], $this->_params['problem_id'], $_SESSION['uid'])) {
+			if (!isset( $_SESSION['uid'] , $this->_params['problem_id'], $this->_params['subject'], $this->_params['body'])) {
+				error_log(json_encode($this->_params));
 				throw new ThreadException("unset vars; cannot create thread.", __FUNCTION__ );
 			}
 
-			// create thread
+			// sanitize
+			$subject = filter_var($this->_params['subject'], FILTER_SANITIZE_STRING);
+			$body = filter_var($this->_params['body'], FILTER_SANITIZE_STRING);	
+
+			// create thread object
 			$new_thread = new ThreadObject($this->_mysqli);
-			$new_thread->creator = $_SESSION['uid'];
-			$new_thread->heading = $this->_params['header'];
-			$new_thread->body = $this->_params'body'];
-			return $new_thread->create();
+			$new_thread->op = $_SESSION['uid'];
+			$new_thread->subject = $subject;
+			$new_thread->body = $body;
+			$new_thread->problem_id = $this->_params['problem_id'];
+			$new_thread->create();
+
+			// return success
+			return array(
+				"thread_id" => $new_thread->id,
+				"post_id" => $new_thread->first_post->id
+			);
 
 		} catch (ThreadException $e) {
-
+			return $e;
 		}
-		
 	}
 
 	/**
@@ -58,6 +72,28 @@ class Thread
 	 */
 	public function loadThread() {
 
+		try {
+
+			if (!isset($this->_params['id'])) {
+				throw new ThreadException("Failed to load thead, no id provided", __FUNCTION__);
+			}
+
+			// load the thread
+			$thread = new ThreadObject($this->_mysqli);
+			$thread->id = $this->_params['id'];
+			$thread->loadPreview();
+
+			$result = Array (
+				"id" => $thread->id,
+				"subject" => $thread->subject,
+				"body" => $thread->first_post->body
+			);
+
+			return $result;
+
+		} catch (Exception $e) {
+			return $e;
+		}
 
 	}
 

@@ -7,49 +7,13 @@
 
 function dashboard() {
 
+	window.document.title = "Mindcloud: Dashboard"
+
 	// handle on content container
 	var $problems = $('#container');
 
 	// initial load
 	loadDashboard();
-
-	// initalize tag handler
-	$('#tag_container').tagsInput({
-
-		// New tag callback
-		'onAddTag': function(tag){
-			// request the tag id
-			var tag_check_request = new APICaller("tag", "identify");
-			tag_check_request.send({
-				identifier: tag
-			}, function (result) {
-				// set the retrieved id as the element id of the tag
-				console.log(result);
-				$('#tag_container').setId(tag, result);
-			});
-		}
-	});
-	
-	// Problem creation submission listener
-	$('#submit_problem').on('valid', function() {
-		$("#tag_container").getAllTags();
-		var req = new APICaller('problem', 'create');
-		var params = {
-			title: $("#form_problem_statement").val(), 
-			description:$("#form_problem_desc").val(), 
-			tags: $("#tag_container").getAllTags(),
-			category: $("#form_problem_cat").val()
-		};
-		req.send(params, function(result) {
-				if (result) {
-					$("#create_problem_modal").foundation('reveal', 'close');
-					loadDashboard();
-
-				}
-			});
-	}).on('invalid', function() {
-		//problem_tags.getAllTags();
-	});
 
 	/**
 	 * Sets up the isotope container and loads inital content
@@ -57,7 +21,7 @@ function dashboard() {
 	function loadDashboard() {
 
 		// initialize isotope
-		$problems.isotope({
+		/*$problems.isotope({
 
 		  itemSelector : '.isotope-item',
 		  layoutMode : 'masonry',
@@ -65,7 +29,7 @@ function dashboard() {
 		  	columnWidth: 50
 		  }
 		  // options...
-		});
+		});*/
 
 		// TODO: This stuff will be useful for sorting problems
 		// filter items when filter link is clicked
@@ -155,17 +119,25 @@ function dashboard() {
 	}
 
 
-	// Problem create form
-	$(document).foundation({
-		abide: {
-			validators: {
-				tagsValid: function(el, required, parent) {
-					return el.value.split(",").length >= 5;
-				}
-			}
-		}
-	});
-	$(document).foundation('reflow');
+	/** TEMPORARY 
+	 * test for discussion div
+	 */
+	 var problem_id = 0;
+
+	 var $disc_container = $("#discussion_container");
+	 $disc_container.Discussion();
+
+	 // set up thread creator
+	 $("#create_thread").click(function (event) {
+	 	if ($("#thread_test_title").val().length > 0 && $("#thread_test_body").val().length > 0)
+	 	$disc_container.addThread(problem_id, $("#thread_test_title").val(), $("#thread_test_body").val());
+	 });
+	 $("#create_post").click(function (event) {
+	 	if ($("#post_test").val() > 0 ) {
+	 		$disc_container.addPost(problem_id, $("#post_test").val());
+	 	}
+	 });
+
 }
 
 function predashboard(url){

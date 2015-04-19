@@ -20,18 +20,11 @@ function login(){
 		}
 	});
 
+	window.document.title = "Mindcloud: Login";
+
 	$("#reload-captcha").click(function(){
 		d = new Date();
 		$("#captcha-img").attr("src","/assets/images/captcha.php?"+d);
-	});
-
-	/**
-	 * Redirect user to the app if already logged in
-	 */
-	var req = new APICaller("user", "check");
-	req.send({}, function (result) {
-		if (result)
-			ph.pageRequest("dashboard"); // loads dash
 	});
 
 	/**

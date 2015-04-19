@@ -49,10 +49,32 @@ class Problem
 			$problem->tags = $this->_params['tags'];
 			$problem->category = $this->_params['category'];
 
-			// only set the shorthand if given
-			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
+			error_log($problem->description);
+
+			// sanitize strings
+			$problem->title = filter_var($problem->title, FILTER_SANITIZE_STRING);
+			$problem->description = strip_tags($problem->description);
+			//$problem->description = str_replace("\n\n", "[[#line#end#]]", $problem->description); //TODO make spacing work better
+			$problem->shorthand = filter_var($problem->shorthand, FILTER_SANITIZE_STRING);
+			error_log($problem->description);
+
+			if (isset($this->_params['shorthand'])) {
+				$problem->shorthand = $this->_params['shorthand']; // Uses user shorthand
+				if(!$problem->validateShorthand()){
+					throw new ProblemException("shorthand unavalible", __FUNCTION__);
+				}
+			} else { 
+				// Creates shorthand
+				$problem->shorthand = preg_replace("/[^ \w]+/", "", $problem->title); // Removes scary characters
+				$problem->shorthand = str_replace(" ", "-", $problem->shorthand); // Removes spacy characters (always forgettin')
+				$problem->shorthand = strtolower($problem->shorthand); // Get's ride of those cocky captials.
+				$problem->shorthand = substr($problem->shorthand,0 ,200); // Shortens the fatter of the bunch.
+				if(!$problem->validateShorthand()){
+					$problem->shorthand = $problem->shorthand . substr(md5($problem->shorthand),0, 4); // Makes unquif if not?
+				}
+			}
 			
-			return $problem->create();
+			return $return = $problem->create() ? $problem->shorthand : false;;
 
 		} catch (ProblemException $e) {
 			return $e;
@@ -74,6 +96,23 @@ class Problem
 
 		return $problem->id;
 	}
+
+
+	/**
+	 * getShorthandProblem()
+	 * Loads shorthand from id
+	 */
+	public function getShorthandProblem(){
+		if (!isset($this->_params['id'])) {
+			throw new ProblemException("Could not load problem shorthand; no id provided.", __FUNCTION__);
+		}
+
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->id= $this->_params['id'];
+		$problem->getShorthand();
+
+		return $problem->shorthand;
+	}
 	/**
 	 * loadProblem()
 	 * Function for loading content of problem page.
@@ -85,10 +124,11 @@ class Problem
 				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
 			}
 
+			// initialize problem object
 			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
 
 			// inflate the problem with its own information
-			$problem->id = $this->_params['id'];
 			$problem->loadFull();
 
 			return Array(
@@ -100,7 +140,9 @@ class Problem
 				"created" => $problem->created,
 				"tags" => $problem->tags,
 				"trial_no" => $problem->trial_no,
-				"score" => $problem->score
+				"score" => $problem->score,
+				"threads" => $problem->threads,
+				"current_user_vote" => $problem->current_user_vote
 			);
 
 		} catch (ProblemException $e) {
@@ -117,21 +159,20 @@ class Problem
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSON['uid'])) {
-				throw new Exception("No problem id given", __FUNCTION__);
+			if (!isset($this->_params['pid'], $this->_params['vote'], $_SESSION['uid'])) {
+				throw new ProblemException("Unset vars: pid, vote", __FUNCTION__);
 			}
 
 			// validate vote value by taking absolute value
-			if (abs($this->_params['vote']) != UPVOTE) {
-				throw new Exception("Invalid vote passed", __FUNCTION__);
+			if ($this->_params['vote'] != UPVOTE && $this->_params['vote'] != DOWNVOTE) {
+				throw new ProblemException("Invalid vote passed", __FUNCTION__);
 			}
 
 			// submit vote
-			$problem = new ProblemObject($_mysqli);
-			$problem->id = $this->_params['problem_id'];
-			$problem->creator = $_SESSION['uid'];
-			$problem->vote(UPVOTE);
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['pid'];
 
+			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
 		} catch (ProblemException $e) {
 			return $e;
 		}
