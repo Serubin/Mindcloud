@@ -174,7 +174,7 @@ div.tagsinput div {
     background-color: $secondary-color;
   }
 
-  .row:hover {
+  .problem-statement:hover {
     background-color: $secondary-color-dark;
   }
 
@@ -190,13 +190,13 @@ div.tagsinput div {
     line-height: $problem-height / 2; 
     text-align: center;
   }
+  
+  .vote:hover {
+    background-color: $secondary-color-dark;
+  }
 
   .problem-button {    
     font: 32px !important;
-  }
-
-  .problem-btn:hover {
-    background: $secondary-color-dark;
   }
 
   button {
@@ -237,11 +237,18 @@ div.tagsinput div {
         a:hover {
           color: $secondary-color;
         }
+
+
     }
+  }
   
-    .dropdown.open {
-      display: block;
-      z-index: 100;
-    }
+  .dropdown.open {
+    display: block;
+    z-index: 100;
+  }
+
+  .selected {
+    background-color: $secondary-color-dark;
+    border: none;
   }
 }

@@ -96,12 +96,31 @@ function dashboard() {
 				// display problems from request
 				repopulateProblems(result.problems);
 
+				// add votes
+				$.each(result.votes, function (i, value) {
+
+					// get what the vote is
+					var voteClass;
+					switch (value[1]) {
+						case 1:
+							voteClass = ".upvote";
+							break;
+						case -1:
+							voteClass = ".downvote";
+							break;
+						default:
+							alertHandler("alert", "Received an invalid vote");
+							break;
+					}
+
+					$problem = $("#" + value[0] + ".problem");
+					$problem.addClass("voted");
+					$problem.find(voteClass).addClass("selected");
+
+
+				});
+
 		});
-	}
-
-	function onComplete() {
-
-		//$(document).resize();
 	}
 
 	function reloadProblems() {
@@ -137,7 +156,7 @@ function dashboard() {
 				.append(
 					// vote button containers
 					$('<div></div>', {class: 'small-2 column voter'})
-						.append( $("<div></div>", {class:'problem-btn vote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
+						.append( $("<div></div>", {class:'problem-btn vote upvote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
 						.append( $("<div></div>", {class:'problem-btn flag'}).html("<i class='fi-flag'></i></div>")
 							.append( $("<div></div>", {class: "dropdown"})
 								.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
@@ -147,26 +166,13 @@ function dashboard() {
 									)
 							)
 						)
-						.append( $("<div></div>", {class:'problem-btn vote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
+						.append( $("<div></div>", {class:'problem-btn vote downvote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
 					)
 				.append(
 					// description, etc. container
 					$('<div></div>', {class: 'small-9 column problem-statement'})
 						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
 				)
-				//.append($('<div></div>').html("...").append("<div></div>"))
-				/*.append( $('<div></div>', {class: 'small-1 column problem-btn'}).html(
-
-							'<a href="#" data-dropdown="drop_' + value[0] + '" aria-controls="drop_' + value[0] + '" aria-expanded="false" class="button dropdown"></button><br>' +
-							'<ul id="drop_' + value[0] + '" data-dropdown-content class="f-dropdown" aria-hidden="true">' +
-								'<li><a href="#">This is a link</a></li>' +
-								'<li><a href="#">This is another</a></li>' +
-								'<li><a href="#">Yet another</a></li>' +
-							'</ul>'
-
-
-							)
-				)*/
 			);
 
 			$problems.append(new_problems[i]);
@@ -191,19 +197,30 @@ function dashboard() {
 	* problem events
 	*/
 	$(document).on("click", ".vote", function (event) {
-		console.log("voting for " + $(this).parent().parent().parent().attr('id') + " ...");
-		var req = new APICaller("problem", "vote");
-		req.send({
-			vote: $(this).attr("data-value"),
-			problem_id: $(this).parent().parent().parent().attr('id')
-		}, function (result) {
-			if (result) {
-				$(this).css("background-color", "black");
-			}
-			else {
-				alert("failed");
-			}
-		});	
+
+		var $btn = $(this);
+		var $parent = $(this).parent().parent().parent();
+		var oppositeVote = ($btn.hasClass("upvote")) ? ".downvote" : ".upvote";
+
+		// only submit the vote if the user has not voted already
+		if (!$btn.hasClass("selected")) {
+			var req = new APICaller("problem", "vote");
+			req.send({
+				vote: $(this).attr("data-value"),
+				problem_id: $parent.attr('id')
+			}, function (result) {
+				if (result) {
+					$btn.addClass("selected");
+					$parent.addClass("voted");
+					
+					// deselect the opposite vote button
+					$parent.find(oppositeVote).removeClass("selected");
+				}
+				else {
+					console.log(" vote submit failed");
+				}
+			});
+		}
 	});
 
 	$(document).on("click", ".flag", function(event) {
@@ -212,6 +229,7 @@ function dashboard() {
 		if (!$menu.hasClass('open')) {
 			$("body").append($("<div></div", {class: "overlay"}));
 			$menu.addClass("open");
+			$(this).addClass("selected");
 		}
 	});
 
@@ -219,12 +237,13 @@ function dashboard() {
 
 		console.log("overlay clicked");
 		$(".dropdown").removeClass('open');
+		$(".dropdown").parent().removeClass("selected");
 		$('.overlay').remove();
 	});
 
-	$(document).on('click', '.problem', function (event) {
+	$(document).on('click', '.problem-statement', function (event) {
 
-		ph.pageRequest("/problem/" + $(this).attr('data-title'));
+		ph.pageRequest("/problem/" + $(this).parent().parent().attr('data-title'));
 	});
 }
 
