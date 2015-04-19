@@ -6,14 +6,6 @@
 	}
 }
 
-#header,#info_container,.discussions-parent{
-}
-
-.discussions-parent,#info_container{
-	margin-right:5px;
-	margin-left:5px;
-}
-
 #discussions_container {
 	width: 100%;
 	height: 200px;
@@ -98,18 +90,6 @@
 		}
 	}
 
-}
-
-#info_container {
-	width:auto;
-}
-
-#meta_action_menu {
-	height: 20px;
-}
-
-.problem_vote_hover {
-	background-color: $primary-color-dark;
 }
 
 
