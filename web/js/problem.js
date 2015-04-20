@@ -89,6 +89,48 @@ function problem(url){
 			$discussions.addPost
 		}
 	})*/
+
+
+	/**
+	 * populatePage()
+	 * Dynamicaly adds in data to page
+	 */
+	function populatePage(data){
+		// show create solution
+		$("#create_solution").css("display", "");
+
+		// set subject
+		window.document.title = "Problem: " + data.title;
+		$("#banner #title").html(data.title);
+
+		// set description
+		$("#description").html(wiky.process(data.description, {}));
+
+		// set contributors
+		$("#contributors").html("");
+		$.each(data.contributors, function(key, value){
+			$("#contributers").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
+		});
+
+		// set vote count and vote status if set
+		log.debug("problem", data.current_user_vote);
+		if(data.current_user_vote < 0) {
+			$("#problem_downvotes").addClass("project_vote_hover");
+		} else if(data.current_user_vote > 0) { 
+			$("#problem_upvotes").addClass("project_vote_hover");
+		}
+
+		// set popuate related projects
+
+
+		
+
+
+		// add threads and posts
+		$.each(data.threads, function(i, value) {
+			$("#discussions_container").loadThread(value);
+		});
+	}
 }
 
 function preproblem(url){
@@ -115,44 +157,4 @@ function preproblem(url){
 		});
 		// fetch shorthand from id
 	}
-}
-
-/**
- * populatePage()
- * Dynamicaly adds in data to page
- */
-function populatePage(data){
-	console.log(data);
-	// show create solution
-	$("#create_solution").css("display", "");
-
-	// set subject
-	window.document.title = "Problem: " + data.title;
-	$("#banner #title").html(data.title);
-
-	// set description
-	$("#description").html(wiky.process(data.description, {}));
-
-	// set contributors
-	$("#contributors").html("");
-	$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
-
-	// set vote count and vote status if set
-	log.debug("problem", data.current_user_vote);
-	if(data.current_user_vote < 0) {
-		$("#problem_downvotes").addClass("project_vote_hover");
-	} else if(data.current_user_vote > 0) { 
-		$("#problem_upvotes").addClass("project_vote_hover");
-	}
-
-	// set popuate related projects
-
-
-	
-
-
-	// add threads and posts
-	$.each(data.threads, function(i, value) {
-		$("#discussions_container").loadThread(value);
-	});
 }

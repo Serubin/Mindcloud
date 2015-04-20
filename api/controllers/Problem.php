@@ -131,19 +131,7 @@ class Problem
 			// inflate the problem with its own information
 			$problem->loadFull();
 
-			return Array(
-				"id" => $problem->id,
-				"title" => $problem->title,
-				"shorthand" => $problem->shorthand,
-				"description" => $problem->description,
-				"creator" => Array("user" => $problem->creator, "association" => "creator"),
-				"created" => $problem->created,
-				"tags" => $problem->tags,
-				"trial_no" => $problem->trial_no,
-				"score" => $problem->score,
-				"threads" => $problem->threads,
-				"current_user_vote" => $problem->current_user_vote
-			);
+			return $problem->toArray();
 
 		} catch (ProblemException $e) {
 			return $e;

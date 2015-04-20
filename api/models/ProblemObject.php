@@ -19,6 +19,7 @@ class ProblemObject {
 	public $created;
 	public $tags;
 	public $trial_no;
+
 	public $score;
 	public $current_user_vote;
 	// TODO: activity
@@ -85,7 +86,6 @@ class ProblemObject {
 	 * Loads all of the necessary problem data for displaying on a problem page.
 	 */
 	public function loadFull() {
-
 		// try to load problem with an id
 		if (!isset($this->id, $_SESSION['uid'])) {
 			throw new ProblemException("Unset variable: ID", __FUNCTION__);
@@ -121,7 +121,7 @@ class ProblemObject {
 		$this->creator->load();
 
 		// set score
-		$this->getScore();
+		$this->scor = $this->getScore();
 
 		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "PROBLEM", $this->id, $_SESSION['uid']);
 
@@ -314,5 +314,21 @@ class ProblemObject {
 		}
 
 		$this->threads = $result;
+	}
+
+	public function toArray(){
+		return Array(
+			"id" => $this->id,
+			"title" => $this->title,
+			"shorthand" => $this->shorthand,
+			"description" => $this->description,
+			"contributors" => Array(Array("user" => $this->creator, "association" => "creator")),
+			"created" => $this->created,
+			"tags" => $this->tags,
+			"trial_no" => $this->trial_no,
+			"score" => $this->score,
+			"threads" => $this->threads,
+			"current_user_vote" => $this->current_user_vote
+		);
 	}
 }
