@@ -211,11 +211,7 @@ class User
 			$user->uid = $this->_params['uid'];
 			$user->load();
 
-			return Array ( 
-				"first_name" => $user->first_name,
-				"last_name" => $user->last_name,
-				"join_date" => $user->join_date,
-			);
+			return $user->toArray();
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -236,13 +232,7 @@ class User
 			$user->uid = $_SESSION['uid'];
 			$user->load();
 
-			return Array (
-				"first_name" => $user->first_name,
-				"last_name" => $user->last_name,
-				"join_date" => $user->join_date,
-				"email" => $user->email,
-				"notification_hash" => $user->notification_hash,
-			);
+			return $user->toConfidentialArray();
 		} catch (Exception $e){
 			return $e;
 		}
