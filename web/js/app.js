@@ -95,6 +95,11 @@ $(function(){
 				tags: $("#tag_container").getAllTags(),
 				category: $("#form_problem_cat").val()
 			};
+
+			if($("#form_problem_shorthand").val()) {
+				params["shorthand"] = $("#form_problem_shorthand").val();
+			}
+			
 			req.send(params, function(result) {
 					if (result) {
 						$("#pose_problem_modal").foundation('reveal', 'close');

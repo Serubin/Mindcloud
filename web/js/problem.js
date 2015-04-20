@@ -49,6 +49,7 @@ function problem(url){
 			log.debug("Problem", "User down voted problem " + problem_id);
 			$("#problem_upvotes").removeClass("project_vote_hover");
 			$("#problem_downvotes").addClass("project_vote_hover");
+			getScore();
 		});
 	});
 	
@@ -60,6 +61,7 @@ function problem(url){
 			log.debug("Problem", "User up voted problem " + problem_id);
 			$("#problem_downvotes").removeClass("project_vote_hover");
 			$("#problem_upvotes").addClass("project_vote_hover");
+			getScore();
 		});
 	})
 	// new thread listener
@@ -119,6 +121,8 @@ function problem(url){
 			$("#problem_upvotes").addClass("project_vote_hover");
 		}
 
+		// set score
+		$("#score").html(data.score);
 		// set popuate related projects
 
 
@@ -129,6 +133,14 @@ function problem(url){
 		$.each(data.threads, function(i, value) {
 			$("#discussions_container").loadThread(value);
 		});
+	}
+
+	function getScore() {
+		var req = new APICaller("problem", "score");
+		var params = {id: problem_id};
+		req.send(params, function(result){
+			$("#score").html(result);
+		})
 	}
 }
 

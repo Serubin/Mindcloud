@@ -4,7 +4,7 @@
  * Authors: Solomon Rubin, Michael Shullick
  * ©mindcloud
  * 1 February 2015
- * Model for the object representation of a solution idea.
+ * Model for the object representation of a problem idea.
  ******************************************************************************/
 
 require_once("models/ProblemObject.php");
@@ -58,20 +58,18 @@ class Problem
 			$problem->shorthand = filter_var($problem->shorthand, FILTER_SANITIZE_STRING);
 			error_log($problem->description);
 
-			if (isset($this->_params['shorthand'])) {
-				$problem->shorthand = $this->_params['shorthand']; // Uses user shorthand
-				if(!$problem->validateShorthand()){
-					throw new ProblemException("shorthand unavalible", __FUNCTION__);
-				}
-			} else { 
-				// Creates shorthand
-				$problem->shorthand = preg_replace("/[^ \w]+/", "", $problem->title); // Removes scary characters
-				$problem->shorthand = str_replace(" ", "-", $problem->shorthand); // Removes spacy characters (always forgettin')
-				$problem->shorthand = strtolower($problem->shorthand); // Get's ride of those cocky captials.
-				$problem->shorthand = substr($problem->shorthand,0 ,200); // Shortens the fatter of the bunch.
-				if(!$problem->validateShorthand()){
-					$problem->shorthand = $problem->shorthand . substr(md5($problem->shorthand),0, 4); // Makes unquif if not?
-				}
+			if (isset($this->_params['shorthand'])) { // Uses user shorthand
+				$problem->shorthand = $this->_params['shorthand']; 
+			} else {  // Creates shorthand from title
+				$problem->shorthand = $problem->title; 
+			}
+
+			$problem->shorthand = preg_replace("/[,!@#$%^&*()=\[\]{};:\'\"<>.,\/?\\~`]+/", "", $problem->shorthand); // Removes scary characters
+			$problem->shorthand = str_replace(" ", "-", $problem->shorthand); // Removes spacy characters (always forgettin')
+			$problem->shorthand = strtolower($problem->shorthand); // Get's ride of those cocky captials.
+			$problem->shorthand = substr($problem->shorthand,0 ,200); // Shortens the fatter of the bunch.
+			if(!$problem->validateShorthand()){
+				$problem->shorthand = $problem->shorthand . substr(md5($problem->shorthand),0, 4); // Makes unquif if not?
 			}
 			
 			return $return = $problem->create() ? $problem->shorthand : false;;
@@ -162,6 +160,23 @@ class Problem
 
 			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
 		} catch (ProblemException $e) {
+			return $e;
+		}
+	}
+
+	public function scoreProblem(){
+		try {
+			// Checks that all required post variables are set
+			if (!isset($this->_params['id'])) {
+				error_log(json_encode($this->_params));
+				throw new ProblemException("Unset vars", __FUNCTION__);
+			}
+
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
+
+			return $problem->getScore();
+		} catch (Exception $e) {
 			return $e;
 		}
 	}

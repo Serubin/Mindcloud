@@ -135,7 +135,7 @@ function solution(url){
 		var params = {id: id};
 		req.send(params, function(result){
 			$("#score").html(result);
-		})
+		});
 	}
 }
 
