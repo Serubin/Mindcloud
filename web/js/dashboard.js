@@ -157,12 +157,12 @@ function dashboard() {
 					// vote button containers
 					$('<div></div>', {class: 'small-2 column voter'})
 						.append( $("<div></div>", {class:'problem-btn vote upvote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
-						.append( $("<div></div>", {class:'problem-btn flag'}).html("<i class='fi-flag'></i></div>")
+						.append( $("<div></div>", {class:'problem-btn flag-reveal'}).html("<i class='fi-flag'></i></div>")
 							.append( $("<div></div>", {class: "dropdown"})
 								.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
-									.append($("<li></li>").html('<a class="flag-innapropro href="#">innapropriate</a>'))
-									.append($("<li></li>").html('<a class="flag-duplicate" href="#">duplicate</a>'))
-									.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
+									.append($("<li></li>").html('<a data-value="1" class="flag-val" href="#">duplicate</a>'))
+									.append($("<li></li>").html('<a data-value="2" class="flag-val" href="#">innapropriate</a>'))
+									//.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
 									)
 							)
 						)
@@ -199,7 +199,7 @@ function dashboard() {
 	$(document).on("click", ".vote", function (event) {
 
 		var $btn = $(this);
-		var $parent = $(this).parent().parent().parent();
+		var $parent = $(this).parents(".problem");
 		var oppositeVote = ($btn.hasClass("upvote")) ? ".downvote" : ".upvote";
 
 		// only submit the vote if the user has not voted already
@@ -223,7 +223,8 @@ function dashboard() {
 		}
 	});
 
-	$(document).on("click", ".flag", function(event) {
+	// show flag menu
+	$(document).on("click", ".flag-reveal", function(event) {
 
 		$menu = $(this).children(".dropdown");
 		if (!$menu.hasClass('open')) {
@@ -233,6 +234,7 @@ function dashboard() {
 		}
 	});
 
+	// hiding flag menu
 	$(document).on('click', ".overlay", function (event) {
 
 		console.log("overlay clicked");
@@ -241,9 +243,33 @@ function dashboard() {
 		$('.overlay').remove();
 	});
 
+	// Link to problem pages
 	$(document).on('click', '.problem-statement', function (event) {
 
 		ph.pageRequest("/problem/" + $(this).parent().parent().attr('data-title'));
+	});
+
+	// flag actions
+	$(document).on('click', ".flag-val", function (event) {
+
+		var problem_id = $(this).parents(".problem").attr('id');
+
+		var req = new APICaller("problem", "flag");
+
+		var params = {
+			problem_id: problem_id, 
+			flag: $(this).attr('data-value')
+		};
+
+		req.send(params, function (result) {
+				if (result) {
+					$(".overlay").click();
+					alertHandler("success", "This problem has been flagged for review.");
+				}
+				else {
+					console.log("Create flag failed");
+				}
+			})
 	});
 }
 

@@ -13,7 +13,13 @@ class Flag {
 	 * addFlag
 	 * Creates a flag in the database associated with the given content.
 	 */ 
-	public static addFlag( $mysqli, $ctype, $cid, $uid, $flag_val ) {
-		if (!$stmt = $mysqli->prepare("INSERT INTO `flags` "))
+	public static function addFlag( $mysqli, $cid, $uid, $flag_val ) {
+		if (!$stmt = $mysqli->prepare("INSERT INTO `flags` (`uid`, `cid`, `value`)  VALUES (?, ?, ?)")) {
+			throw new FlagException("prepare failed: " . $this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("iii", $uid, $cid, $flag_val);
+		$stmt->execute();
+		return true;
 	}
 }
