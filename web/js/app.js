@@ -15,10 +15,6 @@ $(function(){
 	// Loads page handler
 	ph = new pageHandler({"pageLoc": "/pages/", "animations": true});
 
-	function page_handler_global(){
-		$("#create_solution").css("display", "none");
-	}
-
 	// if index page
 	if(ph.parseUrl()[0] == ""){
 		log.debug("App", "No start page, redirecting");
@@ -34,6 +30,7 @@ $(function(){
 		if(result) {
 			connectNotifications();
 			initPoseProblem();
+			initCreateSolution();
 		}
 	});
 
@@ -44,7 +41,6 @@ $(function(){
   		}
 	});
 
-		
 	function connectNotifications(){
 		log.debug("Notification Listener", "Starting!")
 		var req = new APICaller("user", "loadConfidential");
@@ -111,16 +107,44 @@ $(function(){
 		});
 
 			// Problem create form
-	$(document).foundation({
-		abide: {
-			validators: {
-				tagsValid: function(el, required, parent) {
-					return el.value.split(",").length >= 5;
+		$(document).foundation({
+			abide: {
+				validators: {
+					tagsValid: function(el, required, parent) {
+						return el.value.split(",").length >= 5;
+					}
 				}
 			}
-		}
-	});
-	
-	$(document).foundation('reflow');
+		});
+		
+		$(document).foundation('reflow');
+	}
+
+	function initCreateSolution(){
+		
+		// Problem creation submission listener
+		$('#submit_solution').on('valid', function() {
+			var req = new APICaller('solution', 'create');
+			var params = {
+				problem_id: problem_id,
+				title: $("#form_solution_statement").val(), 
+				description:$("#form_solution_desc").val(),
+			};
+			req.send(params, function(result) {
+					if (result) {
+						$("#create_solution_modal").foundation('reveal', 'close');
+						$("#submit_solution").trigger("reset");
+						ph.pageRequest("/problem/" + result);
+					}
+				});
+		}).on('invalid', function() {
+			//problem_tags.getAllTags();
+		});
+		
+		$(document).foundation('reflow');
 	}
 });
+
+function page_handler_global(){
+	$("#create_solution").css("display", "none", "!important");
+}

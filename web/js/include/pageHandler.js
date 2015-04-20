@@ -82,8 +82,10 @@ function pageHandler(args) {
 		log.info("PageHandler", "Loading " + page);
 
 		// Temporary global function
-		if(typeof page_handler_global != "undefined")
+		if(typeof page_handler_global != "undefined") {
+			log.debug(pkg, "Loading global page load handler");
 			page_handler_global();
+		}
 
 		pageLoad(page, callback);
 	}

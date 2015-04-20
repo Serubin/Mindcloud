@@ -30,13 +30,13 @@ class Solution
 	public function createSolution() {
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->_params['problem_id'], $this->_params['shorthand'], $this->_params['title'], 
-				$this->_params['description'], $this->_params['creator'])) {
+			if (!isset($this->_params['problem_id'], $this->_params['title'], 
+				$this->_params['description'], $_SESSION['uid'])) {
 				error_log(json_encode($this->_params));
 				throw new SolutionException("Unset vars", __FUNCTION__);
 			}
 
-			$solution = new SolutionObject();
+			$solution = new SolutionObject($this->_mysqli);
 
 			$problem_id = filter_var($this->_params['problem_id'], FILTER_SANITIZE_NUMBER_INT);
 			$solution->problem_id = $problem_id;
@@ -63,16 +63,13 @@ class Solution
 			$description = strip_tags($this->_params['description']);
 			$solution->description = strip_tags($solution->description);
 
-			$creator = filter_var($this->_params['creator'], FILTER_SANITIZE_NUMBER_INT);
+			$creator = filter_var($_SESSION['uid'], FILTER_SANITIZE_NUMBER_INT);
 			$solution->creator = $creator;
-
-			if(!$solution->validateShorthand())
-				throw new SolutionException("Shorthand exists", __FUNCTION__);
 			
 			$solution->create();
 
 			return true;
-		} catch (Exception $e) {
+		} catch (MindcloudException $e) {
 			return $e;
 		} 
 	}
@@ -108,7 +105,7 @@ class Solution
 
 			return true;
 
-		} catch (Exception $e){
+		} catch (MindcloudException $e){
 			return $e;
 		}
 	}
@@ -135,7 +132,7 @@ class Solution
 			$solution->id = $this->_params['pid'];
 
 			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
-		} catch (Exception $e) {
+		} catch (MindcloudException $e) {
 			return $e;
 		}
 	}
@@ -149,7 +146,7 @@ class Solution
 			}
 			return Vote::fetchScore( $_mysqli, "solution", $this->_params['id'] );
 
-		} catch (Exception $e) {
+		} catch (MindcloudException $e) {
 			return $e;
 		}
 	}
@@ -194,7 +191,7 @@ class Solution
 	 * getIdProblem()
 	 * Loads id from shorthand
 	 */
-	public function getIdSolution()){
+	public function getIdSolution(){
 		try {
 			if (!isset($this->_params['shorthand'])) {
 				throw new SolutionException("Could not load problem id; no shorthand provided.", __FUNCTION__);
@@ -205,7 +202,7 @@ class Solution
 			$solution->getId();
 
 			return $solution->id;
-		} catch (Exception $e) {
+		} catch (MindcloudException $e) {
 			return $e;
 		}
 	}
@@ -226,7 +223,7 @@ class Solution
 			$solution->getShorthand();
 
 			return $problem->shorthand;
-		} catch (Exception $e) {
+		} catch (MindcloudException $e) {
 			return $e;
 		}
 	}

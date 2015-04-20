@@ -100,6 +100,7 @@ var notificationTopbar;
 
 
 			var $solution = createTopbarItem("#","create a solution");
+			$solution.attr("data-reveal-id", "create_solution_modal")
 			$solution.attr("id", "create_solution").css("display", "none");
 			$links.append($solution); //TODO attach/create global pose solution context
 			

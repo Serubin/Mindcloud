@@ -48,17 +48,17 @@ class SolutionObject {
 		$this->shorthand = strtolower($this->shorthand);
 
 		// Submits solution information
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO solutions (`pid`, `shorthand`, `title`, `description`, `creator`) VALUES (?,?,?,?,?)")) {
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO solutions (`pid`, `shorthand`, `title`, `description`) VALUES (?,?,?,?)")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param('isssi', $this->problem_id, $this->shorthand, $this->title, $this->description, $this->creator);
+		$stmt->bind_param('isss', $this->problem_id, $this->shorthand, $this->title, $this->description);
 		$stmt->execute();
 
 		$this->id = $this->_mysqli->insert_id;
 
 		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,'PROBLEM',?,?,?)")) {
-			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
 		$stmt->bind_param("iis", $this->id, $this->creator, Contributors::CREATOR);
@@ -237,7 +237,7 @@ class SolutionObject {
 
 		$stmt->bind_param("s", $this->shorthand);
 		$stmt->execute();
-		$stmt->store_results();
+		$stmt->store_result();
 
 		$rows = $stmt->num_rows;
 

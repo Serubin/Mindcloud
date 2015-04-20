@@ -82,6 +82,37 @@
 			</div> <!-- end pose-a-problem modal -->
 			<!-- create-a-solution modal -->
 			<div id="create_solution_modal" class="reveal-modal" data-reveal>
+				<h2>Create a solution <small id="create_solution_for"> </small></h2>
+				<p class="lead">Fuck your couch.</p>
+
+				<form data-abide="ajax" id="submit_solution">
+
+					<!-- title -->
+				    <div class="statement-field">
+				    	<label>solution statement
+				        	<input id="form_solution_statement" type="text" placeholder="Typing without typing." required/>
+				     	</label>
+				     	<small class="error">What's your solution?</small>
+				    </div>
+				    <!-- shorthand -->
+				    <div class="shorthand-field">
+				    	<label>url
+				    		<input id="form_solution_shorthand" type="text" maxlength="200" />
+				    	</label>
+				    </div>
+				    <!-- description -->
+				    <div class="description-field">
+				     	<label>description
+				        	<textarea id="form_solution_desc" class="small-12 columns" placeholder="All you have to do is think it and Typing without Typing will do it for you." required></textarea>
+				     	</label>
+				     	<small class="error">Please elaborate on your solution</small>
+				    </div>
+
+					<button type="submit" class="button btn-login">create</button>
+
+				   	<!--<a role="button" type="submit" aria-label="submit form" href="#" class="button keep-native">submit</a>-->
+				</form>
+			  <a href="#" class="close-reveal-modal keep-native">&#215;</a>
 			</div>
 		</div>
 	</body>

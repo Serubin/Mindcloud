@@ -4,10 +4,11 @@
  * 13 Febuary 2015
  * Javascript for problem pages
  *****************************************************************************/
+ var problem_id;
+ var problem_title;
+
 function problem(url){
 	// id var for access from all functions
-	var id;
-
 	// get the problem's numeric id
 	var req = new APICaller('problem', 'getId');
 	var params = {shorthand: url[1]};
@@ -26,7 +27,9 @@ function problem(url){
 
 		if (result) {
 			// set id
-			id = result.id;
+			problem_id = result.id;
+			problem_title = result.title;
+			$("#create_solution_for").html(problem_title);
 
 			// Loads problem
 			populatePage(result);
@@ -41,9 +44,9 @@ function problem(url){
 	// downvote listener
 	$("#problem_downvotes").click(function(){
 		var req = new APICaller("problem", "vote");
-		var params = {pid: id, vote: -1};
+		var params = {pid: problem_id, vote: -1};
 		req.send(params, function(){
-			log.debug("Problem", "User down voted problem " + id);
+			log.debug("Problem", "User down voted problem " + problem_id);
 			$("#problem_upvotes").removeClass("project_vote_hover");
 			$("#problem_downvotes").addClass("project_vote_hover");
 		});
@@ -52,9 +55,9 @@ function problem(url){
 	// upvote listener
 	$("#problem_upvotes").click(function(){
 		var req = new APICaller("problem", "vote");
-		var params = {pid: id, vote: 1};
+		var params = {pid: problem_id, vote: 1};
 		req.send(params, function(){
-			log.debug("Problem", "User up voted problem " + id);
+			log.debug("Problem", "User up voted problem " + problem_id);
 			$("#problem_downvotes").removeClass("project_vote_hover");
 			$("#problem_upvotes").addClass("project_vote_hover");
 		});
@@ -74,7 +77,7 @@ function problem(url){
 		$("#discussions_container_toggle").click();
 
 		// add the thread
-		$discussions.createThread(id, subject, body);
+		$discussions.createThread(problem_id, subject, body);
 
 	});
 
