@@ -19,9 +19,10 @@ class SolutionObject {
 	public $title;
 	public $description; // TODO strip tags on submit to filter out html
 	public $created;
-	public $creator;
+	public $contributors;
 	public $status;
 
+	public $score;
 	public $userVote;
 	// TODO
 	// TODO: content handlers
@@ -72,26 +73,65 @@ class SolutionObject {
 	* Loads all of the necessary problem data for displaying on a dedicated page.
 	*/
 	public function loadFull() {
-		// Checks that all required post variables are set
-		if (!isset($this->id)) {
-			throw new SolutionException("unset vars.", __FUNCTION__);
+		// try to load problem with an id
+		if (!isset($this->id, $_SESSION['uid'])) {
+			throw new SolutionException("Unset variable: ID", __FUNCTION__);
 		}
-		// fetches all data for solutions
-		if (!$stmt = $this->_mysqli->prepare("SELECT * FROM solutions WHERE `id` = ?")) {
+
+		// fetch from the db the information about this problem based on its id
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand`, `title`, `description`, `created`, `status`, `current_trial` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
-
 		$stmt->bind_param("i", $this->id);
-		$stmt->execute();
-		$stmt->store_results();
 
-		// stores results from query in variables corresponding to statement
-		$stmt->bind_result($db_id, $this->problem_id, $this->shorthand, $this->title, $this->description, $this->created, $this->creator, $this->status);
+		$stmt->execute();
+		$stmt->store_result();
+
+		if ($stmt->num_rows != 1) {
+			throw new SolutionException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
+		}
+
+		$stmt->bind_result($id, $shorthand, $title, $description, $created, $status, $current_trial);
 		$stmt->fetch();
+
+		// Set this object's member vars
+		$this->shorthand = $shorthand;
+		$this->title = $title;
+		$this->description = $description;
+		$this->created = $created;
+		$this->status = $status;
+		$this->trial_no = $current_trial;
 
 		$stmt->close();
 
-		return true;
+		// Fetch contributors
+		$contributors = Array();
+
+		if (!$stmt = $this->_mysqli->prepare("SELECT `cid`, `uid`, `association` FROM `contributors` WHERE `cid` = ?")) {
+			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+		}
+		$stmt->bind_param("i", $this->id);
+
+		$stmt->execute();
+		$stmt->store_result();
+
+		$stmt->bind_result($cid_db, $uid_db, $db_association);
+
+		while($stmt->fetch()) {
+			$user = new UserObject($this->_mysqli);
+			$user->uid = $uid_db;
+			$user->load();
+
+			array_push($contributors, $user);
+		}
+			
+		// set score
+		$this->score = $this->getScore();
+
+		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "SOLUTION", $this->id, $_SESSION['uid']);
+
+		// get array of afficiliated thread ids
+		$this->getThreads();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /******************************************************************************
- * problem.js
+ * solution.js
  * @author Michael Shullick, Solomon Rubin
  * 13 Febuary 2015
  * Javascript for problem pages
@@ -34,29 +34,29 @@ function solution(url){
 		// if the problem wasn't found, redirect to dashboard
 		else {
 			ph.pageRequest("/dashboard");
-			alertHandler("alert", "Sorry, we couldn't find that problem.");
+			alertHandler("alert", "Sorry, we couldn't find that solution.");
 		}
 	}
 
 	// downvote listener
-	$("#problem_downvotes").click(function(){
+	$("#solution_downvotes").click(function(){
 		var req = new APICaller("solution", "vote");
 		var params = {pid: id, vote: -1};
 		req.send(params, function(){
-			log.debug("Problem", "User down voted problem " + id);
-			$("#problem_upvotes").removeClass("project_vote_hover");
-			$("#problem_downvotes").addClass("project_vote_hover");
+			log.debug("Problem", "User down voted solution " + id);
+			$("#solution_upvotes").removeClass("project_vote_hover");
+			$("#solution_downvotes").addClass("project_vote_hover");
 		});
 	});
 	
 	// upvote listener
-	$("#problem_upvotes").click(function(){
+	$("#solution_upvotes").click(function(){
 		var req = new APICaller("solution", "vote");
 		var params = {pid: id, vote: 1};
 		req.send(params, function(){
 			log.debug("Problem", "User up voted problem " + id);
-			$("#problem_downvotes").removeClass("project_vote_hover");
-			$("#problem_upvotes").addClass("project_vote_hover");
+			$("#solution_downvotes").removeClass("project_vote_hover");
+			$("#solution_upvotes").addClass("project_vote_hover");
 		});
 	})
 	// new thread listener
@@ -86,6 +86,47 @@ function solution(url){
 			$discussions.addPost
 		}
 	})*/
+
+/**
+ * populatePage()
+ * Dynamicaly adds in data to page
+ */
+	function populatePage(data){
+		console.log("DATA YO.");
+		console.log(data);
+		// show create solution
+		$("#create_solution").css("display", "");
+
+		// set subject
+		window.document.title = "Problem: " + data.title;
+		$("#banner #title").html(data.title);
+
+		// set description
+		$("#description").html(wiky.process(data.description, {}));
+
+		// set contributors
+		$("#contributors").html("");
+		$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
+
+		// set vote count and vote status if set
+		log.debug("problem", data.current_user_vote);
+		if(data.current_user_vote < 0) {
+			$("#problem_downvotes").addClass("project_vote_hover");
+		} else if(data.current_user_vote > 0) { 
+			$("#problem_upvotes").addClass("project_vote_hover");
+		}
+
+		// set popuate related projects
+
+
+		
+
+
+		// add threads and posts
+		$.each(data.threads, function(i, value) {
+			$("#discussions_container").loadThread(value);
+		});
+	}
 }
 
 function presolution(url){
@@ -108,48 +149,8 @@ function presolution(url){
 			if(!result)
 				ph.pageRequest("/dashboard");
 
-			ph.pageRequest("/problem/" + result);
+			ph.pageRequest("/solution/" + result);
 		});
 		// fetch shorthand from id
 	}
-}
-
-/**
- * populatePage()
- * Dynamicaly adds in data to page
- */
-function populatePage(data){
-	console.log(data);
-	// show create solution
-	$("#create_solution").css("display", "");
-
-	// set subject
-	window.document.title = "Problem: " + data.title;
-	$("#banner #title").html(data.title);
-
-	// set description
-	$("#description").html(wiky.process(data.description, {}));
-
-	// set contributors
-	$("#contributors").html("");
-	$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
-
-	// set vote count and vote status if set
-	log.debug("problem", data.current_user_vote);
-	if(data.current_user_vote < 0) {
-		$("#problem_downvotes").addClass("project_vote_hover");
-	} else if(data.current_user_vote > 0) { 
-		$("#problem_upvotes").addClass("project_vote_hover");
-	}
-
-	// set popuate related projects
-
-
-	
-
-
-	// add threads and posts
-	$.each(data.threads, function(i, value) {
-		$("#discussions_container").loadThread(value);
-	});
 }

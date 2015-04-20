@@ -157,33 +157,30 @@ class Solution
 	 * content
 	 */
 	public function loadSolution() {
-		if(!isset($this->_params['id']) || !isset($this->_params['shorthand'])) {
-			error_log(json_encode($this->_params));
-			throw new Exception("Unset vars", __FUNCTION__);
-		}
+		try {
+			if (!isset($this->_params['id'])) {
+				throw new SolutionException("Could not load problem; no id provided.", __FUNCTION__);
+			}
 
-		$solution = new SolutionObject();
-
-		if(isset($this->_params['id'])) {
+			// initialize problem object
+			$solution = new SolutionObject($this->_mysqli);
 			$solution->id = $this->_params['id'];
+
+			// inflate the problem with its own information
+			$problem->loadFull();
+
+			return Array(
+				"id" => $solution->id, 
+				"problem_id" => $solution->problem_id, 
+				"shorthand" => $this->shorthand,
+				"title" => $solution->title,
+				"description" => $solution->description,
+				"created" => $solution->created, 
+				"contributors" => $solution->creator
+			);
+		} catch (Exception $e){
+			return $e;
 		}
-
-		if(isset($this->_param['shorthand'])) {
-			$solution->shorthand = $this->_params['shorthand'];
-			$solution->getId();
-		}
-
-		$solution->load();
-
-		if(isset($this->_params['plain-text'])){
-			// TODO parse wiki markup before returning
-		}
-
-		$solutionData = Array("id" => $solution->id, "problem" => $solution->problem_id, "shorthand" => $this->shorthand,
-			"title" => $solution->title, "description" => $solution->description, "created" => $solution->created, 
-			"creator" => $solution->creator);
-
-		return $solutionData;
 	}
 
 	/**
