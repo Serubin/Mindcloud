@@ -51,21 +51,18 @@ class Solution
 			$creator = filter_var($_SESSION['uid'], FILTER_SANITIZE_NUMBER_INT);
 			$solution->creator = $creator;
 
-			if (isset($this->_params['shorthand'])) {
-				$solution->shorthand = $this->_params['shorthand']; // Uses user shorthand
-				if(!$solution->validateShorthand()){
-					throw new ProblemException("shorthand unavalible", __FUNCTION__);
-				}
-			} else { 
-				// Creates shorthand
-				$solution->shorthand = preg_replace("/[^ \w]+/", "", $solution->title); // Removes scary characters
-				$solution->shorthand = str_replace(" ", "-", $solution->shorthand); // Removes spacy characters (always forgettin')
-				$solution->shorthand = strtolower($solution->shorthand); // Get's ride of those cocky captials.
-				$solution->shorthand = substr($solution->shorthand,0 ,200); // Shortens the fatter of the bunch.
-				error_log("!!!!!!!!!!!!" . $solution->shorthand);
-				if(!$solution->validateShorthand()){
-					$solution->shorthand = $solution->shorthand . substr(md5($solution->shorthand),0, 4); // Makes unquif if not?
-				}
+			if (isset($this->_params['shorthand'])) { // Uses user shorthand
+				$solution->shorthand = $this->_params['shorthand']; 
+			} else {  // Creates shorthand from title
+				$solution->shorthand = $solution->title; 
+			}
+
+			$solution->shorthand = preg_replace("/[,!@#$%^&*()=\[\]{};:\'\"<>.,\/?\\~`]+/", "", $solution->shorthand); // Removes scary characters
+			$solution->shorthand = str_replace(" ", "-", $solution->shorthand); // Removes spacy characters (always forgettin')
+			$solution->shorthand = strtolower($solution->shorthand); // Get's ride of those cocky captials.
+			$solution->shorthand = substr($solution->shorthand,0 ,200); // Shortens the fatter of the bunch.
+			if(!$solution->validateShorthand()){
+				$solution->shorthand = $solution->shorthand . substr(md5($solution->shorthand),0, 4); // Makes unquif if not?
 			}
 			
 			$solution->create();

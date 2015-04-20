@@ -130,6 +130,10 @@ $(function(){
 				title: $("#form_solution_statement").val(), 
 				description:$("#form_solution_desc").val(),
 			};
+
+			if($("#form_solution_shorthand").val()) {
+				params["shorthand"] = $("#form_solution_shorthand").val();
+			}
 			req.send(params, function(result) {
 					if (result) {
 						$("#create_solution_modal").foundation('reveal', 'close');
