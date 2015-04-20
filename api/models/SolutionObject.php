@@ -6,7 +6,7 @@
  * This is a file that will describe the standards used for mindcloud.
  * All lines will fit with 80 columns. 
  *****************************************************************************/
-
+require_once "include/contributors.php";
 
 class SolutionObject {
 
@@ -57,11 +57,11 @@ class SolutionObject {
 
 		$this->id = $this->_mysqli->insert_id;
 
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,'PROBLEM',?,?,?)")) {
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `uid`, `association`) VALUES (?,?,?)")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("iis", $this->id, $this->creator, Contributors::CREATOR);
+		$stmt->bind_param("iis", $this->id, $this->creator, Contributors::$CREATOR);
 		$stmt->execute();
 
 		return true;

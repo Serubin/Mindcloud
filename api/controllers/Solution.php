@@ -41,6 +41,16 @@ class Solution
 			$problem_id = filter_var($this->_params['problem_id'], FILTER_SANITIZE_NUMBER_INT);
 			$solution->problem_id = $problem_id;
 
+
+			$title = filter_var($this->_params['title'], FILTER_SANITIZE_STRING);
+			$solution->title = $title;
+
+			$solution->description = strip_tags($this->_params['description']);
+			$solution->description = strip_tags($solution->description);
+
+			$creator = filter_var($_SESSION['uid'], FILTER_SANITIZE_NUMBER_INT);
+			$solution->creator = $creator;
+
 			if (isset($this->_params['shorthand'])) {
 				$solution->shorthand = $this->_params['shorthand']; // Uses user shorthand
 				if(!$solution->validateShorthand()){
@@ -52,24 +62,16 @@ class Solution
 				$solution->shorthand = str_replace(" ", "-", $solution->shorthand); // Removes spacy characters (always forgettin')
 				$solution->shorthand = strtolower($solution->shorthand); // Get's ride of those cocky captials.
 				$solution->shorthand = substr($solution->shorthand,0 ,200); // Shortens the fatter of the bunch.
+				error_log("!!!!!!!!!!!!" . $solution->shorthand);
 				if(!$solution->validateShorthand()){
 					$solution->shorthand = $solution->shorthand . substr(md5($solution->shorthand),0, 4); // Makes unquif if not?
 				}
 			}
-
-			$title = filter_var($this->_params['title'], FILTER_SANITIZE_STRING);
-			$solution->title = $title;
-
-			$description = strip_tags($this->_params['description']);
-			$solution->description = strip_tags($solution->description);
-
-			$creator = filter_var($_SESSION['uid'], FILTER_SANITIZE_NUMBER_INT);
-			$solution->creator = $creator;
 			
 			$solution->create();
 
 			return true;
-		} catch (MindcloudException $e) {
+		} catch (Exception $e) {
 			return $e;
 		} 
 	}
@@ -105,7 +107,7 @@ class Solution
 
 			return true;
 
-		} catch (MindcloudException $e){
+		} catch (Exception $e){
 			return $e;
 		}
 	}
@@ -132,7 +134,7 @@ class Solution
 			$solution->id = $this->_params['pid'];
 
 			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
-		} catch (MindcloudException $e) {
+		} catch (Exception $e) {
 			return $e;
 		}
 	}
@@ -146,7 +148,7 @@ class Solution
 			}
 			return Vote::fetchScore( $_mysqli, "solution", $this->_params['id'] );
 
-		} catch (MindcloudException $e) {
+		} catch (Exception $e) {
 			return $e;
 		}
 	}
@@ -202,7 +204,7 @@ class Solution
 			$solution->getId();
 
 			return $solution->id;
-		} catch (MindcloudException $e) {
+		} catch (Exception $e) {
 			return $e;
 		}
 	}
@@ -223,7 +225,7 @@ class Solution
 			$solution->getShorthand();
 
 			return $problem->shorthand;
-		} catch (MindcloudException $e) {
+		} catch (Exception $e) {
 			return $e;
 		}
 	}

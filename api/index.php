@@ -83,8 +83,8 @@ session_start();
 	catch (Exception $e) {
 		$result['success'] = false;
 		$result['error'] = $e->getMessage();
-		$result['trace'] = $e->stringify();
-		error_log($e->stringify());
+		//$result['trace'] = $e->stringify();
+		error_log($e->getMessage());
 	}
 	
 	// return the result
