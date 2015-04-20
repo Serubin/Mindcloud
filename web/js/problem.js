@@ -113,7 +113,6 @@ function problem(url){
 		});
 
 		// set vote count and vote status if set
-		log.debug("problem", data.current_user_vote);
 		if(data.current_user_vote < 0) {
 			$("#problem_downvotes").addClass("project_vote_hover");
 		} else if(data.current_user_vote > 0) { 

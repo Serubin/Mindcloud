@@ -22,8 +22,8 @@
 			<label >Downvote</label>
 		</a>
 		<a class="item">
-			<i class="fi-flag"></i>
-			<label>Flag</label>
+			<i class="fi-graph-horizontal"></i>
+			<label id="score"></label>
 		</a>
 	</div> <!-- end meta action bar -->
 

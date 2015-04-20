@@ -130,7 +130,7 @@ class Solution
 			$solution = new SolutionObject($this->_mysqli);
 			$solution->id = $this->_params['pid'];
 
-			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
+			return $solution->vote($_SESSION['uid'], $this->_params['vote']);
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -139,12 +139,15 @@ class Solution
 	public function scoreSolution(){
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->_params['id'], $this->_params['vote'])) {
+			if (!isset($this->_params['id'])) {
 				error_log(json_encode($this->_params));
 				throw new SolutionException("Unset vars", __FUNCTION__);
 			}
-			return Vote::fetchScore( $_mysqli, "solution", $this->_params['id'] );
 
+			$solution = new SolutionObject($this->_mysqli);
+			$solution->id = $this->_params['id'];
+
+			return $solution->getScore();
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -167,17 +170,9 @@ class Solution
 			$solution->id = $this->_params['id'];
 
 			// inflate the problem with its own information
-			$problem->loadFull();
+			$solution->loadFull();
 
-			return Array(
-				"id" => $solution->id, 
-				"problem_id" => $solution->problem_id, 
-				"shorthand" => $this->shorthand,
-				"title" => $solution->title,
-				"description" => $solution->description,
-				"created" => $solution->created, 
-				"contributors" => $solution->creator
-			);
+			return $solution->toArray();
 		} catch (Exception $e){
 			return $e;
 		}

@@ -46,6 +46,7 @@ function solution(url){
 			log.debug("Problem", "User down voted solution " + id);
 			$("#solution_upvotes").removeClass("project_vote_hover");
 			$("#solution_downvotes").addClass("project_vote_hover");
+			getScore();
 		});
 	});
 	
@@ -57,6 +58,7 @@ function solution(url){
 			log.debug("Problem", "User up voted problem " + id);
 			$("#solution_downvotes").removeClass("project_vote_hover");
 			$("#solution_upvotes").addClass("project_vote_hover");
+			getScore();
 		});
 	})
 	// new thread listener
@@ -98,7 +100,7 @@ function solution(url){
 		$("#create_solution").css("display", "");
 
 		// set subject
-		window.document.title = "Problem: " + data.title;
+		window.document.title = "Solution: " + data.title;
 		$("#banner #title").html(data.title);
 
 		// set description
@@ -106,26 +108,34 @@ function solution(url){
 
 		// set contributors
 		$("#contributors").html("");
-		$("#contributers").append("<li><small>" + data.creator.association + "</small> " + data.creator.user.first_name + " " +  data.creator.user.last_name + "</li>")
+		$.each(data.contributors, function(key, value){
+			$("#contributers").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
+		});
+
 
 		// set vote count and vote status if set
-		log.debug("problem", data.current_user_vote);
 		if(data.current_user_vote < 0) {
-			$("#problem_downvotes").addClass("project_vote_hover");
+			$("#solution_downvotes").addClass("project_vote_hover");
 		} else if(data.current_user_vote > 0) { 
-			$("#problem_upvotes").addClass("project_vote_hover");
+			$("#solution_upvotes").addClass("project_vote_hover");
 		}
 
+		// set score
+		$("#score").html(data.score);
 		// set popuate related projects
-
-
-		
-
 
 		// add threads and posts
 		$.each(data.threads, function(i, value) {
 			$("#discussions_container").loadThread(value);
 		});
+	}
+
+	function getScore() {
+		var req = new APICaller("solution", "score");
+		var params = {id: id};
+		req.send(params, function(result){
+			$("#score").html(result);
+		})
 	}
 }
 

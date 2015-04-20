@@ -79,7 +79,7 @@ class SolutionObject {
 		}
 
 		// fetch from the db the information about this problem based on its id
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand`, `title`, `description`, `created`, `status`, `current_trial` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid`, `shorthand`, `title`, `description`, `created`, `status`, `current_trial` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 		$stmt->bind_param("i", $this->id);
@@ -88,13 +88,14 @@ class SolutionObject {
 		$stmt->store_result();
 
 		if ($stmt->num_rows != 1) {
-			throw new SolutionException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
+			throw new SolutionException("Unable to fetch solution data: " . $stmt->num_rows . " returned. id: " . $this->id, __FUNCTION__);
 		}
 
-		$stmt->bind_result($id, $shorthand, $title, $description, $created, $status, $current_trial);
+		$stmt->bind_result($id, $pid, $shorthand, $title, $description, $created, $status, $current_trial);
 		$stmt->fetch();
 
 		// Set this object's member vars
+		$this->problem_id = $pid;
 		$this->shorthand = $shorthand;
 		$this->title = $title;
 		$this->description = $description;
@@ -122,16 +123,21 @@ class SolutionObject {
 			$user->uid = $uid_db;
 			$user->load();
 
-			array_push($contributors, $user);
+			array_push($contributors, Array(
+				"association" => $db_association, 
+				"user" => $user
+			));
 		}
-			
+
+		$this->contributors = $contributors;
+
 		// set score
 		$this->score = $this->getScore();
 
 		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "SOLUTION", $this->id, $_SESSION['uid']);
 
 		// get array of afficiliated thread ids
-		$this->getThreads();
+		//$this->getThreads();
 	}
 
 	/**
@@ -144,7 +150,7 @@ class SolutionObject {
 		}
 
 		// fetch from the db the information about this problem
-		if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
+		if (!$stmt = $this->_mysqli("SELECT `pid`, `shorthand`, `title`, `description`, `created`, `creator` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -155,11 +161,12 @@ class SolutionObject {
 			throw new SolutionException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
 		}
 
-		$stmt->bind_result($shorthand, $title, $description, $created, $creator_id);
+		$stmt->bind_result($pid, $shorthand, $title, $description, $created, $creator_id);
 		$stmt->fetch();
 
 
 		// Set this object's member vars
+		$this->problem_id = $pid;
 		$this->shorthand = $shorthand;
 		$this->statement = $title;
 		$this->description = $description;
@@ -207,13 +214,13 @@ class SolutionObject {
 		// Prepares variables
 		$this->shorthand = strtolower($this->shorthand);
 
-		if ($stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM solutions WHERE `shorthand` = ?")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM `solutions` WHERE `shorthand` = ?")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
 		$stmt->bind_param("s", $this->shorthand);
 		$stmt->execute();
-		$stmt->store_results();
+		$stmt->store_result();
 
 		// stores results from query in variables corresponding to statement
 		$stmt->bind_result($db_id, $db_shorthand);
@@ -234,12 +241,12 @@ class SolutionObject {
 	 * upvote
 	 * Enter an upvote for a problem
 	 */
-	public function vote($val) {
-		if (!isset($this->id, $this->creator))
+	public function vote($user, $val) {
+		if (!isset($this->id))
 			throw new SolutionException("Id or creator not set", __FUNCTION__);
 
 		// submit vote
-		return Vote::addVote($this->_mysqli, "SOLUTION", $this->id, $this->creator, $val);
+		return Vote::addVote($this->_mysqli, "SOLUTION", $this->id, $user, $val);
 	}
 
 
@@ -300,6 +307,29 @@ class SolutionObject {
 
 		$stmt->bind_param("isis", $this->id, "SOLUTION", $uid, $association);
 		$stmt->execute();
+	}
+
+	/* toArray()
+	 *  info array of solution
+	 */
+	public function toArray(){
+		$contributors = Array();
+		foreach ($this->contributors as $value) {
+			$value['user'] = $value['user']->toArray();
+			array_push($contributors, $value);
+		}
+
+		return Array(
+			"id" => $this->id, 
+			"problem_id" => $this->problem_id, 
+			"shorthand" => $this->shorthand,
+			"title" => $this->title,
+			"description" => $this->description,
+			"created" => $this->created, 
+			"contributors" => $contributors,
+			"score" => $this->score,
+			"current_user_vote" => $this->current_user_vote
+		);
 	}
 
 }
