@@ -76,12 +76,14 @@ session_start();
 	catch (MindcloudException $e) {
 		$result = Array();
 		$result['success'] = false;
-		$result['error'] = $e->stringify();
+		$result['error'] = $e->getMessage();
+		$result['trace'] = $e->stringify();
 		error_log($e->stringify());
 	}
 	catch (Exception $e) {
 		$result['success'] = false;
 		$result['error'] = $e->getMessage();
+		//$result['trace'] = $e->stringify();
 		error_log($e->getMessage());
 	}
 	

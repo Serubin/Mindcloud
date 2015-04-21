@@ -15,7 +15,7 @@ class Vote {
 
 	/**
 	 * addVote()
-	 * Adds vote to db
+	 * Adds vote to db. Removes any previous votes on object
 	 * @param $_mysqli mysqli object
 	 * @param $ctype type string
 	 * {
@@ -27,6 +27,20 @@ class Vote {
 	 * @return true on success
 	 */
 	public static function addVote( $mysqli, $ctype, $cid, $uid, $vote ){
+
+		// Deletes vote before adding new one
+		if (!$stmt = $mysqli->prepare("DELETE FROM votes WHERE `ctype`= ? AND `cid` = ? AND`uid` = ?")) {
+			throw new MindcloudException($mysqli->error, "vote", __FUNCTION__);
+		}
+
+		error_log("vote: " . $vote);
+
+		$stmt->bind_param("sii", $ctype, $cid, $uid);
+		$stmt->execute();
+
+		$stmt->close();
+
+		// Adds new votes
 		if (!$stmt = $mysqli->prepare("INSERT INTO votes (`ctype`, `cid`, `uid`, `vote`) VALUES (?,?,?,?)")) {
 			throw new MindcloudException($mysqli->error, "vote", __FUNCTION__);
 		}
@@ -52,7 +66,7 @@ class Vote {
 	 * @return vote or false
 	 */
 	public static function fetchVote( $mysqli, $ctype, $cid, $uid ){
-		if (!$stmt = $this->_mysqli->prepare("SELECT `ctype`, `cid`, `uid`, `vote` FROM votes WHERE `ctype`= ? AND `cid` = ? AND`uid` = ?")) {
+		if (!$stmt = $mysqli->prepare("SELECT `ctype`, `cid`, `uid`, `vote` FROM votes WHERE `ctype`= ? AND `cid` = ? AND`uid` = ?")) {
 			throw new MindcloudException($mysqli->error, "vote", __FUNCTION__);
 		}
 

@@ -6,10 +6,15 @@
 /* Mindcloud globals */
 @import "mindcloud";
 
+/* Includes */
+@import "discussion";
+@import "project";
 /* Pages */
 @import "splash";
 @import "dashboard";
 @import "problem";
+@import "solution";
+
 
 // fonts
 //@import url(http://openfontlibrary.org/face/unique);
@@ -54,6 +59,10 @@ body{
 
 /* Topbar */
 .top-bar {
+
+	// box shadow for seperation
+	box-shadow: #333 0px 1px 6px;
+	
 	a, li {
 		transition: background-color 300ms ease-out;
 	}

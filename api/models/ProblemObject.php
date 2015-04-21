@@ -19,7 +19,9 @@ class ProblemObject {
 	public $created;
 	public $tags;
 	public $trial_no;
+
 	public $score;
+	public $current_user_vote;
 	// TODO: activity
 	public $threads;
 
@@ -42,26 +44,27 @@ class ProblemObject {
 	 */
 	public function create() {
 
-		if (!isset($this->title, $this->creator, $this->description, $this->tags, $this->category)) {
+		if (!isset($this->title, $this->shorthand, $this->creator, $this->description, $this->tags, $this->category)) {
+			error_log(json_encode(Array(
+					"title" => $this->title,
+					"shorthand" => $this->shorthand,
+					"creator" => $this->creator,
+					"description" => $this->description,
+					"tags" => $this->tags,
+					"category" => $this->category
+				)));
 			throw new ProblemException("Unset required instance vars", __FUNCTION__);
-		}
-
-		if (!isset($this->shorthand)) {
-			// TODO: create random shorthand for url / mentions, maximum length?
 		}
 
 		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `problems` (`creator`, `title`, `description`, `shorthand`, `category`) VALUES (?, ?, ?, ?, ?)")) {
 			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		// sanitize strings
-		$this->title = filter_var($this->title, FILTER_SANITIZE_STRING);
-		$this->description = strip_tags($this->title);
-		$this->shorthand = filter_var($this->shorthand, FILTER_SANITIZE_STRING);
-
 		// insert problem into db
 		$stmt->bind_param('isssi', $this->creator, $this->title, $this->description, $this->shorthand, $this->category);
 		$stmt->execute();
+
+		error_log("SQL: " . $this->_mysqli->error);
 
 		$this->id = $this->_mysqli->insert_id;
 
@@ -83,10 +86,10 @@ class ProblemObject {
 	 * Loads all of the necessary problem data for displaying on a problem page.
 	 */
 	public function loadFull() {
-
 		// try to load problem with an id
-		if (!isset($this->id))
+		if (!isset($this->id, $_SESSION['uid'])) {
 			throw new ProblemException("Unset variable: ID", __FUNCTION__);
+		}
 
 		// fetch from the db the information about this problem based on its id
 		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand`, `title`, `description`, `created`, `creator`, `status`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
@@ -118,7 +121,9 @@ class ProblemObject {
 		$this->creator->load();
 
 		// set score
-		$this->getScore();
+		$this->scor = $this->getScore();
+
+		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "PROBLEM", $this->id, $_SESSION['uid']);
 
 		// get array of afficiliated thread ids
 		$this->getThreads();
@@ -218,14 +223,16 @@ class ProblemObject {
 	 * upvote
 	 * Enter an upvote for a problem
 	 */
-	public function vote($val) {
-		if (!isset($this->id, $this->creator))
+	public function vote($user, $val) {
+		if (!isset($this->id))
 			throw new ProblemException("Id or creator not set", __FUNCTION__);
-
 		
-
 		// submit vote
-		return Vote::addVote($this->_mysqli, "PROBLEM", $this->id, $this->creator, $val);
+		$voteResult = Vote::addVote($this->_mysqli, "PROBLEM", $this->id, $user, $val);
+		if($voteResult)
+			return $val;
+
+		return false;
 	}
 
 	/**
@@ -306,5 +313,21 @@ class ProblemObject {
 		}
 
 		$this->threads = $result;
+	}
+
+	public function toArray(){
+		return Array(
+			"id" => $this->id,
+			"title" => $this->title,
+			"shorthand" => $this->shorthand,
+			"description" => $this->description,
+			"contributors" => Array(Array("user" => $this->creator, "association" => "creator")),
+			"created" => $this->created,
+			"tags" => $this->tags,
+			"trial_no" => $this->trial_no,
+			"score" => $this->score,
+			"threads" => $this->threads,
+			"current_user_vote" => $this->current_user_vote
+		);
 	}
 }

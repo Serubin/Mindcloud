@@ -1,0 +1,25 @@
+.project{
+	#contributers{
+	padding: 25px 0;
+	list-style: none;
+		small{
+			color: #676767;
+		}
+	}
+	#info_container{
+		margin-right:5px;
+		margin-left:5px;
+	}
+
+	#info_container {
+		width:auto;
+	}
+
+	#meta_action_menu {
+		height: 20px;
+	}
+
+	.project_vote_hover {
+		background-color: $primary-color-dark;
+	}
+}

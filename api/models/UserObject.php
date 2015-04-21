@@ -468,4 +468,28 @@ class UserObject
 
 		return true;
 	}
+
+	/* toArray()
+	 * public info array of user
+	 */
+	public function toArray() {
+		return Array(
+			"first_name" => $this->first_name,
+			"last_name" => $this->last_name,
+			"join_date" => $this->join_date
+		);
+	}
+
+	/* toConfidentialArray()
+	 * private info array of user
+	 */
+	public function toConfidentialArray(){
+		return Array (
+			"first_name" => $this->first_name,
+			"last_name" => $this->last_name,
+			"join_date" => $this->join_date,
+			"email" => $this->email,
+			"notification_hash" => $this->notification_hash
+		);
+	}
 }

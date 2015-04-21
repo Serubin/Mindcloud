@@ -4,7 +4,7 @@
  * Authors: Solomon Rubin, Michael Shullick
  * ©mindcloud
  * 1 February 2015
- * Model for the object representation of a solution idea.
+ * Model for the object representation of a problem idea.
  ******************************************************************************/
 
 require_once("models/ProblemObject.php");
@@ -50,9 +50,30 @@ class Problem
 			$problem->tags = $this->_params['tags'];
 			$problem->category = $this->_params['category'];
 
-			// only set the shorthand if given
-			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
-			return $problem->create();
+			error_log($problem->description);
+
+			// sanitize strings
+			$problem->title = filter_var($problem->title, FILTER_SANITIZE_STRING);
+			$problem->description = strip_tags($problem->description);
+			//$problem->description = str_replace("\n\n", "[[#line#end#]]", $problem->description); //TODO make spacing work better
+			$problem->shorthand = filter_var($problem->shorthand, FILTER_SANITIZE_STRING);
+			error_log($problem->description);
+
+			if (isset($this->_params['shorthand'])) { // Uses user shorthand
+				$problem->shorthand = $this->_params['shorthand']; 
+			} else {  // Creates shorthand from title
+				$problem->shorthand = $problem->title; 
+			}
+
+			$problem->shorthand = preg_replace("/[,!@#$%^&*()=\[\]{};:\'\"<>.,\/?\\~`]+/", "", $problem->shorthand); // Removes scary characters
+			$problem->shorthand = str_replace(" ", "-", $problem->shorthand); // Removes spacy characters (always forgettin')
+			$problem->shorthand = strtolower($problem->shorthand); // Get's ride of those cocky captials.
+			$problem->shorthand = substr($problem->shorthand,0 ,200); // Shortens the fatter of the bunch.
+			if(!$problem->validateShorthand()){
+				$problem->shorthand = $problem->shorthand . substr(md5($problem->shorthand),0, 4); // Makes unquif if not?
+			}
+			
+			return $return = $problem->create() ? $problem->shorthand : false;;
 
 		} catch (ProblemException $e) {
 			return $e;
@@ -109,18 +130,7 @@ class Problem
 			// inflate the problem with its own information
 			$problem->loadFull();
 
-			return Array(
-				"id" => $problem->id,
-				"title" => $problem->title,
-				"shorthand" => $problem->shorthand,
-				"description" => $problem->description,
-				"creator" => Array("user" => $problem->creator, "association" => "creator"),
-				"created" => $problem->created,
-				"tags" => $problem->tags,
-				"trial_no" => $problem->trial_no,
-				"score" => $problem->score,
-				"threads" => $problem->threads
-			);
+			return $problem->toArray();
 
 		} catch (ProblemException $e) {
 			return $e;
@@ -136,23 +146,27 @@ class Problem
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSION['uid'])) {
-				throw new ProblemException("unset parameters", __FUNCTION__);
+			if (!isset($this->_params['pid'], $this->_params['vote'], $_SESSION['uid'])) {
+				throw new ProblemException("Unset vars: pid, vote", __FUNCTION__);
 			}
 
 			// validate vote value by taking absolute value
-			if (abs($this->_params['vote']) != UPVOTE) {
+			if ($this->_params['vote'] != UPVOTE && $this->_params['vote'] != DOWNVOTE) {
 				throw new ProblemException("Invalid vote passed", __FUNCTION__);
 			}
 
 			// submit vote
 			$problem = new ProblemObject($this->_mysqli);
+
 			$problem->id = $this->_params['problem_id'];
 			$problem->creator = $_SESSION['uid'];
 			$problem->vote($this->_params['vote']);
 
 			return Vote::fetchScore( $this->_mysqli, "PROBLEM", $this->_params['problem_id']);
 
+			$problem->id = $this->_params['pid'];
+
+			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
 		} catch (ProblemException $e) {
 			return $e;
 		}
@@ -183,6 +197,23 @@ class Problem
 			// return successfull
 			return true;
 
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	public function scoreProblem(){
+		try {
+			// Checks that all required post variables are set
+			if (!isset($this->_params['id'])) {
+				error_log(json_encode($this->_params));
+				throw new ProblemException("Unset vars", __FUNCTION__);
+			}
+
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
+
+			return $problem->getScore();
 		} catch (Exception $e) {
 			return $e;
 		}

@@ -20,6 +20,8 @@ function login(){
 		}
 	});
 
+	window.document.title = "Mindcloud: Login";
+
 	$("#reload-captcha").click(function(){
 		d = new Date();
 		$("#captcha-img").attr("src","/assets/images/captcha.php?"+d);

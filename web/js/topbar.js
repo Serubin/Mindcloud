@@ -94,10 +94,15 @@ var notificationTopbar;
 			$("#home-link").attr("href", "/dashboard");
 
 			$links.html(""); // clears current link
-			$poseProblem = createTopbarItem("#","pose a problem");
-			$poseProblem.children().attr("data-reveal-id", "create_problem_modal");
-			$links.append($poseProblem); //TODO attach/create global pose problem context
-			$links.append(createTopbarItem("#","pose a solution")); //TODO attach/create global pose solution context
+			var $problem = createTopbarItem("#","pose a problem");
+			$problem.attr("data-reveal-id", "pose_problem_modal")
+			$links.append($problem); //TODO attach/create global pose problem context
+
+
+			var $solution = createTopbarItem("#","create a solution");
+			$solution.attr("data-reveal-id", "create_solution_modal")
+			$solution.attr("id", "create_solution").css("display", "none");
+			$links.append($solution); //TODO attach/create global pose solution context
 			
 			//Notifications
 			notificationTopbar = new notificationElement();
@@ -121,6 +126,7 @@ var notificationTopbar;
 			// Adds bar to page and allows foundation to do it's magic.
 			$links.append($dropdownWrapper);
 			$(document).foundation('topbar', 'reflow');
+			$(document).foundation('reveal', 'reflow');
 
 
 			setTimeout(function(){
@@ -200,8 +206,8 @@ var notificationTopbar;
 		};
 
 		function internalRecount(){
-			var req = new APICaller("notification", "fetchAllUser");
-			var params = {uid: "SESSION"};
+			var req = new APICaller("notification", "fetchAllId");
+			var params = {seen: 0, uid: "SESSION"};
 			
 			$notificationNum = $('#notification_number');
 			// adds hover class to begin animation
@@ -231,7 +237,7 @@ var notificationTopbar;
 
 		function internalPopulate(population){
 			var req = new APICaller("notification", "loadArray");
-			var params = {ids: JSON.stringify(notificationIds)};
+			var params = {ids: JSON.stringify(notificationIds), seen: 0};
 
 			var $nfDropdown = $("#notification-dropdown");
 
@@ -244,7 +250,7 @@ var notificationTopbar;
 						var time = data[i].time.replace(dashFind, "/");
 					var $date = $("<small></small>").addClass("text-right time").html(new Date(time).toLocaleString());
 					var $message = $("<p></p>").html(data[i].message).append($date);
-					$nfDropdown.append(createTopbarItem(data[i].url, $message));
+					$nfDropdown.append(createTopbarItem("/user/notification/" + data[i].id, $message));
 				}
 				displayed += population;
 				showMore();

@@ -7,49 +7,13 @@
 
 function dashboard() {
 
+	window.document.title = "Mindcloud: Dashboard"
+
 	// handle on content container
 	var $problems = $("#problems");
 
 	// initial load
 	loadDashboard();
-
-	// initalize tag handler
-	$('#tag_container').tagsInput({
-
-		// New tag callback
-		'onAddTag': function(tag){
-			// request the tag id
-			var tag_check_request = new APICaller("tag", "identify");
-			tag_check_request.send({
-				identifier: tag
-			}, function (result) {
-				// set the retrieved id as the element id of the tag
-				console.log(result);
-				$('#tag_container').setId(tag, result);
-			});
-		}
-	});
-	
-	// Problem creation submission listener
-	$('#submit_problem').on('valid', function() {
-		$("#tag_container").getAllTags();
-		var req = new APICaller('problem', 'create');
-		var params = {
-			title: $("#form_problem_statement").val(), 
-			description:$("#form_problem_desc").val(), 
-			tags: $("#tag_container").getAllTags(),
-			category: $("#form_problem_cat").val()
-		};
-		req.send(params, function(result) {
-				if (result) {
-					$("#create_problem_modal").foundation('reveal', 'close');
-					loadDashboard();
-
-				}
-			});
-	}).on('invalid', function() {
-		//problem_tags.getAllTags();
-	});
 
 	/**
 	 * Sets up the isotope container and loads inital content
@@ -181,8 +145,6 @@ function dashboard() {
 			$problems.append(new_problems[i]);
 
 		});
-
-		//$problems.append(new_problems);
 	}
 
 	// Problem create form

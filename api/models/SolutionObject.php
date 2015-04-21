@@ -6,7 +6,7 @@
  * This is a file that will describe the standards used for mindcloud.
  * All lines will fit with 80 columns. 
  *****************************************************************************/
-
+require_once "include/contributors.php";
 
 class SolutionObject {
 
@@ -19,9 +19,10 @@ class SolutionObject {
 	public $title;
 	public $description; // TODO strip tags on submit to filter out html
 	public $created;
-	public $creator; // TODO convert to contributors
+	public $contributors;
 	public $status;
 
+	public $score;
 	public $userVote;
 	// TODO
 	// TODO: content handlers
@@ -48,21 +49,21 @@ class SolutionObject {
 		$this->shorthand = strtolower($this->shorthand);
 
 		// Submits solution information
-		if (!$stmt = $this->_mysqli->prepare("INSERT INTO solutions (`pid`, `shorthand`, `title`, `description`, `creator`) VALUES (?,?,?,?,?)")) {
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO solutions (`pid`, `shorthand`, `title`, `description`) VALUES (?,?,?,?)")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param('isssi', $this->problem_id, $this->shorthand, $this->title, $this->description, $this->creator);
+		$stmt->bind_param('isss', $this->problem_id, $this->shorthand, $this->title, $this->description);
 		$stmt->execute();
 
 		$this->id = $this->_mysqli->insert_id;
 
-	if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,'PROBLEM',?,?,?)")) {
-		throw new ProblemException($this->_mysqli->error, __FUNCTION__);
-	}
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `contributors`(`cid`, `uid`, `association`) VALUES (?,?,?)")) {
+			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+		}
 
-	$stmt->bind_param("iis", $this->id, $this->creator, Contributors::CREATOR);
-	$stmt->execute();
+		$stmt->bind_param("iis", $this->id, $this->creator, Contributors::$CREATOR);
+		$stmt->execute();
 
 		return true;
 	}
@@ -72,26 +73,71 @@ class SolutionObject {
 	* Loads all of the necessary problem data for displaying on a dedicated page.
 	*/
 	public function loadFull() {
-		// Checks that all required post variables are set
-		if (!isset($this->id)) {
-			throw new SolutionException("unset vars.", __FUNCTION__);
+		// try to load problem with an id
+		if (!isset($this->id, $_SESSION['uid'])) {
+			throw new SolutionException("Unset variable: ID", __FUNCTION__);
 		}
-		// fetches all data for solutions
-		if (!$stmt = $this->_mysqli->prepare("SELECT * FROM solutions WHERE `id` = ?")) {
+
+		// fetch from the db the information about this problem based on its id
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid`, `shorthand`, `title`, `description`, `created`, `status`, `current_trial` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
-
 		$stmt->bind_param("i", $this->id);
-		$stmt->execute();
-		$stmt->store_results();
 
-		// stores results from query in variables corresponding to statement
-		$stmt->bind_result($db_id, $this->problem_id, $this->shorthand, $this->title, $this->description, $this->created, $this->creator, $this->status);
+		$stmt->execute();
+		$stmt->store_result();
+
+		if ($stmt->num_rows != 1) {
+			throw new SolutionException("Unable to fetch solution data: " . $stmt->num_rows . " returned. id: " . $this->id, __FUNCTION__);
+		}
+
+		$stmt->bind_result($id, $pid, $shorthand, $title, $description, $created, $status, $current_trial);
 		$stmt->fetch();
+
+		// Set this object's member vars
+		$this->problem_id = $pid;
+		$this->shorthand = $shorthand;
+		$this->title = $title;
+		$this->description = $description;
+		$this->created = $created;
+		$this->status = $status;
+		$this->trial_no = $current_trial;
 
 		$stmt->close();
 
-		return true;
+		// Fetch contributors
+		$contributors = Array();
+
+		if (!$stmt = $this->_mysqli->prepare("SELECT `cid`, `uid`, `association` FROM `contributors` WHERE `cid` = ?")) {
+			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+		}
+		$stmt->bind_param("i", $this->id);
+
+		$stmt->execute();
+		$stmt->store_result();
+
+		$stmt->bind_result($cid_db, $uid_db, $db_association);
+
+		while($stmt->fetch()) {
+			$user = new UserObject($this->_mysqli);
+			$user->uid = $uid_db;
+			$user->load();
+
+			array_push($contributors, Array(
+				"association" => $db_association, 
+				"user" => $user
+			));
+		}
+
+		$this->contributors = $contributors;
+
+		// set score
+		$this->score = $this->getScore();
+
+		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "SOLUTION", $this->id, $_SESSION['uid']);
+
+		// get array of afficiliated thread ids
+		//$this->getThreads();
 	}
 
 	/**
@@ -104,7 +150,7 @@ class SolutionObject {
 		}
 
 		// fetch from the db the information about this problem
-		if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
+		if (!$stmt = $this->_mysqli("SELECT `pid`, `shorthand`, `title`, `description`, `created`, `creator` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -115,11 +161,12 @@ class SolutionObject {
 			throw new SolutionException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
 		}
 
-		$stmt->bind_result($shorthand, $title, $description, $created, $creator_id);
+		$stmt->bind_result($pid, $shorthand, $title, $description, $created, $creator_id);
 		$stmt->fetch();
 
 
 		// Set this object's member vars
+		$this->problem_id = $pid;
 		$this->shorthand = $shorthand;
 		$this->statement = $title;
 		$this->description = $description;
@@ -167,13 +214,13 @@ class SolutionObject {
 		// Prepares variables
 		$this->shorthand = strtolower($this->shorthand);
 
-		if ($stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM solutions WHERE `shorthand` = ?")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `shorthand` FROM `solutions` WHERE `shorthand` = ?")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
 		$stmt->bind_param("s", $this->shorthand);
 		$stmt->execute();
-		$stmt->store_results();
+		$stmt->store_result();
 
 		// stores results from query in variables corresponding to statement
 		$stmt->bind_result($db_id, $db_shorthand);
@@ -194,12 +241,12 @@ class SolutionObject {
 	 * upvote
 	 * Enter an upvote for a problem
 	 */
-	public function vote($val) {
-		if (!isset($this->id, $this->creator))
+	public function vote($user, $val) {
+		if (!isset($this->id))
 			throw new SolutionException("Id or creator not set", __FUNCTION__);
 
 		// submit vote
-		return Vote::addVote($this->_mysqli, "SOLUTION", $this->id, $this->creator, $val);
+		return Vote::addVote($this->_mysqli, "SOLUTION", $this->id, $user, $val);
 	}
 
 
@@ -237,10 +284,7 @@ class SolutionObject {
 
 		$stmt->bind_param("s", $this->shorthand);
 		$stmt->execute();
-		$stmt->store_results();
-
-		$stmt->bind_result($db_shorthand);
-		$stmt->fetch();
+		$stmt->store_result();
 
 		$rows = $stmt->num_rows;
 
@@ -250,6 +294,42 @@ class SolutionObject {
 			return false;
 
 		return true;
+	}
+	// TODO add constants for association
+	public function addContributor($uid, $association){
+		if(!isset($this->id)){
+			throw new SolutionException("Unset var: Id", __FUNCTION__);
+		}
+
+		if(!$stmt = $this->_mysql->prepare("INSERT INTO `contributors`(`cid`, `type`, `uid`, `association`) VALUES (?,?,?,?")){
+			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("isis", $this->id, "SOLUTION", $uid, $association);
+		$stmt->execute();
+	}
+
+	/* toArray()
+	 *  info array of solution
+	 */
+	public function toArray(){
+		$contributors = Array();
+		foreach ($this->contributors as $value) {
+			$value['user'] = $value['user']->toArray();
+			array_push($contributors, $value);
+		}
+
+		return Array(
+			"id" => $this->id, 
+			"problem_id" => $this->problem_id, 
+			"shorthand" => $this->shorthand,
+			"title" => $this->title,
+			"description" => $this->description,
+			"created" => $this->created, 
+			"contributors" => $contributors,
+			"score" => $this->score,
+			"current_user_vote" => $this->current_user_vote
+		);
 	}
 
 }

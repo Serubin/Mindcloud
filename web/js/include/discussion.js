@@ -121,7 +121,8 @@
 	 	var forms_width = $(document).width() - $('#' + ids.toggle).width();
 
     	$('#' + ids.forms).animate({
-	        width: forms_width + "px"
+	        //width: forms_width + "px"
+	        width: "95%"
 	    }, "fast");
 
     	$('#' + ids.toggle).html('<i class="fi-minus icon">');
