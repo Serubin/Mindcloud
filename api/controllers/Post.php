@@ -28,12 +28,12 @@ class Post
 		try {
 
 			// check for the right vars
-			if (!isset($_SESSION['uid'], $this->_params['thread_id'], $this->_params['body'])) {
+			if (!isset($_SESSION['uid'], $this->_params['thread_id'], $this->_params['post_body'])) {
 				throw new PostException("Unset vars", __FUNCTION__);
 			}	
 
 			// cleanse body
-			$body = filter_var($this->_param['body'], FILTER_SANITIZE_STRING);
+			$body = filter_var($this->_params['post_body'], FILTER_SANITIZE_STRING);
 
 			// create the problem
 			$new_post = new PostObject($this->_mysqli);
@@ -43,7 +43,7 @@ class Post
 			$new_post->create();
 
 			// return success
-			return true;
+			return $new_post;
 
 		} catch (PostException $e) {
 			return $e;

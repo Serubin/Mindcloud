@@ -40,7 +40,10 @@
 		var $thread_container = $('<div></div>', {id: ids.thread_container, class: 'threads-container'});
 
 		// create viewer for threads
-		var $thread_viewer = $('<div></div>', {id: ids.thread_viewer, class: 'thread-viewer'});
+		var $thread_viewer = $('<div></div>', {id: ids.thread_viewer, class: 'thread-viewer row'});
+
+		// holds individual posts
+		var $posts = $('<div></div', {class: "posts small-10 small-centered medium-8 columns"});
 
 		// setup the create new thread prompt
 		// thread_toggle is the entire div that grows to contain forms, or stays small to contain a button div
@@ -64,6 +67,9 @@
 
 		});
 
+		// initialize thread viewer
+		$thread_viewer.append($posts);
+
 		// add each element to the parent
 		$(id).append($forms);
 		$(id).append($thread_toggle);
@@ -75,12 +81,54 @@
 
 		// create listener for showing threads' posts
 		// TODO load posts
-		$(id).on("click", ".thread-preview", function() {
+		$(id).on("click", ".thread-preview", function (event) {
 
-			$("#" + ids.thread_viewer).animate({
-				height: "200px"
-			}, "fast");
+
+			// clear all past content
+			$posts.empty();
+
+			// initialize the list of posts
+			$posts_list = $("<ul></ul>", {class : "posts-list small-block-grid-1", 'data-title' : $(this).attr('data-title')});
+
+			// append the initial block grid list
+			$posts.append($posts_list);
+
+			/*$("#" + ids.thread_viewer).animate({
+			}, "fast");*/
+
+			// append form for new post
+			$posts_list.append($.fn.Discussion.posterFormatter());
+
+			// reflow for foundation DOM
+			$(document).foundation("reflow");
 		});
+
+		// post submission listener
+		$(id).on("valid", '.submit-post-form', function (event) {
+
+			$posts_list = $(this).parents(".posts-list");
+
+			var params = {
+				'post_body' : $(this).find("input").val(),
+				'thread_id' : $posts_list.attr('data-title')
+			};
+			
+			var req = new APICaller("post", "create");
+			req.send(params, function (result) {
+
+				if (result) {
+
+					$(".poster").before($.fn.Discussion.postFormatter(result.user, result.body, result.id, result.date));
+
+
+				} else {
+					alertHandler("alert", "Failed submit post");
+				}
+
+			});
+
+		});
+
 
 	};
 
@@ -179,32 +227,6 @@
 		});
 	};
 
-	/*
-	 * Given a thread id, load that thread
-	 * @deprecated all posts loaded at once 
-	 */
-	$.fn.populateThreads = function(thread_id) {
-
-	 	var ids = $.fn.getIds($(this).selector);
-
-	 	// add a thread container with a loading icon identified by the id
-	 	var $new_thread = $.fn.Discussion.loadingFormatter(ids, thread_id);
-	 	var $thread_container = $("#" + ids.thread_container);
-	 	$thread_container.append($.fn.Discussion.loadingFormatter(ids, thread_id));
-	 	//$thread_container.width($thread_container.width() + $new_thread.css('width'));
-
-	 	// request the content of this thread and replace the loading sign with its content when it loads
-	 	var req = new APICaller('thread', 'load');
-	 	req.send({ id : thread_id }, function (result) {
-	 		if (result) {
-	 			//console.log("#" + ids.thread + thread_id);
-	 			$("#" + ids.thread + thread_id).replaceWith($.fn.Discussion.threadPrevFormatter(ids, result.id, result.subject, result.body));
-	 		} else {
-	 			alertHandler("alert", "<p>Failed to load thread</p>");
-	 		}
-	 	});
-	}
-
 	/**
 	 * empty
 	 * called clearAll instead of empty() because the JQuery method will get called and fail
@@ -292,9 +314,43 @@
 	   * returns a div for the preview of a thread
 	   */
 	   $.fn.Discussion.threadPrevFormatter = function(ids, id, subject, body) {
-	   	return $("<div></div>", {id: ids.thread + id, class: "thread-preview"})
+	   	return $("<div></div>", {'data-title' : id, class: "thread-preview"})
 	   	.append($("<h4></h4>").html(subject))
 	   	.append($("<p></p>").text(body));
 	   }
+
+	   /*
+	    * returns a div containing the forms for an enw post
+	    */
+	    $.fn.Discussion.posterFormatter = function () {
+	    	return $("<li></li>").append(
+	    			$("<div></div", {class : "discussion-child poster"})
+	    				.append($("<form></form>", {class: "submit-post-form", 'data-abide' : 'ajax'})
+	    					.append($('<div></div>', {class : "post-text-field"})
+		    					.append($("<input></input", {placeholder: "Write a post...", required : ""}))
+		    				)
+		    				.append($("<button></button", {class: "button keep-native", type:"submit"}).text("submit"))
+		    			)
+		    		);
+	    }
+
+	    /**
+	     * postFormatter - creates an element out of a post data
+	     */
+	     $.fn.Discussion.postFormatter = function (user, body, id, date) {
+	     	// list item
+	     	var top = $("<li></li>", {class : 'problem'});
+
+	     	// column container
+	     	var container = $("<div></div>", {class : "row"});
+
+	     	// post body div
+	     	var post_body = $("<div></div>", {class : "small-7 columns"}).html(body);
+
+	     	// put it all together
+	     	top.append(container.append(post_body));
+
+	     	return top;
+	     }
 
 })(jQuery);
