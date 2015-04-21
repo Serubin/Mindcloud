@@ -151,7 +151,7 @@ class Problem
 			$problem->creator = $_SESSION['uid'];
 			$problem->vote($this->_params['vote']);
 
-			return true;
+			return Vote::fetchScore( $this->_mysqli, "PROBLEM", $this->_params['problem_id']);
 
 		} catch (ProblemException $e) {
 			return $e;

@@ -157,7 +157,17 @@ function dashboard() {
 					// vote button containers
 					$('<div></div>', {class: 'small-2 column voter'})
 						.append( $("<div></div>", {class:'problem-btn vote upvote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
-						.append( $("<div></div>", {class:'problem-btn flag-reveal'}).html("<i class='fi-flag'></i></div>")
+						.append( $("<div></div>", {class: 'vote-counter'}).html("<span>" + value[4] + "</span>"))
+						.append( $("<div></div>", {class:'problem-btn vote downvote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
+					)
+				.append(
+				// description, etc. container
+					$('<div></div>', {class: 'small-9 column problem-statement'})
+						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
+				// flag button and menu
+				).append(
+
+					$('<div></div>', {class: 'small-1 column problem-btn flag-reveal'}).html("<i class='fi-flag'></i></div>")
 							.append( $("<div></div>", {class: "dropdown"})
 								.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
 									.append($("<li></li>").html('<a data-value="1" class="flag-val" href="#">duplicate</a>'))
@@ -165,14 +175,7 @@ function dashboard() {
 									//.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
 									)
 							)
-						)
-						.append( $("<div></div>", {class:'problem-btn vote downvote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
 					)
-				.append(
-					// description, etc. container
-					$('<div></div>', {class: 'small-9 column problem-statement'})
-						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
-				)
 			);
 
 			$problems.append(new_problems[i]);
@@ -196,6 +199,8 @@ function dashboard() {
 	/** 
 	* problem events
 	*/
+
+	// voting 
 	$(document).on("click", ".vote", function (event) {
 
 		var $btn = $(this);
@@ -215,6 +220,10 @@ function dashboard() {
 					
 					// deselect the opposite vote button
 					$parent.find(oppositeVote).removeClass("selected");
+
+					// update the vote total
+					$parent.find(".vote-counter > span").html(result);
+
 				}
 				else {
 					console.log(" vote submit failed");
