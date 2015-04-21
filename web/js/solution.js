@@ -94,8 +94,6 @@ function solution(url){
  * Dynamicaly adds in data to page
  */
 	function populatePage(data){
-		console.log("DATA YO.");
-		console.log(data);
 		// show create solution
 		$("#create_solution").css("display", "");
 

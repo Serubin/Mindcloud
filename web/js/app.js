@@ -126,7 +126,7 @@ $(function(){
 	}
 
 	function initCreateSolution(){
-		
+
 		// Problem creation submission listener
 		$('#submit_solution').on('valid', function() {
 			var req = new APICaller('solution', 'create');

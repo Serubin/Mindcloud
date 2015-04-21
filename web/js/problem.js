@@ -29,6 +29,7 @@ function problem(url){
 			// set id
 			problem_id = result.id;
 			problem_title = result.title;
+
 			$("#create_solution_for").html(problem_title);
 
 			// Loads problem
@@ -125,10 +126,6 @@ function problem(url){
 		$("#score").html(data.score);
 		// set popuate related projects
 
-
-		
-
-
 		// add threads and posts
 		$.each(data.threads, function(i, value) {
 			$("#discussions_container").loadThread(value);
@@ -156,7 +153,6 @@ function preproblem(url){
 
 
 	if($.isNumeric(url[1])) {
-		console.log(url[1])
 		var req = new APICaller('problem', 'getShorthand');
 		var params = {id:url[1]};
 		req.send(params, function(result) {
