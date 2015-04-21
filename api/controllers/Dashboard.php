@@ -7,6 +7,8 @@
  * displaying in problem/solution browser. Also handles sorting of results.
  *****************************************************************************/
 
+require_once("include/vote.php");
+
 class Dashboard {
 
 	// the parameters of the request
@@ -48,7 +50,7 @@ class Dashboard {
 			// if problems are to be loaded
 			// load most recent 10
 			// TODO change constant 10 to be however many can fit on screen
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand` FROM `problems` ORDER BY `created` LIMIT 10")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand` FROM `problems` ORDER BY `created` LIMIT 20")) {
 				error_log("failing");
 				throw new DashboardException($this->_mysqli->error, __FUNCTION__);
 			}
@@ -57,7 +59,9 @@ class Dashboard {
 			$stmt->store_result();
 			$stmt->bind_result($id, $pr_stmt, $date, $shorthand);
 			while ($stmt->fetch()) {
-				$result['problems'][] = array($id, $pr_stmt, $date, $shorthand);
+
+				$vote_count = Vote::fetchScore($this->_mysqli, "PROBLEM", $id);
+				$result['problems'][] = array($id, $pr_stmt, $date, $shorthand, $vote_count);
 				$problem_ids[] = $id;
 				//error_log(html_entity_decode($pr_stmt));	
 			}
