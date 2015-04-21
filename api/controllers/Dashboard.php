@@ -40,20 +40,25 @@ class Dashboard {
 			$result = array();
 			$result['problems'] = array();
 			$result['categories'] = array();
+			$result['votes'] = array();
+			$problem_ids = array(); // retained for finding problems
+
+			// handle on all of the problem ids 
 
 			// if problems are to be loaded
 			// load most recent 10
 			// TODO change constant 10 to be however many can fit on screen
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created` FROM `problems` ORDER BY `created` LIMIT 10")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand` FROM `problems` ORDER BY `created` LIMIT 10")) {
 				error_log("failing");
 				throw new DashboardException($this->_mysqli->error, __FUNCTION__);
 			}
 
 			$stmt->execute();
 			$stmt->store_result();
-			$stmt->bind_result($id, $pr_stmt, $date);
+			$stmt->bind_result($id, $pr_stmt, $date, $shorthand);
 			while ($stmt->fetch()) {
-				$result['problems'][] = array($id, $pr_stmt, $date);
+				$result['problems'][] = array($id, $pr_stmt, $date, $shorthand);
+				$problem_ids[] = $id;
 				//error_log(html_entity_decode($pr_stmt));	
 			}
 
@@ -68,6 +73,56 @@ class Dashboard {
 			$stmt->bind_result($id, $name);
 			while($stmt->fetch()) {
 				$result['categories'][] = array($id, $name);
+			}
+
+			// end
+			$stmt->close();
+
+			/** 
+			 * load vote statuses
+			 */
+
+			// base query
+			$query = "SELECT `vote`, `cid` FROM `votes` WHERE `uid` = ? AND `ctype` = 'PROBLEM' AND `cid` IN (";
+			$typesByString = "";
+
+			// add the correct number of variable params
+			// Array of references for use in bind_param
+			$problem_args = array();
+			for ($i = 0; $i < count($problem_ids); $i++) {
+				$problem_args[] = &$problem_ids[$i];
+				// Add an s for every sku argument
+				$typesByString .= "i";
+				// A question mark for every parameter in the query
+				$wildcards[] = "?";
+			}
+
+			// Tack on the question marks and right parenthetical
+			$wildcards = implode(",", $wildcards);
+			$query .= $wildcards . ")";
+
+			// Create one giant array of arguments for call_user_func_array
+			$typesByString = "i" . $typesByString; // account for uid
+			$params = array_merge(array($typesByString, &$_SESSION['uid']), $problem_args);
+
+			if (!$stmt = $this->_mysqli->prepare($query)) {
+				throw new DashboardException("prepare failed: " . $this->_mysqli->error, __FUNCTION__);
+			}
+
+			// bind params
+			// prepare query, accounting for a variable number of parameters with call_user_func_array
+			if (!call_user_func_array(array($stmt, "bind_param"), $params)) {
+				error_log($query);
+				error_log(json_encode($params));
+				throw new DashboardException("bind param failed: " . $stmt->error, __FUNCTION__);
+			}
+
+			$stmt->execute();
+			$stmt->store_result();
+			$stmt->bind_result($vote, $cid);
+
+			while ($stmt->fetch()) {
+				$result['votes'][] = array($cid, $vote);
 			}
 
 			//error_log(json_encode($result));

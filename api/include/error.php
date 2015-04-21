@@ -182,11 +182,25 @@ class TagException extends MindcloudException {
 
 /*
  * Class for exceptions in Tag handlers
- * Module ID: 6
+ * Module ID: 7
  */
 class DashboardException extends MindcloudException {
 
 	private $MODULE_ID = '7';
+
+	public function __construct($msg, $function) {
+		parent::__construct($msg, $this->MODULE_ID, $function);
+	}
+
+}
+
+/*
+ * Class for exceptions in Flag handlers
+ * Module ID: 8
+ */
+class FlagException extends MindcloudException {
+
+	private $MODULE_ID = '8';
 
 	public function __construct($msg, $function) {
 		parent::__construct($msg, $this->MODULE_ID, $function);

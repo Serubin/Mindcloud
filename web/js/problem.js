@@ -151,7 +151,6 @@ function preproblem(url){
 		}
 	});
 
-
 	if($.isNumeric(url[1])) {
 		var req = new APICaller('problem', 'getShorthand');
 		var params = {id:url[1]};

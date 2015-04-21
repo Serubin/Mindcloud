@@ -54,73 +54,8 @@ $problem-height: 80px;
   padding: 2px;
 }
 
-/**** Isotope Filtering ****/
-
-.isotope-item {
-  z-index: 2;
-  background-color: $secondary-color;
-  color: white;
-  height: $problem-height;
-  line-height: $problem-height;
-  margin-bottom: 5px;
-}
-
-.isotope-hidden.isotope-item {
-  pointer-events: none;
-  z-index: 1;
-}
-
-/**** Isotope CSS3 transitions ****/
-
-.isotope,
-.isotope .isotope-item {
-  -webkit-transition-duration: 0.8s;
-     -moz-transition-duration: 0.8s;
-      -ms-transition-duration: 0.8s;
-       -o-transition-duration: 0.8s;
-          transition-duration: 0.8s;
-}
-
-.isotope {
-  -webkit-transition-property: height, width;
-     -moz-transition-property: height, width;
-      -ms-transition-property: height, width;
-       -o-transition-property: height, width;
-          transition-property: height, width;
-}
-
-.isotope .isotope-item {
-  -webkit-transition-property: -webkit-transform, opacity;
-     -moz-transition-property:    -moz-transform, opacity;
-      -ms-transition-property:     -ms-transform, opacity;
-       -o-transition-property:      -o-transform, opacity;
-          transition-property:         transform, opacity;
-}
-
-/**** disabling Isotope CSS3 transitions ****/
-
-.isotope.no-transition,
-.isotope.no-transition .isotope-item,
-.isotope .isotope-item.no-transition {
-  -webkit-transition-duration: 0s;
-     -moz-transition-duration: 0s;
-      -ms-transition-duration: 0s;
-       -o-transition-duration: 0s;
-          transition-duration: 0s;
-}
-
 .selected {
   border-bottom: 2px solid $primary-color;
-
-}
-
-.voter {
-  line-height: $problem-height / 2; 
-  text-align: center;
-
-  .arrow {    
-    font: 32px !important;
-  }
 
 }
 
@@ -221,4 +156,99 @@ div.tagsinput div {
 .post {
   border-style: solid;
   border-width: 1px;
+}
+
+#grid[data-columns]::before {
+  content: '3 .column.size-1of3';
+}
+
+#problems {
+  margin: 0px;
+}
+
+.problem {
+  color: white;
+  //padding: 5px;
+
+  .row {
+    background-color: $secondary-color;
+  }
+
+  .problem-statement:hover {
+    background-color: $secondary-color-dark;
+  }
+
+  .column {
+    padding: 0px;
+  }
+
+  .problem-statement {
+    padding: 12px;
+  }
+
+  .voter {
+    line-height: $problem-height / 2; 
+    text-align: center;
+  }
+  
+  .vote:hover {
+    background-color: $secondary-color-dark;
+  }
+
+  .problem-button {    
+    font: 32px !important;
+  }
+
+  button {
+    padding: 0px;
+    margin: 0px;
+  }
+
+  .dropdown {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    //width: 18px;
+    //height: 10px;
+    float: left;
+    overflow: hidden;
+    color: black;
+
+    //top: 100%;
+    display: none;
+    float: left;
+    background: none repeat scroll 0% 0% padding-box #FFF;
+    border: 0px solid rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+
+    ul {
+        margin: 0px;
+        list-style: outside none none;
+        text-align: left;
+        padding: 0px;
+        padding: 10px;
+        margin: 2px 0px 0px;
+
+        a {
+          color: black;
+        }
+
+        a:hover {
+          color: $secondary-color;
+        }
+
+
+    }
+  }
+  
+  .dropdown.open {
+    display: block;
+    z-index: 100;
+  }
+
+  .selected {
+    background-color: $secondary-color-dark;
+    border: none;
+  }
 }

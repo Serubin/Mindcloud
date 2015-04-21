@@ -10,6 +10,7 @@
 require_once("models/ProblemObject.php");
 require_once("models/TagObject.php");
 require_once("include/vote.php");
+require_once("include/Flag.php");
 
 class Problem 
 {
@@ -37,13 +38,13 @@ class Problem
 	public function createProblem() {
 		
 		try {
-			if (!isset($this->_params['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
+			if (!isset($_SESSION['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
 				error_log(json_encode($this->_params));
 				throw new ProblemException("Unset vars.", __FUNCTION__);
 			}
 
 			$problem = new ProblemObject($this->_mysqli);
-			$problem->creator = $this->_params['uid'];
+			$problem->creator = $_SESSION['uid'];
 			$problem->title = $this->_params['title'];
 			$problem->description = $this->_params['description'];
 			$problem->tags = $this->_params['tags'];
@@ -162,6 +163,36 @@ class Problem
 		} catch (ProblemException $e) {
 			return $e;
 		}
+	} 
+
+	/**
+	 * Submit a flag on a problem
+	 */
+	public function flagProblem() {
+
+		try {
+			if (!isset($this->_params['problem_id'], $this->_params['flag'], $_SESSION['uid'])) {
+				error_log(json_encode($this->_params));
+				throw new ProblemException("Unable to flag problem, unset params", __FUNCTION__);
+			}
+
+			// check that the flag is valid
+			// TODO: Currently hardcoded for the sake of time. Change this to be dynamic later on
+			if ($this->_params['flag'] != 1 && $this->_params['flag'] != 2) {
+				throw new ProblemException("Invalid flag passed", __FUNCTION__);
+			}
+
+			// submit the flag
+			if (!Flag::addFlag($this->_mysqli, $this->_params['problem_id'], $_SESSION['uid'], $this->_params['flag'])) {
+				throw new ProblemException("Failed to flag problem", __FUNCTION__);
+			}
+
+			// return successfull
+			return true;
+
+		} catch (Exception $e) {
+			return $e;
+		}
 	}
 
 	public function scoreProblem(){
@@ -209,6 +240,7 @@ class Problem
 			return $e;
 		}
 	}
+
 
 	/**
 	 * activate()

@@ -1,4 +1,4 @@
-	<h1>dashboard, yo</h1>
+<h1>dashboard, yo</h1>
 
 <button class="success">pose a problem</a>
 <button class="success">create a solution</a>

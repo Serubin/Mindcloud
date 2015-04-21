@@ -10,7 +10,7 @@ function dashboard() {
 	window.document.title = "Mindcloud: Dashboard"
 
 	// handle on content container
-	var $problems = $('#container');
+	var $problems = $("#problems");
 
 	// initial load
 	loadDashboard();
@@ -19,17 +19,6 @@ function dashboard() {
 	 * Sets up the isotope container and loads inital content
 	 */
 	function loadDashboard() {
-
-		// initialize isotope
-		/*$problems.isotope({
-
-		  itemSelector : '.isotope-item',
-		  layoutMode : 'masonry',
-		  masonry: {
-		  	columnWidth: 50
-		  }
-		  // options...
-		});*/
 
 		// TODO: This stuff will be useful for sorting problems
 		// filter items when filter link is clicked
@@ -71,6 +60,30 @@ function dashboard() {
 				// display problems from request
 				repopulateProblems(result.problems);
 
+				// add votes
+				$.each(result.votes, function (i, value) {
+
+					// get what the vote is
+					var voteClass;
+					switch (value[1]) {
+						case 1:
+							voteClass = ".upvote";
+							break;
+						case -1:
+							voteClass = ".downvote";
+							break;
+						default:
+							alertHandler("alert", "Received an invalid vote");
+							break;
+					}
+
+					$problem = $("#" + value[0] + ".problem");
+					$problem.addClass("voted");
+					$problem.find(voteClass).addClass("selected");
+
+
+				});
+
 		});
 	}
 
@@ -99,45 +112,37 @@ function dashboard() {
 
 		// append new problems		
 		$.each(new_problems, function(i, value) {
-			new_problems[i] = 
-				"<div class='isotope-item' datetime='" + value[2] + "' id=" + value[0] + ">" + 
-					"<div class='row'>" +
-						"<div class='small-9 column problem-statement'>" +
-							"<span text-left'>" + 
-								value[1] + 
-							"</span>" +
-						"</div>" +
-						"<div class='small-3 column voter'>" +
-							"<div class='arrow'><i class='fi-arrow-up'></i></div>" +
-							"<div class='arrow'><i class='fi-arrow-down'></i></div>" +
-						"</div>" +
-					"<div>" + // end row
-				"</div>";
+
+			// overall container
+			new_problems[i] = $('<li></li>', {id: value[0], datetime: value[2], class: 'problem', 'data-title' : value[3]}).append(
+				// row div 
+				$('<div></div>', {class: 'row'})
+				.append(
+					// vote button containers
+					$('<div></div>', {class: 'small-2 column voter'})
+						.append( $("<div></div>", {class:'problem-btn vote upvote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
+						.append( $("<div></div>", {class:'problem-btn flag-reveal'}).html("<i class='fi-flag'></i></div>")
+							.append( $("<div></div>", {class: "dropdown"})
+								.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
+									.append($("<li></li>").html('<a data-value="1" class="flag-val" href="#">duplicate</a>'))
+									.append($("<li></li>").html('<a data-value="2" class="flag-val" href="#">innapropriate</a>'))
+									//.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
+									)
+							)
+						)
+						.append( $("<div></div>", {class:'problem-btn vote downvote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
+					)
+				.append(
+					// description, etc. container
+					$('<div></div>', {class: 'small-9 column problem-statement'})
+						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
+				)
+			);
+
+			$problems.append(new_problems[i]);
+
 		});
-
-		$problems.isotope('appended', new_problems);
 	}
-
-
-	/** TEMPORARY 
-	 * test for discussion div
-	 */
-	 var problem_id = 0;
-
-	 var $disc_container = $("#discussion_container");
-	 $disc_container.Discussion();
-
-	 // set up thread creator
-	 $("#create_thread").click(function (event) {
-	 	if ($("#thread_test_title").val().length > 0 && $("#thread_test_body").val().length > 0)
-	 	$disc_container.addThread(problem_id, $("#thread_test_title").val(), $("#thread_test_body").val());
-	 });
-	 $("#create_post").click(function (event) {
-	 	if ($("#post_test").val() > 0 ) {
-	 		$disc_container.addPost(problem_id, $("#post_test").val());
-	 	}
-	 });
-
 }
 
 function predashboard(url){

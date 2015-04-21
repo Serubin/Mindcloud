@@ -175,6 +175,9 @@
 		});
 	};
 
+	/*
+	 * Given a thread id, load that thread
+	 */
 	$.fn.loadThread = function(thread_id) {
 
 	 	var ids = $.fn.getIds($(this).selector);
@@ -197,11 +200,25 @@
 	 	});
 	}
 
+	/**
+	 * empty
+	 */
+	 $.fn.setEmpty = function() {
+
+	 	var ids = $.fn.getIds($(this).selector);
+	 	var $thread_container = $("#" + ids.thread_container);
+
+	 	$thread_container.append($("<div></div>", {class: "placeholder"}).html("<p>No threads to display</p>"));
+	 }
+
 	/*
 	 * Append a preview to the end of the previews list
 	 * takes an array of thread objects containing at least an id, title, and body
 	 */
 	 $.fn.Discussion.addPreviews = function (ids,threads) {
+
+	 	$("#" + ids.thread_container).children(".placeholder").remove();
+
 	 	$.each(threads, function (i, value) {
 
 			$("#" + ids.thread_container).prepend($.fn.Discussion.threadPrevFormatter(ids, value.id, value.subject, value.body));
