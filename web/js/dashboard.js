@@ -5,6 +5,18 @@
  * Javascript for account page
  *****************************************************************************/
 
+// preloader
+function predashboard(url){
+	var _this = this;
+	// Checks for user login
+	var req = new APICaller('user', 'check');
+	req.send({}, function(result){
+		if(!result){
+			ph.pageRequest("/login");
+		}
+	});
+}
+
 function dashboard() {
 
 	window.document.title = "Mindcloud: Dashboard"
@@ -19,29 +31,6 @@ function dashboard() {
 	 * Sets up the isotope container and loads inital content
 	 */
 	function loadDashboard() {
-
-		// TODO: This stuff will be useful for sorting problems
-		// filter items when filter link is clicked
-		/*$('#filters a').click(function(){
-		  var selector = $(this).attr('data-filter');
-		  $container.isotope({ filter: selector });
-		  return false;
-		});
-			
-		// set selected menu items
-		var $optionSets = $('.inline-list'),
-		$optionLinks = $optionSets.find('a');
-
-		$optionLinks.click(function(){
-			var $this = $(this);
-		    // don't proceed if already selected
-		    if ( $this.hasClass('selected') ) {
-		        return false;
-		    }
-		   var $optionSet = $this.parents('.inline-list');
-		   $optionSet.find('.selected').removeClass('selected');
-		   $this.addClass('selected'); 
-		});*/
 
 		// initial load
 		var req = new APICaller("dashboard", "load");
@@ -134,8 +123,8 @@ function dashboard() {
 					$('<div></div>', {class: 'small-1 column problem-btn flag-reveal'}).html("<i class='fi-flag'></i></div>")
 							.append( $("<div></div>", {class: "dropdown"})
 								.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
-									.append($("<li></li>").html('<a data-value="1" class="flag-val" href="#">duplicate</a>'))
-									.append($("<li></li>").html('<a data-value="2" class="flag-val" href="#">innapropriate</a>'))
+									.append($("<li></li>").html('<a data-value="1" class="flag-val keep-native" href="#">duplicate</a>'))
+									.append($("<li></li>").html('<a data-value="2" class="flag-val keep-native" href="#">innapropriate</a>'))
 									//.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
 									)
 							)
@@ -223,6 +212,8 @@ function dashboard() {
 	// flag actions
 	$(document).on('click', ".flag-val", function (event) {
 
+		event.preventDefault();
+
 		var problem_id = $(this).parents(".problem").attr('id');
 
 		var req = new APICaller("problem", "flag");
@@ -242,16 +233,4 @@ function dashboard() {
 				}
 			})
 	});
-}
-
-function predashboard(url){
-	var _this = this;
-	// Checks for user login
-	var req = new APICaller('user', 'check');
-	req.send({}, function(result){
-		if(!result){
-			ph.pageRequest("/login");
-		}
-	});
-
 }

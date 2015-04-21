@@ -64,8 +64,6 @@ class ProblemObject {
 		$stmt->bind_param('isssi', $this->creator, $this->title, $this->description, $this->shorthand, $this->category);
 		$stmt->execute();
 
-		error_log("SQL: " . $this->_mysqli->error);
-
 		$this->id = $this->_mysqli->insert_id;
 
 		// associate tags
@@ -296,25 +294,27 @@ class ProblemObject {
 		}
 
 		// prepare statement
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `threads` WHERE `problem_id` = ? ORDER BY `created` DESC")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `subject`, `created` FROM `threads` WHERE `problem_id` = ? ORDER BY `created` DESC")) {
 			throw new ProblemException("Prepared failed: " . $this->_mysqli->error, __FUNCTION__);
 		}
-
-		error_log("id of problem: " . $this->id);
 
 		$stmt->bind_param("i", $this->id);
 		$stmt->execute();
 		$stmt->store_result();
 
-		$stmt->bind_result($thread_id);
+		$stmt->bind_result($thread_id, $subject, $created);
 		$result = array();
 		while ($stmt->fetch()) {
-			$result[] = $thread_id;
+			$result[] = array("id" => $thread_id, "subject" => $subject, "created" => $created);
 		}
 
 		$this->threads = $result;
 	}
 
+	/**
+	 * toArray()
+	 * Get this problem in array form.
+	 */
 	public function toArray(){
 		return Array(
 			"id" => $this->id,

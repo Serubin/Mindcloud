@@ -66,19 +66,6 @@ class Dashboard {
 				//error_log(html_entity_decode($pr_stmt));	
 			}
 
-			// load categories
-			$stmt->close();
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `name` FROM `categories`")) {
-				throw new DashboardException($this->_mysqli->error);
-			}
-
-			$stmt->execute();
-			$stmt->store_result();
-			$stmt->bind_result($id, $name);
-			while($stmt->fetch()) {
-				$result['categories'][] = array($id, $name);
-			}
-
 			// end
 			$stmt->close();
 

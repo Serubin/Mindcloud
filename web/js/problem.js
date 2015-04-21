@@ -8,6 +8,12 @@
  var problem_title;
 
 function problem(url){
+
+	
+	// initialize discussion container
+	$discussions = $("#discussions_container");
+	$discussions.Discussion();
+
 	// id var for access from all functions
 	// get the problem's numeric id
 	var req = new APICaller('problem', 'getId');
@@ -18,10 +24,6 @@ function problem(url){
 		var params = {id: result};
 		req.send(params, onDataLoad);
 	});
-	
-	// initialize discussion container
-	$discussions = $("#discussions_container");
-	$discussions.Discussion();
 
 	function onDataLoad (result) {
 
@@ -42,33 +44,42 @@ function problem(url){
 		}
 	}
 
-	// downvote listener
-	$("#problem_downvotes").click(function(){
-		var req = new APICaller("problem", "vote");
-		var params = {pid: problem_id, vote: -1};
-		req.send(params, function(){
-			log.debug("Problem", "User down voted problem " + problem_id);
-			$("#problem_upvotes").removeClass("project_vote_hover");
-			$("#problem_downvotes").addClass("project_vote_hover");
-			getScore();
-		});
+	// voting 
+	$(document).on("click", ".vote", function (event) {
+
+		var $btn = $(this);
+		//var $parent = $(this).parents(".problem");
+		var oppositeVote = ($btn.hasClass("upvote-btn")) ? ".downvote-btn" : ".upvote-btn";
+
+		// only submit the vote if the user has not voted already
+		if (!$btn.hasClass("selected-vote")) {
+			var req = new APICaller("problem", "vote");
+			req.send({
+				vote: $(this).attr("data-value"),
+				problem_id: problem_id
+			}, function (result) {
+				if (result) {
+					$btn.addClass("selected-vote");
+					
+					// deselect the opposite vote button
+					$(oppositeVote).removeClass("selected-vote");
+
+					// update the vote total
+					$("#score").html(result);
+
+				}
+				else {
+					console.log("vote submit failed");
+					alertHandler("alert", "Failed to submit vote");
+				}
+			});
+		}
 	});
-	
-	// upvote listener
-	$("#problem_upvotes").click(function(){
-		var req = new APICaller("problem", "vote");
-		var params = {pid: problem_id, vote: 1};
-		req.send(params, function(){
-			log.debug("Problem", "User up voted problem " + problem_id);
-			$("#problem_downvotes").removeClass("project_vote_hover");
-			$("#problem_upvotes").addClass("project_vote_hover");
-			getScore();
-		});
-	})
+
 	// new thread listener
 	$("#submit_thread").submit( function (event) {
 
-		log.debug("submitting thread", problem);
+		//log.debug("submitting thread to", problem_id);
 
 		// prevent default submission
 		event.preventDefault();
@@ -110,26 +121,29 @@ function problem(url){
 		$("#description").html(wiky.process(data.description, {}));
 
 		// set contributors
-		$("#contributors").html("");
+		$("#contributors").empty();
 		$.each(data.contributors, function(key, value){
-			$("#contributers").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
+			$("#contributors").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
 		});
 
 		// set vote count and vote status if set
-		if(data.current_user_vote < 0) {
-			$("#problem_downvotes").addClass("project_vote_hover");
-		} else if(data.current_user_vote > 0) { 
-			$("#problem_upvotes").addClass("project_vote_hover");
+		// downvote 
+		if(data.current_user_vote == -1) {
+			$(".downvote-btn").addClass("selected-vote");
+		//upvote
+		} else if(data.current_user_vote  == 1) { 
+			$(".upvote-btn").addClass("selected-vote");
 		}
 
 		// set score
 		$("#score").html(data.score);
+
 		// set popuate related projects
+		// TODO
 
 		// add threads and posts
-		$.each(data.threads, function(i, value) {
-			$("#discussions_container").loadThread(value);
-		});
+		$("#discussions_container").clearAll();
+		$("#discussions_container").addThreadThumbnails(data.threads);
 	}
 
 	function getScore() {
