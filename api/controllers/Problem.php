@@ -10,6 +10,7 @@
 require_once("models/ProblemObject.php");
 require_once("models/TagObject.php");
 require_once("include/vote.php");
+require_once("include/Flag.php");
 
 class Problem 
 {
@@ -37,17 +38,18 @@ class Problem
 	public function createProblem() {
 		
 		try {
-			if (!isset($this->_params['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
+			if (!isset($_SESSION['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
 				error_log(json_encode($this->_params));
 				throw new ProblemException("Unset vars.", __FUNCTION__);
 			}
 
 			$problem = new ProblemObject($this->_mysqli);
-			$problem->creator = $this->_params['uid'];
+			$problem->creator = $_SESSION['uid'];
 			$problem->title = $this->_params['title'];
 			$problem->description = $this->_params['description'];
 			$problem->tags = $this->_params['tags'];
 			$problem->category = $this->_params['category'];
+
 			// only set the shorthand if given
 			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
 			return $problem->create();
@@ -56,6 +58,11 @@ class Problem
 			return $e;
 		}
 	}
+
+	/**
+	 * getIdProblem()
+	 * Loads id from shorthand
+	 */
 	public function getIdProblem(){
 		if (!isset($this->_params['shorthand'])) {
 			throw new ProblemException("Could not load problem id; no shorthand provided.", __FUNCTION__);
@@ -66,6 +73,23 @@ class Problem
 		$problem->getId();
 
 		return $problem->id;
+	}
+
+
+	/**
+	 * getShorthandProblem()
+	 * Loads shorthand from id
+	 */
+	public function getShorthandProblem(){
+		if (!isset($this->_params['id'])) {
+			throw new ProblemException("Could not load problem shorthand; no id provided.", __FUNCTION__);
+		}
+
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->id= $this->_params['id'];
+		$problem->getShorthand();
+
+		return $problem->shorthand;
 	}
 	/**
 	 * loadProblem()
@@ -78,21 +102,24 @@ class Problem
 				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
 			}
 
+			// initialize problem object
 			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
 
 			// inflate the problem with its own information
-			$problem->id = $this->_params['id'];
 			$problem->loadFull();
 
 			return Array(
-				"id" => $problem->creator,
-				"statement" => $problem->statement,
+				"id" => $problem->id,
+				"title" => $problem->title,
 				"shorthand" => $problem->shorthand,
 				"description" => $problem->description,
+				"creator" => Array("user" => $problem->creator, "association" => "creator"),
 				"created" => $problem->created,
 				"tags" => $problem->tags,
 				"trial_no" => $problem->trial_no,
-				"score" => $problem->score
+				"score" => $problem->score,
+				"threads" => $problem->threads
 			);
 
 		} catch (ProblemException $e) {
@@ -109,22 +136,54 @@ class Problem
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSON['uid'])) {
-				throw new Exception("No problem id given", __FUNCTION__);
+			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSION['uid'])) {
+				throw new ProblemException("unset parameters", __FUNCTION__);
 			}
 
 			// validate vote value by taking absolute value
 			if (abs($this->_params['vote']) != UPVOTE) {
-				throw new Exception("Invalid vote passed", __FUNCTION__);
+				throw new ProblemException("Invalid vote passed", __FUNCTION__);
 			}
 
 			// submit vote
-			$problem = new ProblemObject($_mysqli);
+			$problem = new ProblemObject($this->_mysqli);
 			$problem->id = $this->_params['problem_id'];
 			$problem->creator = $_SESSION['uid'];
-			$problem->vote(UPVOTE);
+			$problem->vote($this->_params['vote']);
+
+			return true;
 
 		} catch (ProblemException $e) {
+			return $e;
+		}
+	} 
+
+	/**
+	 * Submit a flag on a problem
+	 */
+	public function flagProblem() {
+
+		try {
+			if (!isset($this->_params['problem_id'], $this->_params['flag'], $_SESSION['uid'])) {
+				error_log(json_encode($this->_params));
+				throw new ProblemException("Unable to flag problem, unset params", __FUNCTION__);
+			}
+
+			// check that the flag is valid
+			// TODO: Currently hardcoded for the sake of time. Change this to be dynamic later on
+			if ($this->_params['flag'] != 1 && $this->_params['flag'] != 2) {
+				throw new ProblemException("Invalid flag passed", __FUNCTION__);
+			}
+
+			// submit the flag
+			if (!Flag::addFlag($this->_mysqli, $this->_params['problem_id'], $_SESSION['uid'], $this->_params['flag'])) {
+				throw new ProblemException("Failed to flag problem", __FUNCTION__);
+			}
+
+			// return successfull
+			return true;
+
+		} catch (Exception $e) {
 			return $e;
 		}
 	}
@@ -157,6 +216,7 @@ class Problem
 			return $e;
 		}
 	}
+
 
 	/**
 	 * activate()

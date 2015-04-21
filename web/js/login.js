@@ -26,15 +26,6 @@ function login(){
 	});
 
 	/**
-	 * Redirect user to the app if already logged in
-	 */
-	var req = new APICaller("user", "check");
-	req.send({}, function (result) {
-		if (result)
-			ph.pageRequest("dashboard"); // loads dash
-	});
-
-	/**
 	 * Login form submission, validation done by Foundation form-abide
 	 */
 	$('#login_form').on('valid', function() {

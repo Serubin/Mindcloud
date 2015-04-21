@@ -1,14 +1,7 @@
-	<h1>dashboard, yo</h1>
+<h1>dashboard, yo</h1>
 
-<button class="success" data-reveal-id="create_problem_modal">pose a problem</a>
-<button class="success">create a solution</a>
-<button id="more" name="more">MORE</button>
-
-<div class="row" id="temp">
-	<div class="small-12 column text-center">
-		<p>Every problem is an opportunity</p>
-	</div>
-</div>
+<ul id="problems" class="small-block-grid-1 medium-block-grid-2 large-block-grid-4">
+</ul>
 
 <!-- pose-a-problem modal -->
 <div id="create_problem_modal" class="reveal-modal" data-reveal>
@@ -54,7 +47,7 @@
 
 	   	<!--<a role="button" type="submit" aria-label="submit form" href="#" class="button keep-native">submit</a>-->
 	</form>
-  <a href="#" class="close-reveal-modal keep-native">&#215;</a>
+	<a href="#" class="close-reveal-modal keep-native">&#215;</a>
 </div> <!-- end pose-a-problem modal -->
 
 <div id="content_container">

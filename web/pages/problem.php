@@ -1,14 +1,48 @@
+<!-- begin head -->
 <div class="row" id="header">
-	<div class="large-8 small-10 columns" id="title">
+	<div class="small-12 medium-8 columns" id="banner">
+		<h2 id="title"></h2>
 	</div>
-	<div class="large-4 small-2" id="creators">
+	<div class="small-12 medium-4 columns" id="meta">
+		<ul id="contributers" class="text-right">
+
+		</ul>
 	</div>
+</div> <!-- end head -->
+
+<!-- meta action bar -->
+<div class="icon-bar three-up" id="#meta_action_menu">
+	<a class="item">
+		<i class="fi-like"></i>
+		<label class="problem_downvotes">Upvote</label>
+	</a>
+	<a class="item">
+		<i class="fi-dislike"></i>
+		<label class="problem_downvotes">Downvote</label>
+	</a>
+	<a class="item">
+		<i class="fi-flag"></i>
+		<label>Flag</label>
+	</a>
+</div> <!-- end meta action bar -->
+
+<!-- problem description -->
+<div id="description">
+
+</div> <!-- end problem description -->
+<hr>
+<div id="discussions_container">
+
+</div><!-- end discussion thread list-->
+
+
+<!-- related projects -->
+<div id="related_projects">
+
+
+</div> <!-- end related projects -->
+
 </div>
 
-<div class="row">
-	<div class="large-8 small-10 columns" id="description">
-	</div>
-	<div class="large-4 small-2" id="discussion">
-	</div>
-</div>
+
 

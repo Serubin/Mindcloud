@@ -1,8 +1,15 @@
+/* Foundation */
 @import "settings";
 @import "foundation";
+@import "foundation-icons";
+
+/* Mindcloud globals */
+@import "mindcloud";
+
+/* Pages */
 @import "splash";
 @import "dashboard";
-@import "foundation-icons";
+@import "problem";
 
 // fonts
 //@import url(http://openfontlibrary.org/face/unique);
@@ -98,4 +105,13 @@ body{
 	.accordion {
 		padding: 2%;
 	}
+}
+
+.overlay {
+	z-index: 50;
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	top: 0px;
+	left: 0px;
 }
