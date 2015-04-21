@@ -9,7 +9,7 @@ var ph; // page handler global variable
 var tp;
 
 $(function(){
-
+	log.info("Mindcloud", "Loading mindcloud");
 	tp = new topBar();
 
 	// Loads page handler

@@ -87,7 +87,7 @@ class Notification
 	 */
 	public function loadArrayNotification(){
 		try {
-			if(!isset($this->_params['ids'], $_SESSION['uid'])) {
+			if(!isset($this->_params['ids'], $this->_params['seen'], $_SESSION['uid'])) {
 				throw new UserException("Unset vars: ids, uid", __FUNCTION__);
 			}
 
@@ -98,6 +98,7 @@ class Notification
 			foreach ($ids as $key => $value){
 				$notification = new NotificationObject($this->_mysqli);
 				$notification->id = $value;
+				$notification->seen = $this->_params['seen'];
 				$notification->uid = $_SESSION['uid'];
 				$notification->load();
 
@@ -112,6 +113,29 @@ class Notification
 
 			return $result;
 		} catch(Exception $e) {
+			return $e;
+		}
+	}
+
+	/**
+	 * Updates seen flag
+	 * @param id notification id
+	 * @param seen - seen value
+	 */
+	public function updateNotification(){
+		try {
+
+			if(!isset($this->_params['id'], $this->_params['seen'])) {
+				throw new UserException("Unset vars: ids, uid", __FUNCTION__);
+			}
+			$notif = new NotificationObject($this->_mysqli);
+			$notif->id = $this->_params['id'];
+			$notif->seen = $this->_params['seen'];
+			$notif->updateSeen();
+
+			return true;
+
+		} catch(Exception $e){
 			return $e;
 		}
 	}
@@ -137,9 +161,9 @@ class Notification
 	/* fetchAllUserNotification()
 	 * Fetchs all notification ids of the current user
 	 */
-	public function fetchAllUserNotification(){
+	public function fetchAllIdNotification(){
 		try {
-			if(!isset($_SESSION['uid'])) {
+			if(!isset($this->_params['seen'], $_SESSION['uid'])) {
 				throw new UserException("unset vars: uid ", __FUNCTION__);
 			}
 
@@ -147,6 +171,7 @@ class Notification
 			
 			$notif = new NotificationObject($this->_mysqli);
 			$notif->uid = $uid;
+			$notif->seen = $this->_params['seen'];
 		
 			return $notif->fetchNotifications();
 
