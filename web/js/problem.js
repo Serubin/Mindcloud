@@ -115,14 +115,20 @@ function populatePage(data){
 	// set vote count and vote status if set
 
 
-	// set popuate related projects
+	// set popular related solutions
 
-
-	
 
 
 	// add threads and posts
-	$.each(data.threads, function(i, value) {
-		$("#discussions_container").loadThread(value);
-	});
+	if (data.threads.length == 0) {
+		
+		$("#discussions_container").setEmpty();
+
+	} else {
+		$.each(data.threads, function(i, value) {
+			$("#discussions_container").loadThread(value);
+		});
+	}
+
+
 }
