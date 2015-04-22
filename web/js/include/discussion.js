@@ -83,16 +83,37 @@
 		// TODO load posts
 		$(id).on("click", ".thread-preview", function (event) {
 
+			// handle on the thread id
+			var thread_id = $(this).attr('data-title');
 
 			// clear all past content
 			$posts.empty();
 
 			// initialize the list of posts
-			$posts_list = $("<ul></ul>", {class : "posts-list small-block-grid-1", 'data-title' : $(this).attr('data-title')});
+			$posts_list = $("<ul></ul>", {class : "posts-list small-block-grid-1", 'data-title' : thread_id});
 
 			// append the initial block grid list
 			$posts.append($posts_list);
 
+			// request all problems of this thread
+			var req = new APICaller("thread", "load");
+
+			req.send({thread_id : thread_id}, function (result) {
+
+				if (result) {
+
+					$.each(result, function (i, value) {
+						$posts_list.prepend($.fn.Discussion.postFormatter(value.poster, value.body, value.id, value.date));
+					});
+
+				} else {
+					alertHandler("alert", "Failed to load thread");
+				}
+
+
+			});
+
+			// load all posts of this thread
 			/*$("#" + ids.thread_viewer).animate({
 			}, "fast");*/
 
@@ -119,7 +140,7 @@
 				if (result) {
 
 					$(".poster").before($.fn.Discussion.postFormatter(result.user, result.body, result.id, result.date));
-
+					$posts_list.find("input").val("");
 
 				} else {
 					alertHandler("alert", "Failed submit post");
