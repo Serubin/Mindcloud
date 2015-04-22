@@ -135,18 +135,19 @@ class ProblemObject {
 	 * For obtaining less innformation to display on dashboard.
 	 */
 	public function loadPreview() {
-		if (isset($this->id)) {
+		if (!isset($this->id)) {
 			throw new ProblemException("Could not load preview: id not set.", __FUNCTION__);
 		}
 
 		// fetch from the db the information about this problem
-		if (!$stmt = $this->_mysqli("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
 			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
 		}
 
 		$stmt->bind_param("i", $this->id);
 		$stmt->execute();
-		$stmt->bind_result();
+		$stmt->store_result();
+
 		if ($stmt->num_rows != 1) {
 			throw new ProblemException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
 		}
@@ -157,7 +158,7 @@ class ProblemObject {
 
 		// Set this object's member vars
 		$this->shorthand = $shorthand;
-		$this->statement = $title;
+		$this->title = $title;
 		$this->description = $description;
 		$this->created = $created;
 		$this->trial_no = $current_trial;
@@ -316,7 +317,7 @@ class ProblemObject {
 	}
 
 	public function toArray(){
-		return Array(
+		@$result = Array(
 			"id" => $this->id,
 			"title" => $this->title,
 			"shorthand" => $this->shorthand,
@@ -329,5 +330,7 @@ class ProblemObject {
 			"threads" => $this->threads,
 			"current_user_vote" => $this->current_user_vote
 		);
+		
+		return $result;
 	}
 }

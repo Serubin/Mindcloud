@@ -3,6 +3,7 @@
 	<div class="row" id="header">
 		<div class="small-12 medium-8 columns" id="banner">
 			<h2 id="title"></h2>
+			<h2 id="subtitle"><small>Solves: <a id="solves_for"> </a></small></h2>
 		</div>
 		<div class="small-12 medium-4 columns" id="meta">
 			<ul id="contributers" class="text-right">

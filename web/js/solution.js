@@ -101,6 +101,9 @@ function solution(url){
 		window.document.title = "Solution: " + data.title;
 		$("#banner #title").html(data.title);
 
+		$("#solves_for").html(data.problem.title).attr("href", "/problem/" + data.problem.shorthand);
+
+
 		// set description
 		$("#description").html(wiky.process(data.description, {}));
 

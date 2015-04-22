@@ -7,6 +7,7 @@
  * All lines will fit with 80 columns. 
  *****************************************************************************/
 require_once "include/contributors.php";
+require_once "models/ProblemObject.php";
 
 class SolutionObject {
 
@@ -15,6 +16,7 @@ class SolutionObject {
 	// member vars
 	public $id;
 	public $problem_id;
+	public $problem;
 	public $shorthand; // Short hand title/url
 	public $title;
 	public $description; // TODO strip tags on submit to filter out html
@@ -129,6 +131,8 @@ class SolutionObject {
 			));
 		}
 
+		$stmt->close();
+
 		$this->contributors = $contributors;
 
 		// set score
@@ -136,6 +140,9 @@ class SolutionObject {
 
 		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "SOLUTION", $this->id, $_SESSION['uid']);
 
+		$this->problem = new ProblemObject($this->_mysqli);
+		$this->problem->id = $this->problem_id;
+		$this->problem->loadPreview();
 		// get array of afficiliated thread ids
 		//$this->getThreads();
 	}
@@ -318,10 +325,10 @@ class SolutionObject {
 			$value['user'] = $value['user']->toArray();
 			array_push($contributors, $value);
 		}
-
-		return Array(
+		@$result = Array(
 			"id" => $this->id, 
 			"problem_id" => $this->problem_id, 
+			"problem" => $this->problem->toArray(),
 			"shorthand" => $this->shorthand,
 			"title" => $this->title,
 			"description" => $this->description,
@@ -330,6 +337,8 @@ class SolutionObject {
 			"score" => $this->score,
 			"current_user_vote" => $this->current_user_vote
 		);
+
+		return $result;
 	}
 
 }
