@@ -70,7 +70,11 @@
 		$(id).append($thread_container);
 		$(id).append($thread_viewer);
 
-		// create listener for showing threads
+		// append the loading gif
+		$thread_viewer.append($.fn.Discussion.loadingFormatter());
+
+		// create listener for showing threads' posts
+		// TODO load posts
 		$(id).on("click", ".thread-preview", function() {
 
 			$("#" + ids.thread_viewer).animate({
@@ -168,7 +172,7 @@
 
 				var new_threads = [thread];
 
-				$.fn.Discussion.addPreviews(ids, new_threads);
+				$.fn.addThreadThumbnails(new_threads, ids);
 			}
 			else
 				alertHandler("alert", "<p>Failed to submit thread</p>");
@@ -177,8 +181,9 @@
 
 	/*
 	 * Given a thread id, load that thread
+	 * @deprecated all posts loaded at once 
 	 */
-	$.fn.loadThread = function(thread_id) {
+	$.fn.populateThreads = function(thread_id) {
 
 	 	var ids = $.fn.getIds($(this).selector);
 
@@ -202,28 +207,38 @@
 
 	/**
 	 * empty
+	 * called clearAll instead of empty() because the JQuery method will get called and fail
 	 */
-	 $.fn.setEmpty = function() {
+	 $.fn.clearAll = function() {
 
 	 	var ids = $.fn.getIds($(this).selector);
 	 	var $thread_container = $("#" + ids.thread_container);
+	 	$thread_container.children().remove();
 
-	 	$thread_container.append($("<div></div>", {class: "placeholder"}).html("<p>No threads to display</p>"));
 	 }
 
 	/*
 	 * Append a preview to the end of the previews list
 	 * takes an array of thread objects containing at least an id, title, and body
 	 */
-	 $.fn.Discussion.addPreviews = function (ids,threads) {
+	 $.fn.addThreadThumbnails = function (threads, ids) {
 
-	 	$("#" + ids.thread_container).children(".placeholder").remove();
 
-	 	$.each(threads, function (i, value) {
+	 	if (!ids) ids = $.fn.getIds($(this).selector);
+		$(".placeholder").remove();
 
-			$("#" + ids.thread_container).prepend($.fn.Discussion.threadPrevFormatter(ids, value.id, value.subject, value.body));
+	 	if (threads.length == 0) {
+	 		console.log("no threads to display");
+	 		$.fn.Discussion.showEmpty(ids);
+	 	}
+	 	else {
 
-	 	});
+		 	$.each(threads, function (i, value) {
+
+				$("#" + ids.thread_container).prepend($.fn.Discussion.threadPrevFormatter(ids, value.id, value.subject, value.body));
+
+		 	});
+		 }
 	 }
 
 	/*
@@ -245,12 +260,22 @@
 	 	})
 	 }
 
+	/**
+	 * Add a message say there are no threads to append
+	 */
+	 $.fn.Discussion.showEmpty = function(ids) {
+
+	 	var $thread_container = $("#" + ids.thread_container);
+
+	 	$thread_container.append($("<div></div>", {class: "placeholder"}).html("<span>No threads to display</span>"));
+	 }
+
 	 /*
 	  * format a thread element for loading
 	  */
-	 $.fn.Discussion.loadingFormatter = function(ids, thread_id) {
+	 $.fn.Discussion.loadingFormatter = function() {
 
-	 	var result = $('<div></div>', {id:ids.thread + thread_id, class: "thread-preview"}).html('<img src="/assets/images/ajax-loader.gif">');
+	 	var result = $('<div></div>', {class: "placeholder loading"}).html('<img src="/assets/images/ajax-loader.gif">');
 	 	return result;
 	 } 
 

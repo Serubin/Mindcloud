@@ -33,8 +33,6 @@ class Vote {
 			throw new MindcloudException($mysqli->error, "vote", __FUNCTION__);
 		}
 
-		error_log("vote: " . $vote);
-
 		$stmt->bind_param("sii", $ctype, $cid, $uid);
 		$stmt->execute();
 

@@ -207,7 +207,7 @@ div.tagsinput div {
   .dropdown {
     position: absolute;
     top: -10px;
-    left: 12px;
+    right: 12px;
     //width: 18px;
     //height: 10px;
     float: left;
@@ -250,5 +250,11 @@ div.tagsinput div {
   .selected {
     background-color: $secondary-color-dark;
     border: none;
+  }
+
+  .flag-reveal {
+    text-align: center;
+    padding-top: 5px;
+    padding-right: 5px;
   }
 }

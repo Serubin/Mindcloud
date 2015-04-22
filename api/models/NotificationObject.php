@@ -103,7 +103,7 @@ class NotificationObject {
 			throw new UserException("Unset vars: uid", __FUNCTION__);
 		}
 
-		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `time`,`seen` FROM `user_notifications` WHERE `uid` = ? AND `seen`=? order by `time` desc")) {
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `uid`, `time`,`read` FROM `user_notifications` WHERE `uid` = ? AND `read`=? order by `time` desc")) {
 			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
 

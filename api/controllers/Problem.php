@@ -50,14 +50,11 @@ class Problem
 			$problem->tags = $this->_params['tags'];
 			$problem->category = $this->_params['category'];
 
-			error_log($problem->description);
-
 			// sanitize strings
 			$problem->title = filter_var($problem->title, FILTER_SANITIZE_STRING);
 			$problem->description = strip_tags($problem->description);
 			//$problem->description = str_replace("\n\n", "[[#line#end#]]", $problem->description); //TODO make spacing work better
 			$problem->shorthand = filter_var($problem->shorthand, FILTER_SANITIZE_STRING);
-			error_log($problem->description);
 
 			if (isset($this->_params['shorthand'])) { // Uses user shorthand
 				$problem->shorthand = $this->_params['shorthand']; 
@@ -70,10 +67,11 @@ class Problem
 			$problem->shorthand = strtolower($problem->shorthand); // Get's ride of those cocky captials.
 			$problem->shorthand = substr($problem->shorthand,0 ,200); // Shortens the fatter of the bunch.
 			if(!$problem->validateShorthand()){
-				$problem->shorthand = $problem->shorthand . substr(md5($problem->shorthand),0, 4); // Makes unquif if not?
+				// Makes unique if not
+				$problem->shorthand = $problem->shorthand . substr(md5($problem->shorthand . date('Y-m-d H:i:s') . $_SESSION['uid']),0, 6);
 			}
 			
-			return $return = $problem->create() ? $problem->shorthand : false;;
+			return $return = $problem->create() ? $problem->shorthand : false;
 
 		} catch (ProblemException $e) {
 			return $e;
@@ -146,8 +144,9 @@ class Problem
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['pid'], $this->_params['vote'], $_SESSION['uid'])) {
-				throw new ProblemException("Unset vars: pid, vote", __FUNCTION__);
+			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSION['uid'])) {
+				error_log("Request parameter dump" . json_encode($this->_params));
+				throw new ProblemException("Unset vars", __FUNCTION__);
 			}
 
 			// validate vote value by taking absolute value
@@ -157,6 +156,13 @@ class Problem
 
 			// submit vote
 			$problem = new ProblemObject($this->_mysqli);
+
+			$problem->id = $this->_params['problem_id'];
+			$problem->creator = $_SESSION['uid'];
+			$problem->vote($_SESSION['uid'], $this->_params['vote']);
+
+			return Vote::fetchScore( $this->_mysqli, "PROBLEM", $this->_params['problem_id']);
+
 			$problem->id = $this->_params['pid'];
 
 			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
@@ -258,5 +264,27 @@ class Problem
 	 */
 	public function deactivateProblem() {
 		// TODO
+	}
+
+	/**
+	 * getCategoriesProblem()
+	 */
+	public function getcategoriesProblem() {
+		
+		$categories = array();
+
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `name` FROM `categories`")) {
+				throw new DashboardException($this->_mysqli->error);
+			}
+
+		$stmt->execute();
+		$stmt->store_result();
+		$stmt->bind_result($id, $name);
+		while($stmt->fetch()) {
+			$categories[] = array($id, $name);
+		}
+
+		return $categories;
+
 	}
 }

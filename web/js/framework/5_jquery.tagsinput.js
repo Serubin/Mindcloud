@@ -177,6 +177,15 @@
 		$.fn.tagsInput.importTags(this,str);
 	}
 
+	$.fn.clearTags = function () {
+
+		console.log("testing tags in tagsinput.js 182");
+        id = $(this).attr('id');
+        console.log(id);
+		$("#" + id).val('');
+		$("#" + id).parent().find(".tag").remove();
+	}
+
 	/**
 	 * getAllTags
 	 * returns a list of the IDs the list of tags

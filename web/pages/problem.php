@@ -5,7 +5,7 @@
 			<h2 id="title"></h2>
 		</div>
 		<div class="small-12 medium-4 columns" id="meta">
-			<ul id="contributers" class="text-right">
+			<ul id="contributors" class="text-right">
 
 			</ul>
 		</div>
@@ -13,11 +13,11 @@
 
 	<!-- meta action bar -->
 	<div class="icon-bar three-up" id="#meta_action_menu">
-		<a class="item" id="problem_upvotes">
+		<a class="item vote upvote-btn" data-value="1">
 			<i class="fi-like"></i>
 			<label>Upvote</label>
 		</a>
-		<a class="item" id="problem_downvotes">
+		<a class="item vote downvote-btn" data-value="-1">
 			<i class="fi-dislike"></i>
 			<label >Downvote</label>
 		</a>

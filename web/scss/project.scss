@@ -1,5 +1,5 @@
 .project{
-	#contributers{
+	#contributors{
 	padding: 25px 0;
 	list-style: none;
 		small{
@@ -19,7 +19,12 @@
 		height: 20px;
 	}
 
-	.project_vote_hover {
+	.selected-vote {
 		background-color: $primary-color-dark;
+	}
+
+	.placeholder {
+		padding-top: 90px;
+		padding-left: 10px;
 	}
 }
