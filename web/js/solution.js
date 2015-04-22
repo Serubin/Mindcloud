@@ -44,8 +44,8 @@ function solution(url){
 		var params = {pid: id, vote: -1};
 		req.send(params, function(){
 			log.debug("Problem", "User down voted solution " + id);
-			$("#solution_upvotes").removeClass("project_vote_hover");
-			$("#solution_downvotes").addClass("project_vote_hover");
+			$("#solution_upvotes").removeClass("selected-vote");
+			$("#solution_downvotes").addClass("selected-vote");
 			getScore();
 		});
 	});
@@ -56,8 +56,8 @@ function solution(url){
 		var params = {pid: id, vote: 1};
 		req.send(params, function(){
 			log.debug("Problem", "User up voted problem " + id);
-			$("#solution_downvotes").removeClass("project_vote_hover");
-			$("#solution_upvotes").addClass("project_vote_hover");
+			$("#solution_downvotes").removeClass("selected-vote");
+			$("#solution_upvotes").addClass("selected-vote");
 			getScore();
 		});
 	})
@@ -110,15 +110,15 @@ function solution(url){
 		// set contributors
 		$("#contributors").html("");
 		$.each(data.contributors, function(key, value){
-			$("#contributers").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
+			$("#contributors").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
 		});
 
 
 		// set vote count and vote status if set
 		if(data.current_user_vote < 0) {
-			$("#solution_downvotes").addClass("project_vote_hover");
+			$("#solution_downvotes").addClass("selected-vote");
 		} else if(data.current_user_vote > 0) { 
-			$("#solution_upvotes").addClass("project_vote_hover");
+			$("#solution_upvotes").addClass("selected-vote");
 		}
 
 		// set score
