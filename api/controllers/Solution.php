@@ -218,4 +218,30 @@ class Solution
 			return $e;
 		}
 	}
+
+	public function getRelatedSolution(){
+		try {
+			if(!isset($this->_params['problem_id'])){
+				throw new SolutionException("Couldn't load related solutions, no id provided", __FUNCTION__);
+			}
+
+			$solution = new SolutionObject($this->_mysqli);
+			$solution->problem_id;
+			$related = $solution->getRelatedSolutions();
+
+			$result = Array();
+
+			foreach($related as $value) {
+				$related_solution = new SolutionObject($this->_mysqli);
+				$related_solution->id = $value;
+				$related_solution->loadPreview();
+
+				array_push($result, $related_solution);
+			}
+
+			return $result;
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
 }

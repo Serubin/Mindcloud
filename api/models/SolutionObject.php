@@ -316,6 +316,31 @@ class SolutionObject {
 		$stmt->execute();
 	}
 
+	public function getRelatedSolutions(){
+		if(!isset($this->problem_id)) {
+			throw new SolutionException("Unset var problem_id", __FUNCTION__);
+		}
+
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid` FROM `solutions` WHERE `pid` = ?")) {
+			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("i", $this->problem_id);
+		$stmt->execute();
+		$stmt->store_result();
+
+		$stmt->bind_result($db_id, $db_pid);
+
+		$result = Array();
+		while($stmt->fetch()) {
+			array_push($result, $db_id);
+		}
+
+		$stmt->close();
+		
+		return $result;
+	}
+
 	/* toArray()
 	 *  info array of solution
 	 */
