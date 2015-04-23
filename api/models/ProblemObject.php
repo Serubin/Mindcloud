@@ -311,7 +311,7 @@ class ProblemObject {
 
 		$this->threads = $result;
 	}
-
+	
 	/**
 	 * toArray()
 	 * Get this problem in array form.
