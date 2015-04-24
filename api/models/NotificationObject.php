@@ -16,7 +16,7 @@ class NotificationObject {
 	public $url;
 	public $message;
 	public $time;
-	public $seen;
+	public $read;
 
 	/**
 	 * Constructor
@@ -80,16 +80,16 @@ class NotificationObject {
 		$stmt->close();
 	}
 
-	public function updateSeen(){
-		if(!isset($this->id, $this->seen, $_SESSION['uid'])) {
-			throw new UserException("unset vars: id, seen");
+	public function updateRead(){
+		if(!isset($this->id, $this->read, $_SESSION['uid'])) {
+			throw new UserException("unset vars: id read", __FUNCTION__);
 		}
 
-		if(!$stmt = $this->_mysqli->prepare("UPDATE `user_notifications` SET `seen`=? WHERE `id`=? AND `uid`=?")){
+		if(!$stmt = $this->_mysqli->prepare("UPDATE `user_notifications` SET `read`=? WHERE `id`=? AND `uid`=?")){
 			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("iii", $this->seen, $this->id, $_SESSION['uid']);
+		$stmt->bind_param("iii", $this->read, $this->id, $_SESSION['uid']);
 		$stmt->execute();
 		$stmt->close();
 	}
@@ -99,7 +99,7 @@ class NotificationObject {
 	 * returns a list of ids for a notification that is attached to a user
 	 */
 	public function fetchNotifications(){
-		if(!isset($this->uid, $this->seen)){
+		if(!isset($this->uid, $this->read)){
 			throw new UserException("Unset vars: uid", __FUNCTION__);
 		}
 
@@ -107,11 +107,11 @@ class NotificationObject {
 			throw new UserException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("ii", $this->uid, $this->seen);
+		$stmt->bind_param("ii", $this->uid, $this->read);
 		$stmt->execute();
 		$stmt->store_result();
 
-		$stmt->bind_result($db_id, $db_uid, $db_time, $db_seen);
+		$stmt->bind_result($db_id, $db_uid, $db_time, $db_read);
 
 		$notifications = Array();
 

@@ -207,7 +207,7 @@ var notificationTopbar;
 
 		function internalRecount(){
 			var req = new APICaller("notification", "fetchAllId");
-			var params = {seen: 0, uid: "SESSION"};
+			var params = {read: 0, uid: "SESSION"};
 			
 			$notificationNum = $('#notification_number');
 			// adds hover class to begin animation
@@ -237,7 +237,7 @@ var notificationTopbar;
 
 		function internalPopulate(population){
 			var req = new APICaller("notification", "loadArray");
-			var params = {ids: JSON.stringify(notificationIds), seen: 0};
+			var params = {ids: JSON.stringify(notificationIds), read: 0};
 
 			var $nfDropdown = $("#notification-dropdown");
 
