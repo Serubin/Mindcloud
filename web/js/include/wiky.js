@@ -6,7 +6,8 @@
 
 var wiky = {
     options: {
-        'link-image': true //Preserve backward compat
+        'link-image': true, //Preserve backward compat
+        'strip': false
     }
 }
 

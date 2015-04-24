@@ -38,7 +38,7 @@ function problem(url){
 			alertHandler("alert", "Sorry, we couldn't find that problem.");
 		}
 	}
-
+	//TODO take a look, modify
 	// voting 
 	$(document).on("click", ".vote", function (event) {
 
