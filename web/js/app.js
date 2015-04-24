@@ -8,6 +8,10 @@
 var ph; // page handler global variable
 var tp;
 
+var problem_id; // globals for create solutions
+var problem_title; 
+
+
 $(function(){
 	log.info("Mindcloud", "Loading mindcloud");
 	tp = new topBar();
@@ -175,6 +179,20 @@ $(function(){
 	}
 });
 
+/* updateCreateSolution()
+ * updates global problem id and title as well as updating the html in the modal
+ * for creating a solutions
+ * @param id - problem id, once set available globally at problem_id
+ * @param id - problem title, once set available globally at problem_title
+ */
+function updateCreateSolution(id, title){
+	problem_id = id;
+	problem_title = title;
+
+	$("#create_solution_for").html(title);
+}
+
 function page_handler_global(){
 	$("#create_solution").css("display", "none", "!important");
+	updateCreateSolution(undefined, "");
 }

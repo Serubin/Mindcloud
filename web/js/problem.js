@@ -4,8 +4,6 @@
  * 13 Febuary 2015
  * Javascript for problem pages
  *****************************************************************************/
- var problem_id;
- var problem_title;
 
 function problem(url){
 
@@ -28,11 +26,8 @@ function problem(url){
 	function onDataLoad (result) {
 
 		if (result) {
-			// set id
-			problem_id = result.id;
-			problem_title = result.title;
 
-			$("#create_solution_for").html(problem_title);
+			updateCreateSolution(result.id, result.title); // Updates create solution modal
 
 			// Loads problem
 			populatePage(result);

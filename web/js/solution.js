@@ -28,6 +28,8 @@ function solution(url){
 			// set id
 			id = result.id;
 
+			updateCreateSolution(result.problem_id, result.problem.title); // Updates create solution modal
+
 			// Loads problem
 			console.log(result);
 			populatePage(result);
