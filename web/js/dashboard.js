@@ -32,6 +32,9 @@ function dashboard() {
 	 */
 	function loadDashboard() {
 
+		// remove all past listeners
+		$("#content").off("click");
+
 		// initial load
 		var req = new APICaller("dashboard", "load");
 
@@ -152,7 +155,7 @@ function dashboard() {
 	*/
 
 	// voting 
-	$(document).on("click", ".vote", function (event) {
+	$("content").on("click", ".vote", function (event) {
 
 		var $btn = $(this);
 		var $parent = $(this).parents(".problem");
@@ -184,18 +187,18 @@ function dashboard() {
 	});
 
 	// show flag menu
-	$(document).on("click", ".flag-reveal", function(event) {
+	$("#content").on("click", ".flag-reveal", function(event) {
 
 		$menu = $(this).children(".dropdown");
 		if (!$menu.hasClass('open')) {
-			$("body").append($("<div></div", {class: "overlay"}));
+			$("#content").append($("<div></div", {class: "overlay"}));
 			$menu.addClass("open");
 			$(this).addClass("selected");
 		}
 	});
 
 	// hiding flag menu
-	$(document).on('click', ".overlay", function (event) {
+	$("#content").on('click', ".overlay", function (event) {
 
 		console.log("overlay clicked");
 		$(".dropdown").removeClass('open');
@@ -204,13 +207,13 @@ function dashboard() {
 	});
 
 	// Link to problem pages
-	$(document).on('click', '.problem-statement', function (event) {
+	$("#content").on('click', '.problem-statement', function (event) {
 
 		ph.pageRequest("/problem/" + $(this).parent().parent().attr('data-title'));
 	});
 
 	// flag actions
-	$(document).on('click', ".flag-val", function (event) {
+	$("#content").on('click', ".flag-val", function (event) {
 
 		event.preventDefault();
 
