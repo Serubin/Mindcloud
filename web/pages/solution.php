@@ -1,11 +1,12 @@
-<div class="project" id="problem">
+<div class="project" id="solution">
 	<!-- begin head -->
 	<div class="row" id="header">
 		<div class="small-12 medium-8 columns" id="banner">
 			<h2 id="title"></h2>
+			<h2 id="subtitle"><small>Solves: <a id="solves_for"> </a></small></h2>
 		</div>
 		<div class="small-12 medium-4 columns" id="meta">
-			<ul id="contributors" class="text-right">
+			<ul id="contributers" class="text-right">
 
 			</ul>
 		</div>
@@ -13,11 +14,11 @@
 
 	<!-- meta action bar -->
 	<div class="icon-bar three-up" id="#meta_action_menu">
-		<a class="item vote upvote-btn" data-value="1">
+		<a class="item" id="solution_upvotes">
 			<i class="fi-like"></i>
 			<label>Upvote</label>
 		</a>
-		<a class="item vote downvote-btn" data-value="-1">
+		<a class="item" id="solution_downvotes">
 			<i class="fi-dislike"></i>
 			<label >Downvote</label>
 		</a>
@@ -45,3 +46,6 @@
 
 	</div>
 </div>
+
+
+

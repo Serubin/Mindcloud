@@ -5,90 +5,32 @@
  * Javascript for account page
  *****************************************************************************/
 
+// preloader
+function predashboard(url){
+	var _this = this;
+	// Checks for user login
+	var req = new APICaller('user', 'check');
+	req.send({}, function(result){
+		if(!result){
+			ph.pageRequest("/login");
+		}
+	});
+}
+
 function dashboard() {
 
+	window.document.title = "Mindcloud: Dashboard"
+
 	// handle on content container
-	var $problems = $('#container');
+	var $problems = $("#problems");
 
 	// initial load
 	loadDashboard();
-
-	// initalize tag handler
-	$('#tag_container').tagsInput({
-
-		// New tag callback
-		'onAddTag': function(tag){
-			// request the tag id
-			var tag_check_request = new APICaller("tag", "identify");
-			tag_check_request.send({
-				identifier: tag
-			}, function (result) {
-				// set the retrieved id as the element id of the tag
-				console.log(result);
-				$('#tag_container').setId(tag, result);
-			});
-		}
-	});
-	
-	// Problem creation submission listener
-	$('#submit_problem').on('valid', function() {
-		$("#tag_container").getAllTags();
-		var req = new APICaller('problem', 'create');
-		var params = {
-			title: $("#form_problem_statement").val(), 
-			description:$("#form_problem_desc").val(), 
-			tags: $("#tag_container").getAllTags(),
-			category: $("#form_problem_cat").val()
-		};
-		req.send(params, function(result) {
-				if (result) {
-					$("#create_problem_modal").foundation('reveal', 'close');
-					loadDashboard();
-
-				}
-			});
-	}).on('invalid', function() {
-		//problem_tags.getAllTags();
-	});
 
 	/**
 	 * Sets up the isotope container and loads inital content
 	 */
 	function loadDashboard() {
-
-		// initialize isotope
-		$problems.isotope({
-
-		  itemSelector : '.isotope-item',
-		  layoutMode : 'masonry',
-		  masonry: {
-		  	columnWidth: 50
-		  }
-		  // options...
-		});
-
-		// TODO: This stuff will be useful for sorting problems
-		// filter items when filter link is clicked
-		/*$('#filters a').click(function(){
-		  var selector = $(this).attr('data-filter');
-		  $container.isotope({ filter: selector });
-		  return false;
-		});
-			
-		// set selected menu items
-		var $optionSets = $('.inline-list'),
-		$optionLinks = $optionSets.find('a');
-
-		$optionLinks.click(function(){
-			var $this = $(this);
-		    // don't proceed if already selected
-		    if ( $this.hasClass('selected') ) {
-		        return false;
-		    }
-		   var $optionSet = $this.parents('.inline-list');
-		   $optionSet.find('.selected').removeClass('selected');
-		   $this.addClass('selected'); 
-		});*/
 
 		// initial load
 		var req = new APICaller("dashboard", "load");
@@ -106,6 +48,30 @@ function dashboard() {
 
 				// display problems from request
 				repopulateProblems(result.problems);
+
+				// add votes
+				$.each(result.votes, function (i, value) {
+
+					// get what the vote is
+					var voteClass;
+					switch (value[1]) {
+						case 1:
+							voteClass = ".upvote";
+							break;
+						case -1:
+							voteClass = ".downvote";
+							break;
+						default:
+							alertHandler("alert", "Received an invalid vote");
+							break;
+					}
+
+					$problem = $("#" + value[0] + ".problem");
+					$problem.addClass("voted");
+					$problem.find(voteClass).addClass("selected");
+
+
+				});
 
 		});
 	}
@@ -135,25 +101,40 @@ function dashboard() {
 
 		// append new problems		
 		$.each(new_problems, function(i, value) {
-			new_problems[i] = 
-				"<div class='isotope-item' datetime='" + value[2] + "' id=" + value[0] + ">" + 
-					"<div class='row'>" +
-						"<div class='small-9 column problem-statement'>" +
-							"<span text-left'>" + 
-								value[1] + 
-							"</span>" +
-						"</div>" +
-						"<div class='small-3 column voter'>" +
-							"<div class='arrow'><i class='fi-arrow-up'></i></div>" +
-							"<div class='arrow'><i class='fi-arrow-down'></i></div>" +
-						"</div>" +
-					"<div>" + // end row
-				"</div>";
+
+			// overall container
+			new_problems[i] = $('<li></li>', {id: value[0], datetime: value[2], class: 'problem', 'data-title' : value[3]}).append(
+				// row div 
+				$('<div></div>', {class: 'row'})
+				.append(
+					// vote button containers
+					$('<div></div>', {class: 'small-2 column voter'})
+						.append( $("<div></div>", {class:'problem-btn vote upvote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
+						.append( $("<div></div>", {class: 'vote-counter'}).html("<span>" + value[4] + "</span>"))
+						.append( $("<div></div>", {class:'problem-btn vote downvote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
+					)
+				.append(
+				// description, etc. container
+					$('<div></div>', {class: 'small-9 column problem-statement'})
+						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
+				// flag button and menu
+				).append(
+
+					$('<div></div>', {class: 'small-1 column problem-btn flag-reveal'}).html("<i class='fi-flag'></i></div>")
+							.append( $("<div></div>", {class: "dropdown"})
+								.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
+									.append($("<li></li>").html('<a data-value="1" class="flag-val keep-native" href="#">duplicate</a>'))
+									.append($("<li></li>").html('<a data-value="2" class="flag-val keep-native" href="#">innapropriate</a>'))
+									//.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
+									)
+							)
+					)
+			);
+
+			$problems.append(new_problems[i]);
+
 		});
-
-		$problems.isotope('appended', new_problems);
 	}
-
 
 	// Problem create form
 	$(document).foundation({
@@ -165,17 +146,91 @@ function dashboard() {
 			}
 		}
 	});
-	$(document).foundation('reflow');
-}
 
-function predashboard(url){
-	var _this = this;
-	// Checks for user login
-	var req = new APICaller('user', 'check');
-	req.send({}, function(result){
-		if(!result){
-			ph.pageRequest("/login");
+	/** 
+	* problem events
+	*/
+
+	// voting 
+	$(document).on("click", ".vote", function (event) {
+
+		var $btn = $(this);
+		var $parent = $(this).parents(".problem");
+		var oppositeVote = ($btn.hasClass("upvote")) ? ".downvote" : ".upvote";
+
+		// only submit the vote if the user has not voted already
+		if (!$btn.hasClass("selected")) {
+			var req = new APICaller("problem", "vote");
+			req.send({
+				vote: $(this).attr("data-value"),
+				problem_id: $parent.attr('id')
+			}, function (result) {
+				if (result) {
+					$btn.addClass("selected");
+					$parent.addClass("voted");
+					
+					// deselect the opposite vote button
+					$parent.find(oppositeVote).removeClass("selected");
+
+					// update the vote total
+					$parent.find(".vote-counter > span").html(result);
+
+				}
+				else {
+					console.log(" vote submit failed");
+				}
+			});
 		}
 	});
 
+	// show flag menu
+	$(document).on("click", ".flag-reveal", function(event) {
+
+		$menu = $(this).children(".dropdown");
+		if (!$menu.hasClass('open')) {
+			$("body").append($("<div></div", {class: "overlay"}));
+			$menu.addClass("open");
+			$(this).addClass("selected");
+		}
+	});
+
+	// hiding flag menu
+	$(document).on('click', ".overlay", function (event) {
+
+		console.log("overlay clicked");
+		$(".dropdown").removeClass('open');
+		$(".dropdown").parent().removeClass("selected");
+		$('.overlay').remove();
+	});
+
+	// Link to problem pages
+	$(document).on('click', '.problem-statement', function (event) {
+
+		ph.pageRequest("/problem/" + $(this).parent().parent().attr('data-title'));
+	});
+
+	// flag actions
+	$(document).on('click', ".flag-val", function (event) {
+
+		event.preventDefault();
+
+		var problem_id = $(this).parents(".problem").attr('id');
+
+		var req = new APICaller("problem", "flag");
+
+		var params = {
+			problem_id: problem_id, 
+			flag: $(this).attr('data-value')
+		};
+
+		req.send(params, function (result) {
+				if (result) {
+					$(".overlay").click();
+					alertHandler("success", "This problem has been flagged for review.");
+				}
+				else {
+					console.log("Create flag failed");
+				}
+			})
+	});
 }

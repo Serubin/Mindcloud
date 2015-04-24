@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: dev_greymatters
 -- ------------------------------------------------------
--- Server version	5.6.23
+-- Server version 5.6.23
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -28,7 +28,7 @@ USE `dev_greymatters`;
 --
 
 DROP TABLE IF EXISTS `categories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `categories` (
   `id` int(2) unsigned NOT NULL AUTO_INCREMENT,
@@ -277,6 +277,7 @@ CREATE TABLE `threads` (
   `subject` varchar(255) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `problem_id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL,
   `status` tinyint(2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=latin1;
@@ -288,7 +289,6 @@ CREATE TABLE `threads` (
 
 LOCK TABLES `threads` WRITE;
 /*!40000 ALTER TABLE `threads` DISABLE KEYS */;
-INSERT INTO `threads` VALUES (1,2,'test','2015-03-14 18:47:12',0,0),(2,2,'afd','2015-03-14 18:47:55',0,0),(3,2,'sdf','2015-03-14 18:48:50',0,0),(4,2,'show','2015-03-16 13:02:24',0,0),(5,2,'asdf','2015-03-16 13:07:42',0,0),(6,2,'sfadsf','2015-03-16 13:08:03',0,0),(7,2,'asdf','2015-03-16 13:10:02',0,0),(8,2,'asdf','2015-03-16 13:11:11',0,0),(9,2,'asdf','2015-03-16 13:11:25',0,0),(10,2,'asdf','2015-03-16 13:12:19',0,0),(11,2,'as','2015-03-16 13:13:25',0,0),(12,2,'asdf','2015-03-16 13:14:16',0,0),(13,2,'asdf','2015-03-16 13:15:16',0,0),(14,2,'fuc','2015-03-16 13:16:56',0,0),(15,2,'adsf','2015-03-16 13:17:33',0,0),(16,2,'adsf','2015-03-16 13:17:42',0,0),(17,2,'asdf','2015-03-16 13:22:24',0,0),(18,2,'asdf','2015-03-16 13:23:16',0,0),(19,2,'adf','2015-03-16 13:23:47',0,0),(20,2,'adf','2015-03-16 13:24:26',0,0),(21,2,'adf','2015-03-16 13:24:57',0,0),(22,2,'adf','2015-03-16 13:25:19',0,0),(23,2,'adf','2015-03-16 13:25:28',0,0),(24,2,'test','2015-03-16 13:26:35',0,0),(25,2,'asdf','2015-03-16 13:28:42',0,0),(26,2,'1','2015-03-16 13:29:09',0,0),(27,2,'2','2015-03-16 13:29:56',0,0),(28,2,'5','2015-03-16 13:30:36',0,0),(29,2,'asdf','2015-03-16 13:30:49',0,0),(30,2,'asdf','2015-03-16 16:52:25',0,0),(31,2,'asdf','2015-03-17 14:48:21',0,0),(32,2,'a','2015-03-24 19:16:07',1,0),(33,2,'a','2015-03-24 19:16:55',1,0),(34,2,'a','2015-03-24 19:18:09',1,0),(35,2,'a','2015-03-24 19:18:12',1,0),(36,2,'etest','2015-03-24 19:35:24',1,0),(37,2,'etest','2015-03-24 19:35:28',1,0),(38,2,'test','2015-03-24 19:36:03',1,0),(39,2,'test','2015-03-24 19:36:07',1,0),(40,2,'test','2015-03-24 19:37:10',1,0),(41,2,'test','2015-03-24 19:37:10',1,0),(42,2,'asdf','2015-03-24 19:42:43',1,0),(43,2,'asdf','2015-03-24 19:42:43',1,0),(44,2,'test','2015-03-24 19:43:52',1,0),(45,2,'test','2015-03-24 19:43:52',1,0),(46,2,'ytet','2015-03-24 19:45:44',1,0),(47,2,'ytet','2015-03-24 19:45:44',1,0),(48,2,'test','2015-03-24 19:46:19',1,0),(49,2,'test','2015-03-24 19:46:40',1,0),(50,2,'test','2015-03-24 19:46:45',1,0),(51,2,'test','2015-03-24 19:46:49',1,0),(52,2,'test','2015-03-24 20:06:35',1,0),(53,2,'test','2015-03-24 20:07:22',1,0),(54,2,'test','2015-03-24 20:07:29',1,0),(55,2,'test2','2015-03-24 20:08:35',1,0),(56,2,'test2','2015-03-24 20:08:39',1,0),(57,2,'test','2015-03-24 20:10:22',1,0),(58,2,'test','2015-03-24 20:10:22',1,0),(59,2,'What does that even mean','2015-03-24 20:11:37',1,0),(60,2,'What does that even mean','2015-03-24 20:11:37',1,0),(61,2,'What does that even mean','2015-03-24 20:12:17',1,0),(62,2,'What does that even mean','2015-03-24 20:12:17',1,0),(63,2,'test','2015-03-24 20:12:26',1,0),(64,2,'test','2015-03-24 20:12:26',1,0),(65,2,'test','2015-03-24 20:12:34',1,0),(66,2,'test','2015-03-24 20:12:34',1,0),(67,2,'zcvzxZXCVxcvz','2015-03-24 20:21:32',1,0),(68,2,'zcvzxZXCVxcvz','2015-03-24 20:21:32',1,0),(69,2,'test','2015-03-24 20:30:49',1,0),(70,2,'test','2015-03-24 20:30:49',1,0),(71,2,'test','2015-03-24 20:30:58',1,0),(72,2,'test','2015-03-24 20:30:58',1,0),(73,2,'test','2015-03-24 20:42:38',1,0),(74,2,'test','2015-03-24 20:45:49',1,0),(75,2,'asdf','2015-03-24 21:05:33',1,0),(76,2,'asdf','2015-03-24 21:05:45',1,0);
 /*!40000 ALTER TABLE `threads` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -322,8 +322,8 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `user_data`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!40101 SET @saved_cs_client     =  @character_set_client */;
+/*!40101 SET CHARACTER_SET_CLIENT = utf8 */;
 CREATE TABLE `user_data` (
   `id` int(11) unsigned NOT NULL,
   `first_name` varchar(255) NOT NULL,
@@ -351,7 +351,7 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `user_meta`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_meta` (
   `id` int(11) unsigned NOT NULL,
@@ -443,7 +443,7 @@ CREATE TABLE `votes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `votes`
+-- Dumping data for table `flags`
 --
 
 LOCK TABLES `votes` WRITE;
@@ -451,6 +451,49 @@ LOCK TABLES `votes` WRITE;
 /*!40000 ALTER TABLE `votes` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+DROP TABLE IF EXISTS `votes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+
+CREATE TABLE IF NOT EXISTS `flags` (
+  `id` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `cid` int(11) NOT NULL,
+  `value` int(2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `flag_types`
+--
+DROP TABLE IF EXISTS `flag_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+
+CREATE TABLE IF NOT EXISTS `flag_types` (
+  `id` int(2) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `flag_types`
+--
+
+INSERT INTO `flag_types` (`id`, `name`) VALUES
+(1, 'duplicate'),
+(2, 'inappropriate');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `flag_types`
+--
+ALTER TABLE `flag_types`
+  ADD PRIMARY KEY (`id`);
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

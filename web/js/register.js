@@ -23,7 +23,7 @@ function register(){
 		}
 	});
 
-	//TODO why no work
+	window.document.title = "Mindcloud: Register";
 
 	$("#reload-captcha").click(function(){
 		d = new Date();

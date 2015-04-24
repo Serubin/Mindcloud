@@ -23,4 +23,3 @@ $mysqli = new mysqli(HOST, USER, PASSWORD, DATABASE);
 // Specify cookie security details
 define("SECURE", false);
 define("DOMAIN", "mindcloud.loc");
-

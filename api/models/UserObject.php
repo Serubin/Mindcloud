@@ -302,6 +302,7 @@ class UserObject
 		if($stmt->num_rows != 1){
 			throw new UserException("More than one row returned", "VERIFY");
 		}
+
 		// Returns true false based on database
 		return ($verified === 1) ? true : false;
 	}
@@ -466,5 +467,29 @@ class UserObject
 		setcookie('stoken', "", time()-9999999, "/", DOMAIN, SECURE, true);
 
 		return true;
+	}
+
+	/* toArray()
+	 * public info array of user
+	 */
+	public function toArray() {
+		return Array(
+			"first_name" => $this->first_name,
+			"last_name" => $this->last_name,
+			"join_date" => $this->join_date
+		);
+	}
+
+	/* toConfidentialArray()
+	 * private info array of user
+	 */
+	public function toConfidentialArray(){
+		return Array (
+			"first_name" => $this->first_name,
+			"last_name" => $this->last_name,
+			"join_date" => $this->join_date,
+			"email" => $this->email,
+			"notification_hash" => $this->notification_hash
+		);
 	}
 }

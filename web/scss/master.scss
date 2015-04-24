@@ -1,8 +1,20 @@
+/* Foundation */
 @import "settings";
 @import "foundation";
+@import "foundation-icons";
+
+/* Mindcloud globals */
+@import "mindcloud";
+
+/* Includes */
+@import "discussion";
+@import "project";
+/* Pages */
 @import "splash";
 @import "dashboard";
-@import "foundation-icons";
+@import "problem";
+@import "solution";
+
 
 // fonts
 //@import url(http://openfontlibrary.org/face/unique);
@@ -47,6 +59,10 @@ body{
 
 /* Topbar */
 .top-bar {
+
+	// box shadow for seperation
+	box-shadow: #333 0px 1px 6px;
+	
 	a, li {
 		transition: background-color 300ms ease-out;
 	}
@@ -98,4 +114,13 @@ body{
 	.accordion {
 		padding: 2%;
 	}
+}
+
+.overlay {
+	z-index: 50;
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	top: 0px;
+	left: 0px;
 }

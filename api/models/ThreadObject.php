@@ -6,16 +6,18 @@
  * Model representation of a discussion thread.
  *****************************************************************************/
 
-class ProblemObject {
+class ThreadObject {
 
 	private $_mysqli;
 
 	// member vars
-	public $creator;
-	public $heading;
-	public $body;
+	public $id;
+	public $op;
+	public $subject;
 	public $status;
-	public $replies;
+	public $created;
+	public $problem_id;
+	public $first_post;
 
 	/**
 	 * Constructor
@@ -28,27 +30,38 @@ class ProblemObject {
 
 	/**
 	 * create this thread in the database
+	 * @return an array of the new thread id and the new post id
 	 */
 	public function create() {
-		try {
-
-			if (!isset($this->creator, $this->heading, $this->body)) {
-				throw new Exception("unset vars", __FUNCTION__);
+		
+		if (!isset($this->op, $this->subject, $this->problem_id, $this->body)) {
+				error_log(json_encode($this));
+				throw new ThreadException("unset vars", __FUNCTION__);
 			}
 
-			// prepare statement and execute
-			if ($stmt = $this->_mysqli->prepare("INSERT INTO `threads` (`heading`, `body`, `creator`) VALUES (?, ?, ?)")) {
-				throw new Exception($this->_mysqli->error, __FUNCTION__);
-			}
-
-			$stmt->bind_param("sssi", $this->heading, $this->body, $this->creator);
-			$stmt->execute();
-
-
-			}
-		} catch (ThreadException $e) {
-			return $e;
+		// prepare statement
+		if (!$stmt = $this->_mysqli->prepare("INSERT INTO `threads` (`op_id`, `subject`, `problem_id`) VALUES (?, ?, ?)")) {
+			throw new ThreadException("Insert failed: " . $this->_mysqli->error, __FUNCTION__);
 		}
+
+		$stmt->bind_param("isi", $this->op, $this->subject, $this->problem_id);
+
+		// submit thread
+		$stmt->execute();
+
+		// store id
+		$this->id = $this->_mysqli->insert_id;
+
+		// create the inital post
+		$post = new PostObject($this->_mysqli);
+		$post->body = $this->body;
+		$post->thread_id = $this->id;
+		$post->uid = $_SESSION['uid'];
+		$post->create();
+		$this->first_post = $post;
+
+		// finish
+		return true;
 	}
 
 	/**
@@ -60,12 +73,39 @@ class ProblemObject {
 
 		try {
 			// check that we have an id
-			if (!$isset($this->id)) {
+			if (!isset($this->id)) {
 				throw new ThreadException("ID unset", __FUNCTION__);
 			}
 
 			// Ensure that the idea exists
-			
+			if (!$this->exists()) {
+				throw new ThreadException("thread doesn't exist", __FUNCTION__);
+			}
+
+			if (!$stmt = $this->_mysqli->prepare("SELECT `subject`, `created` FROM `threads` WHERE `id` = ?")) {
+				throw new ThreadException("prepare failed: " . $this->_mysqli->error, __FUNCTION__);
+			}
+
+			$stmt->bind_param("i", $this->id);
+			$stmt->execute();
+			$stmt->store_result();
+
+			if ($stmt->num_rows != 1) {
+				throw new ThreadException ("multiple threads found with that id", __FUNCTION__);
+			}
+			$stmt->bind_result($subject, $created);
+			$stmt->fetch();
+
+			// set instance vars
+			$this->subject = $subject;
+			$this->created = $created;
+
+			// load the first post as body of thread
+			$stmt->close();
+			$this->first_post = new PostObject($this->_mysqli);
+			$this->first_post->thread_id = $this->id;
+			$this->first_post->loadFromThreadId();
+
 
 		} catch (ThreadException $e) {
 			error_log("Getting thread preview failed: " . $e->getMessage());
@@ -101,6 +141,31 @@ class ProblemObject {
 	 *	Checks that a thread of this id exists in the database already. 
 	 */
 	public function exists() {
+
+		if (!isset($this->id)) {
+			throw new ThreadException("no id provided", __FUNCTION__);
+		}
+
+		if (!$stmt = $this->_mysqli->prepare("SELECT * FROM `threads` WHERE `id` = ?")) {
+			throw new ThreadException("prepare failed " . $this->_mysqli->error, __FUNCTION);
+		}
+
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->store_result();
+
+		// return true on a single thread being found
+		if ($stmt->num_rows == 1) {
+			return true;
+		}
+		// report the error if multiple are found
+		else if ($stmt->num_rows > 1) {
+			throw new ThreadException("Multiple threads with id " . $this->id . "found", __FUNCTION__);
+		}
+		// return false if not found
+		else {
+			return false;
+		}
 
 	}
 

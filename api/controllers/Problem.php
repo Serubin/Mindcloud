@@ -4,12 +4,13 @@
  * Authors: Solomon Rubin, Michael Shullick
  * ©mindcloud
  * 1 February 2015
- * Model for the object representation of a solution idea.
+ * Model for the object representation of a problem idea.
  ******************************************************************************/
 
 require_once("models/ProblemObject.php");
 require_once("models/TagObject.php");
 require_once("include/vote.php");
+require_once("include/Flag.php");
 
 class Problem 
 {
@@ -37,25 +38,50 @@ class Problem
 	public function createProblem() {
 		
 		try {
-			if (!isset($this->_params['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
+			if (!isset($_SESSION['uid'], $this->_params['title'], $this->_params['description'], $this->_params['tags'], $this->_params['category'])) {
 				error_log(json_encode($this->_params));
 				throw new ProblemException("Unset vars.", __FUNCTION__);
 			}
 
 			$problem = new ProblemObject($this->_mysqli);
-			$problem->creator = $this->_params['uid'];
+			$problem->creator = $_SESSION['uid'];
 			$problem->title = $this->_params['title'];
 			$problem->description = $this->_params['description'];
 			$problem->tags = $this->_params['tags'];
 			$problem->category = $this->_params['category'];
-			// only set the shorthand if given
-			if (isset($_params['shorthand'])) $problem->shorthand = $_params['shorthand'];
-			return $problem->create();
+
+			// sanitize strings
+			$problem->title = filter_var($problem->title, FILTER_SANITIZE_STRING);
+			$problem->description = strip_tags($problem->description);
+			//$problem->description = str_replace("\n\n", "[[#line#end#]]", $problem->description); //TODO make spacing work better
+			$problem->shorthand = filter_var($problem->shorthand, FILTER_SANITIZE_STRING);
+
+			if (isset($this->_params['shorthand'])) { // Uses user shorthand
+				$problem->shorthand = $this->_params['shorthand']; 
+			} else {  // Creates shorthand from title
+				$problem->shorthand = $problem->title; 
+			}
+
+			$problem->shorthand = preg_replace("/[,!@#$%^&*()=\[\]{};:\'\"<>.,\/?\\~`]+/", "", $problem->shorthand); // Removes scary characters
+			$problem->shorthand = str_replace(" ", "-", $problem->shorthand); // Removes spacy characters (always forgettin')
+			$problem->shorthand = strtolower($problem->shorthand); // Get's ride of those cocky captials.
+			$problem->shorthand = substr($problem->shorthand,0 ,200); // Shortens the fatter of the bunch.
+			if(!$problem->validateShorthand()){
+				// Makes unique if not
+				$problem->shorthand = $problem->shorthand . substr(md5($problem->shorthand . date('Y-m-d H:i:s') . $_SESSION['uid']),0, 6);
+			}
+			
+			return $return = $problem->create() ? $problem->shorthand : false;
 
 		} catch (ProblemException $e) {
 			return $e;
 		}
 	}
+
+	/**
+	 * getIdProblem()
+	 * Loads id from shorthand
+	 */
 	public function getIdProblem(){
 		if (!isset($this->_params['shorthand'])) {
 			throw new ProblemException("Could not load problem id; no shorthand provided.", __FUNCTION__);
@@ -66,6 +92,23 @@ class Problem
 		$problem->getId();
 
 		return $problem->id;
+	}
+
+
+	/**
+	 * getShorthandProblem()
+	 * Loads shorthand from id
+	 */
+	public function getShorthandProblem(){
+		if (!isset($this->_params['id'])) {
+			throw new ProblemException("Could not load problem shorthand; no id provided.", __FUNCTION__);
+		}
+
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->id= $this->_params['id'];
+		$problem->getShorthand();
+
+		return $problem->shorthand;
 	}
 	/**
 	 * loadProblem()
@@ -78,22 +121,14 @@ class Problem
 				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
 			}
 
+			// initialize problem object
 			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
 
 			// inflate the problem with its own information
-			$problem->id = $this->_params['id'];
 			$problem->loadFull();
 
-			return Array(
-				"id" => $problem->creator,
-				"statement" => $problem->statement,
-				"shorthand" => $problem->shorthand,
-				"description" => $problem->description,
-				"created" => $problem->created,
-				"tags" => $problem->tags,
-				"trial_no" => $problem->trial_no,
-				"score" => $problem->score
-			);
+			return $problem->toArray();
 
 		} catch (ProblemException $e) {
 			return $e;
@@ -109,22 +144,76 @@ class Problem
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSON['uid'])) {
-				throw new Exception("No problem id given", __FUNCTION__);
+			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSION['uid'])) {
+				error_log("Request parameter dump" . json_encode($this->_params));
+				throw new ProblemException("Unset vars", __FUNCTION__);
 			}
 
 			// validate vote value by taking absolute value
-			if (abs($this->_params['vote']) != UPVOTE) {
-				throw new Exception("Invalid vote passed", __FUNCTION__);
+			if ($this->_params['vote'] != UPVOTE && $this->_params['vote'] != DOWNVOTE) {
+				throw new ProblemException("Invalid vote passed", __FUNCTION__);
 			}
 
 			// submit vote
-			$problem = new ProblemObject($_mysqli);
+			$problem = new ProblemObject($this->_mysqli);
+
 			$problem->id = $this->_params['problem_id'];
 			$problem->creator = $_SESSION['uid'];
-			$problem->vote(UPVOTE);
+			$problem->vote($_SESSION['uid'], $this->_params['vote']);
 
+			return Vote::fetchScore( $this->_mysqli, "PROBLEM", $this->_params['problem_id']);
+
+			$problem->id = $this->_params['pid'];
+
+			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
 		} catch (ProblemException $e) {
+			return $e;
+		}
+	} 
+
+	/**
+	 * Submit a flag on a problem
+	 */
+	public function flagProblem() {
+
+		try {
+			if (!isset($this->_params['problem_id'], $this->_params['flag'], $_SESSION['uid'])) {
+				error_log(json_encode($this->_params));
+				throw new ProblemException("Unable to flag problem, unset params", __FUNCTION__);
+			}
+
+			// check that the flag is valid
+			// TODO: Currently hardcoded for the sake of time. Change this to be dynamic later on
+			if ($this->_params['flag'] != 1 && $this->_params['flag'] != 2) {
+				throw new ProblemException("Invalid flag passed", __FUNCTION__);
+			}
+
+			// submit the flag
+			if (!Flag::addFlag($this->_mysqli, $this->_params['problem_id'], $_SESSION['uid'], $this->_params['flag'])) {
+				throw new ProblemException("Failed to flag problem", __FUNCTION__);
+			}
+
+			// return successfull
+			return true;
+
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	public function scoreProblem(){
+		try {
+			// Checks that all required post variables are set
+			if (!isset($this->_params['id'])) {
+				error_log(json_encode($this->_params));
+				throw new ProblemException("Unset vars", __FUNCTION__);
+			}
+
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
+
+			return $problem->getScore();
+		} catch (Exception $e) {
 			return $e;
 		}
 	}
@@ -158,6 +247,7 @@ class Problem
 		}
 	}
 
+
 	/**
 	 * activate()
 	 * Begins the next trial of a problem, presuming it is now inactive.
@@ -174,5 +264,27 @@ class Problem
 	 */
 	public function deactivateProblem() {
 		// TODO
+	}
+
+	/**
+	 * getCategoriesProblem()
+	 */
+	public function getcategoriesProblem() {
+		
+		$categories = array();
+
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `name` FROM `categories`")) {
+				throw new DashboardException($this->_mysqli->error);
+			}
+
+		$stmt->execute();
+		$stmt->store_result();
+		$stmt->bind_result($id, $name);
+		while($stmt->fetch()) {
+			$categories[] = array($id, $name);
+		}
+
+		return $categories;
+
 	}
 }
