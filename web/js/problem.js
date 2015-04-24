@@ -116,9 +116,10 @@ function problem(url){
 		$("#description").html(wiky.process(data.description, {}));
 
 		// set contributors
-		$("#contributors").empty();
+		$("#contributors").html("");
 		$.each(data.contributors, function(key, value){
-			$("#contributors").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
+			console.log(value);
+			$("#contributors").append("<li><small>" + value.association + "</small> " + value.first_name + " " +  value.last_name + "</li>");
 		});
 
 		// set vote count and vote status if set
@@ -129,12 +130,28 @@ function problem(url){
 		} else if(data.current_user_vote  == 1) { 
 			$(".upvote-btn").addClass("selected-vote");
 		}
-
+		
 		// set score
 		$("#score").html(data.score);
 
 		// set popuate related projects
-		// TODO
+		var $related_projects = $("#related-solutions");
+		if(data.related_solutions.length == 0)
+			$related_projects.html("<h4>No related solutions... yet!</h4>");
+
+		$.each(data.related_solutions, function(key, value){
+			var $project_preview = $("<div></div>").addClass("solution-preview").attr("data-url", value.shorthand);
+			var $title = $("<h4></h4>").html(value.title);
+			var $content = $("<p></p>").html(value.description.substr(0,50));
+
+			$project_preview.append($title).append($content);
+			
+			$project_preview.click(function(){
+				ph.pageRequest("/solution/" + $(this).attr("data-url"));
+			})
+
+			$related_projects.append($project_preview);
+		});
 
 		// add threads and posts
 		$("#discussions_container").clearAll();
