@@ -82,7 +82,7 @@ class NotificationObject {
 
 	public function updateRead(){
 		if(!isset($this->id, $this->read, $_SESSION['uid'])) {
-			throw new UserException("unset vars: id, read");
+			throw new UserException("unset vars: id read", __FUNCTION__);
 		}
 
 		if(!$stmt = $this->_mysqli->prepare("UPDATE `user_notifications` SET `read`=? WHERE `id`=? AND `uid`=?")){

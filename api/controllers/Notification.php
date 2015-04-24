@@ -130,8 +130,8 @@ class Notification
 			}
 			$notif = new NotificationObject($this->_mysqli);
 			$notif->id = $this->_params['id'];
-			$notif->seen = $this->_params['read'];
-			$notif->updateSeen();
+			$notif->read = $this->_params['read'];
+			$notif->updateRead();
 
 			return true;
 
