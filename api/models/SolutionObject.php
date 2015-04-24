@@ -26,6 +26,8 @@ class SolutionObject {
 
 	public $score;
 	public $userVote;
+
+	public $related_solutions;
 	// TODO
 	// TODO: content handlers
 	// TODO: activity
@@ -145,6 +147,18 @@ class SolutionObject {
 		$this->problem->loadPreview();
 		// get array of afficiliated thread ids
 		//$this->getThreads();
+
+		$related = $this->getRelatedSolutions();
+
+		$this->related_solutions = Array();
+		foreach($related as $value) {
+			$related_solution = new SolutionObject($this->_mysqli);
+			$related_solution->id = $value;
+		
+			$related_solution->loadPreview();
+
+			array_push($this->related_solutions, $related_solution);
+		}
 	}
 
 	/**
@@ -152,23 +166,24 @@ class SolutionObject {
 	 * For obtaining less innformation to display on dashboard.
 	 */
 	public function loadPreview() {
-		if (isset($this->id)) {
+		if (!isset($this->id)) {
 			throw new SolutionException("Could not load preview: id not set.", __FUNCTION__);
 		}
 
 		// fetch from the db the information about this problem
-		if (!$stmt = $this->_mysqli("SELECT `pid`, `shorthand`, `title`, `description`, `created`, `creator` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid`, `shorthand`, `title`, `description`, `created` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
 		$stmt->bind_param("i", $this->id);
 		$stmt->execute();
-		$stmt->bind_result();
+		$stmt->store_result();
+
 		if ($stmt->num_rows != 1) {
 			throw new SolutionException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
 		}
 
-		$stmt->bind_result($pid, $shorthand, $title, $description, $created, $creator_id);
+		$stmt->bind_result($id, $pid, $shorthand, $title, $description, $created);
 		$stmt->fetch();
 
 
@@ -177,7 +192,7 @@ class SolutionObject {
 		$this->shorthand = $shorthand;
 		$this->statement = $title;
 		$this->description = $description;
-		$this->created = $created;
+		//$this->created = $created;
 
 		$stmt->close();
 	}
@@ -316,16 +331,17 @@ class SolutionObject {
 		$stmt->execute();
 	}
 
+
 	public function getRelatedSolutions(){
-		if(!isset($this->problem_id)) {
-			throw new SolutionException("Unset var problem_id", __FUNCTION__);
+		if(!isset($this->id, $this->problem_id)) {
+			throw new SolutionException("Unset var: id, problem_id", __FUNCTION__);
 		}
 
-		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid` FROM `solutions` WHERE `pid` = ?")) {
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid` FROM `solutions` WHERE `pid` = ? AND NOT `id` = ?")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("i", $this->problem_id);
+		$stmt->bind_param("ii", $this->problem_id, $this->id);
 		$stmt->execute();
 		$stmt->store_result();
 
@@ -337,35 +353,9 @@ class SolutionObject {
 		}
 
 		$stmt->close();
-		
-		return $result;
-	}
-
-	/* toArray()
-	 *  info array of solution
-	 */
-	public function toArray(){
-		$contributors = Array();
-		foreach ($this->contributors as $value) {
-			$value['user'] = $value['user']->toArray();
-			array_push($contributors, $value);
-		}
-		@$result = Array(
-			"id" => $this->id, 
-			"problem_id" => $this->problem_id, 
-			"problem" => $this->problem->toArray(),
-			"shorthand" => $this->shorthand,
-			"title" => $this->title,
-			"description" => $this->description,
-			"created" => $this->created, 
-			"contributors" => $contributors,
-			"score" => $this->score,
-			"current_user_vote" => $this->current_user_vote
-		);
 
 		return $result;
 	}
-
 }
 
 

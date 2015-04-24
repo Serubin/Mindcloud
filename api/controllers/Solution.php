@@ -165,15 +165,34 @@ class Solution
 				throw new SolutionException("Could not load problem; no id provided.", __FUNCTION__);
 			}
 
-			// initialize problem object
+			// initialize solution object
 			$solution = new SolutionObject($this->_mysqli);
 			$solution->id = $this->_params['id'];
 
-			// inflate the problem with its own information
+			// inflate the solution with its own information
 			$solution->loadFull();
 
-			return $solution->toArray();
+			return $solution;
 		} catch (Exception $e){
+			return $e;
+		}
+	}
+
+	public function loadPreviewSolution(){
+		try {
+			if(!isset($this->_params['id'])){
+				throw new SolutionException("Could not load problem preview; no id provided", __FUNCTION__);
+			}
+
+			// initialize solution
+			$solution = new SolutionObject($this->_mysqli);
+			$solution->id = $this->_params['id'];
+
+			// inflate solution with preview info
+			$solution->loadPreview();
+
+			return $solution;
+		} catch(Exception $e) {
 			return $e;
 		}
 	}
