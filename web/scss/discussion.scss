@@ -47,9 +47,17 @@
 
 	.threads-container {
 		display: flex;
+		display: -webkit-flex;
 		flex-direction: row;
 		overflow-x: auto;
 		overflow-y: auto;
+
+		-webkit-box-align: start;
+		-webkit-align-items: flex-start;
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+		-webkit-flex-direction: row;
+
 
 		.thread-preview {
 			display: inline-block;
@@ -58,6 +66,9 @@
 			box-shadow: 0px 0px 1px;
 			margin: 5px;
 			margin-bottom: 10px;
+
+
+			-webkit-flex: 0 0 210px;
 
 			h4 {
 				width: 200px;
