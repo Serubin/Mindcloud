@@ -136,6 +136,9 @@ function problem(url){
 
 		// set popuate related projects
 		var $related_projects = $("#related-solutions");
+
+		$related_projects.html(""); // Clears div
+
 		if(data.related_solutions.length == 0)
 			$related_projects.html("<h4>No related solutions... yet!</h4>");
 
@@ -148,7 +151,7 @@ function problem(url){
 			
 			$project_preview.click(function(){
 				ph.pageRequest("/solution/" + $(this).attr("data-url"));
-			})
+			});
 
 			$related_projects.append($project_preview);
 		});

@@ -104,6 +104,7 @@ function solution(url){
 		$("#banner #title").html(data.title);
 
 		$("#solves_for").html(data.problem.title).attr("href", "/problem/" + data.problem.shorthand);
+		ph.captureLink($("#solves_for"));
 
 
 		// set description
@@ -128,18 +129,27 @@ function solution(url){
 		// set popuate related projects
 
 		var $related_projects = $("#related-solutions");
+
+		$related_projects.html(""); // Clears div
+
 		if(data.related_solutions.length == 0)
 			$related_projects.html("<h4>No related solutions... yet!</h4>");
 
 		$.each(data.related_solutions, function(key, value){
-			var $project_preview = $("<div></div>").addClass("solution-preview");
+			var $project_preview = $("<div></div>").addClass("solution-preview").attr("data-url", value.shorthand);
 			var $title = $("<h4></h4>").html(value.title);
 			var $content = $("<p></p>").html(value.description.substr(0,50));
 
 			$project_preview.append($title).append($content);
+
+			$project_preview.click(function(){
+				ph.pageRequest("/solution/" + $(this).attr("data-url"));
+			})
+
 			$related_projects.append($project_preview);
 		});
 
+		// THIS IS BROKEN
 		// add threads and posts
 		$.each(data.threads, function(i, value) {
 			$("#discussions_container").loadThread(value);
