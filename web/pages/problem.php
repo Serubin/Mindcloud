@@ -31,14 +31,14 @@
 	<div id="description">
 
 	</div> <!-- end problem description -->
-	<hr>
-	<div id="discussions_container">
-
+	<hr />
+	<div id="discussions_container" class="clearfix">
+	<hr />
 	</div><!-- end discussion thread list-->
 
 
 	<!-- related projects -->
-	<div id="related_projects">
+	<div id="related-solutions" class="clearfix">
 
 
 	</div> <!-- end related projects -->
