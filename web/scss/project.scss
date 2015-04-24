@@ -1,5 +1,5 @@
 .project{
-	#contributers{
+	#contributors{
 	padding: 25px 0;
 	list-style: none;
 		small{
@@ -19,18 +19,21 @@
 		height: 20px;
 	}
 
-	.project_vote_hover {
+	.selected-vote {
 		background-color: $primary-color-dark;
 	}
 
-
-	.related-solutions-container {
+	.placeholder {
+		padding-top: 90px;
+		padding-left: 10px;
+	}
+	#related_projects {
 		display: flex;
 		flex-direction: row;
 		overflow-x: auto;
 		overflow-y: auto;
 
-		.solutions-preview {
+		.project_preview {
 			display: inline-block;
 			height: 200px;
 			padding: 5px;

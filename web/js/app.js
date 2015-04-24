@@ -168,7 +168,7 @@ $(function(){
 					if (result) {
 						$("#create_solution_modal").foundation('reveal', 'close');
 						$("#submit_solution").trigger("reset");
-						ph.pageRequest("/problem/" + result);
+						ph.pageRequest("/solution/" + result);
 					}
 				});
 		}).on('invalid', function() {

@@ -10,7 +10,7 @@ function solution(url){
 
 	// get the problem's numeric id
 	var req = new APICaller('solution', 'getId');
-	var params = {shorthand: url[1]};
+	var params = {shorthand: url[1].toLowerCase()};
 	req.send(params, function(result){
 		// populate the problem data
 		var req = new APICaller('solution', 'load');
@@ -31,7 +31,6 @@ function solution(url){
 			updateCreateSolution(result.problem_id, result.problem.title); // Updates create solution modal
 
 			// Loads problem
-			console.log(result);
 			populatePage(result);
 		}
 		// if the problem wasn't found, redirect to dashboard
@@ -128,10 +127,18 @@ function solution(url){
 		$("#score").html(data.score);
 		// set popuate related projects
 
+		var $related_projects = $("#related_projects");
 		if(data.related_solutions.length == 0)
-			$("#related_projects").html("<h2>No related solutions... yet!</h2>");
+			$related_projects.html("<h2>No related solutions... yet!</h2>");
 
+		$.each(data.related_solutions, function(key, value){
+			var $project_preview = $("<div></div>").addClass("project_preview");
+			var $title = $("<h4></h4>").html(value.title);
+			var $content = $("<p></p>").html(value.description.substr(0,50));
 
+			$project_preview.append($title).append($content);
+			$related_projects.append($project_preview);
+		});
 		// add threads and posts
 		$.each(data.threads, function(i, value) {
 			$("#discussions_container").loadThread(value);
@@ -158,13 +165,13 @@ function presolution(url){
 		}
 	});
 
+	log.debug("PRE SOLUTION CALL");
 
 	if($.isNumeric(url[1])) {
-		console.log(url[1])
 		var req = new APICaller('solution', 'getShorthand');
 		var params = {id:url[1]};
 		req.send(params, function(result) {
-			log.debug("result of getShorthand: " + result, "problem");
+			log.debug("result of getShorthand: " + result, "solution");
 			if(!result)
 				ph.pageRequest("/dashboard");
 
