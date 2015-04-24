@@ -29,6 +29,7 @@ function solution(url){
 			id = result.id;
 
 			// Loads problem
+			console.log(result);
 			populatePage(result);
 		}
 		// if the problem wasn't found, redirect to dashboard
@@ -125,10 +126,15 @@ function solution(url){
 		$("#score").html(data.score);
 		// set popuate related projects
 
+		if(data.related_solutions.length == 0)
+			$("#related_projects").html("<h2>No related solutions... yet!</h2>");
+
+
 		// add threads and posts
 		$.each(data.threads, function(i, value) {
 			$("#discussions_container").loadThread(value);
 		});
+
 	}
 
 	function getScore() {
