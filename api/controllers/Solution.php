@@ -67,7 +67,7 @@ class Solution
 			
 			$solution->create();
 
-			return true;
+			return $solution->shorthand;
 		} catch (Exception $e) {
 			return $e;
 		} 
@@ -232,7 +232,7 @@ class Solution
 			$solution->id = $this->_params['id'];
 			$solution->getShorthand();
 
-			return $problem->shorthand;
+			return $solution->shorthand;
 		} catch (Exception $e) {
 			return $e;
 		}

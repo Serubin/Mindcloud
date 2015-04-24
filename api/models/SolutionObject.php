@@ -190,7 +190,7 @@ class SolutionObject {
 		// Set this object's member vars
 		$this->problem_id = $pid;
 		$this->shorthand = $shorthand;
-		$this->statement = $title;
+		$this->title = $title;
 		$this->description = $description;
 		//$this->created = $created;
 
