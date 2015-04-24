@@ -6,6 +6,8 @@
  * Model representation of a problem.
  *****************************************************************************/
 
+require_once "models/SolutionObject.php";
+
 class ProblemObject {
 
 	private $_mysqli;
@@ -17,11 +19,15 @@ class ProblemObject {
 	public $shorthand;
 	public $description;
 	public $created;
+	public $contributors;
 	public $tags;
 	public $trial_no;
 
 	public $score;
 	public $current_user_vote;
+	
+	public $related_solutions;
+	
 	// TODO: activity
 	public $threads;
 
@@ -114,17 +120,35 @@ class ProblemObject {
 		$this->trial_no = $current_trial;
 
 		// fetch creator info
-		$this->creator = new UserObject($this->_mysqli);
-		$this->creator->uid = $creator_id;
-		$this->creator->load();
+		$this->contributors = new UserObject($this->_mysqli);
+		$this->contributors->uid = $creator_id;
+		$this->contributors->load();
+
+		$this->contributors = Array($this->contributors);
 
 		// set score
-		$this->scor = $this->getScore();
+		$this->score = $this->getScore();
 
 		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "PROBLEM", $this->id, $_SESSION['uid']);
 
 		// get array of afficiliated thread ids
 		$this->getThreads();
+
+		$tmp_solution = new SolutionObject($this->_mysqli);
+		$tmp_solution->id = -1; // dummy id
+		$tmp_solution->problem_id = $this->id; // problem id
+
+		$related = $tmp_solution->getRelatedSolutions();
+
+		$this->related_solutions = Array();
+		foreach($related as $value) {
+			$related_solution = new SolutionObject($this->_mysqli);
+			$related_solution->id = $value;
+		
+			$related_solution->loadPreview();
+
+			array_push($this->related_solutions, $related_solution);
+		}
 	}
 
 
@@ -310,27 +334,5 @@ class ProblemObject {
 		}
 
 		$this->threads = $result;
-	}
-	
-	/**
-	 * toArray()
-	 * Get this problem in array form.
-	 */
-	public function toArray(){
-		@$result = Array(
-			"id" => $this->id,
-			"title" => $this->title,
-			"shorthand" => $this->shorthand,
-			"description" => $this->description,
-			"contributors" => Array(Array("user" => $this->creator, "association" => "creator")),
-			"created" => $this->created,
-			"tags" => $this->tags,
-			"trial_no" => $this->trial_no,
-			"score" => $this->score,
-			"threads" => $this->threads,
-			"current_user_vote" => $this->current_user_vote
-		);
-		
-		return $result;
 	}
 }

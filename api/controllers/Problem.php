@@ -7,10 +7,10 @@
  * Model for the object representation of a problem idea.
  ******************************************************************************/
 
-require_once("models/ProblemObject.php");
-require_once("models/TagObject.php");
-require_once("include/vote.php");
-require_once("include/Flag.php");
+require_once "models/ProblemObject.php";
+require_once "models/TagObject.php";
+require_once "include/vote.php";
+require_once "include/Flag.php";
 
 class Problem 
 {
@@ -128,7 +128,7 @@ class Problem
 			// inflate the problem with its own information
 			$problem->loadFull();
 
-			return $problem->toArray();
+			return $problem;
 
 		} catch (ProblemException $e) {
 			return $e;
