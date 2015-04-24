@@ -26,7 +26,7 @@ function pageHandler(args) {
 	// public functions
 	var pageRequest;
 	var parseUrl;
-	var setPreloadStatus;
+	var captureLink;
 
 	// class options
 	var pageLoc;
@@ -139,19 +139,10 @@ function pageHandler(args) {
 
 			if(registerEvents) {
 				log.debug(pkg, "Registering link events");
-
-				// Gets all a tags that don't have "keep-native" class
 				$("a").not(".keep-native").each(function(){
-					var $el = $(this);
-					if(typeof $el.attr("href") == "undefined" ||
-					   $el.attr("href").toLowerCase() == "javascript:void(0);" || 
-					   $el.attr("href").toLowerCase() == "#")
-							return;
-					$el.unbind("click");
-					$el.click(function() {
-						return linkHandler( $(this).attr("href") );
-					});
-				})
+					_this.captureLink($(this));
+				});
+				
 			}
 		};
 
@@ -172,10 +163,33 @@ function pageHandler(args) {
 
 	}
 
+
+	/**
+	 * captureLink()
+	 * captures all a links and takes control of their functionality
+	 * ignores a-links with a .keep-native, href: undefined, href: #, and 
+	 * href: javascript:void(0);
+	 *
+	 * @param $el - element
+	 */ 
+	this.captureLink = function($el){
+		if(typeof $el.attr("href") == "undefined" ||
+		   $el.attr("href").toLowerCase() == "javascript:void(0);" ||
+		   $el.attr("href").toLowerCase() == "javascript:void(0)" || 
+		   $el.attr("href").toLowerCase() == "#" ||
+		   $el.hasClass("keep-native"))
+				return;
+
+		log.debug(pkg, "Registering: " + $el.attr("href"));
+		$el.unbind("click");
+		$el.click(function() {
+			return linkHandler( $(this).attr("href") );
+		});
+	}
 	/**
 	 * parseGet()
 	 * Parse hash bang parameters from a URL as key value object.
-	 * #!x&y=3 -> { x:null, y:3 }
+	 * #!x&y=3 -> { x:null, y:3 } // outdated
 	 * 
 	 * @param aURL URL to parse or null if window.location is used
 	 * @return Object of key -> value mappings.
