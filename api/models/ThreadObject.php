@@ -157,12 +157,18 @@ class ThreadObject {
 		$stmt->bind_param("i", $this->id);
 		$stmt->execute();
 		$stmt->store_result();
-		$stmt->bind_result($poster, $body, $created);
+		$stmt->bind_result($uid, $body, $created);
 
 		$posts = array();
 		while ($stmt->fetch()) {
 
-			$posts[] = array("user" => $poster, "body" => $body, "date" => $created);
+			// get user's name
+			$poster = new UserObject($this->_mysqli);
+			$poster->uid = $uid;
+			$poster->load();
+
+			$posts[] = array("user" => $poster->first_name . " " . $poster->last_name, "body" => $body, "date" => $created);
+
 		}
 
 		$this->posts = $posts;

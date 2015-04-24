@@ -7,7 +7,7 @@
 
 	var forms ='<form id="submit_thread">' +
 						'<p>stir the pot.</p>' +
-						'<input type="text" id="new_thread_subject" class="thread-subject" placeholder="What would you like to say?" required/>' +
+						'<input type="text" id="new_thread_subject" class="thread-subject" maxlength="200" placeholder="What would you like to say?" required/>' +
 						'<input type="text" id="new_thread_body" class="thread-desc" style="height:100px" placeholder="Elaborate on that?" required/>' +
 						'<button id="submit_thread_btn" class="button btn-login">create</button>' +
 				'</form>';
@@ -43,7 +43,7 @@
 		var $thread_viewer = $('<div></div>', {id: ids.thread_viewer, class: 'thread-viewer row'});
 
 		// holds individual posts
-		var $posts = $('<div></div', {class: "posts small-10 small-centered medium-8 columns"});
+		var $posts = $('<div></div', {class: "posts small-11 small-centered medium-8 columns"});
 
 		// setup the create new thread prompt
 		// thread_toggle is the entire div that grows to contain forms, or stays small to contain a button div
@@ -103,7 +103,7 @@
 				if (result) {
 
 					$.each(result, function (i, value) {
-						$posts_list.prepend($.fn.Discussion.postFormatter(value.poster, value.body, value.id, value.date));
+						$posts_list.prepend($.fn.Discussion.postFormatter(value.user, value.body, value.id, value.date));
 					});
 
 				} else {
@@ -118,7 +118,7 @@
 			}, "fast");*/
 
 			// append form for new post
-			$posts_list.append($.fn.Discussion.posterFormatter());
+			$posts_list.append($.fn.Discussion.postFormFormatter());
 
 			// reflow for foundation DOM
 			$(document).foundation("reflow");
@@ -127,8 +127,10 @@
 		// post submission listener
 		$(id).on("valid", '.submit-post-form', function (event) {
 
+			// handle on parent list of posts
 			$posts_list = $(this).parents(".posts-list");
 
+			// request parameter array
 			var params = {
 				'post_body' : $(this).find("input").val(),
 				'thread_id' : $posts_list.attr('data-title')
@@ -139,8 +141,14 @@
 
 				if (result) {
 
-					$(".poster").before($.fn.Discussion.postFormatter(result.user, result.body, result.id, result.date));
+					// add the post to the list
+					$(".post-form").before($.fn.Discussion.postFormatter(result.user_name, result.body, result.id, result.created));
+
+					// clear the post field
 					$posts_list.find("input").val("");
+
+					// reflow for the new DOM object
+					$(document).foundation('reflow');
 
 				} else {
 					alertHandler("alert", "Failed submit post");
@@ -150,7 +158,24 @@
 
 		});
 
+		// new thread listener
+		$(id).on('submit', "#submit_thread", function (event) {
 
+			//log.debug("submitting thread to", problem_id);
+
+			// prevent default submission
+			event.preventDefault();
+
+			var subject = $("#new_thread_subject").val();
+			var body = $("#new_thread_body").val();
+
+			// hide forms
+			$("#discussions_container_toggle").click();
+
+			// add the thread
+			$discussions.createThread(problem_id, subject, body);
+
+		});
 	};
 
 	$.fn.loadThreads = function (problem_id) {
@@ -193,6 +218,8 @@
 
 	 	var forms_width = $(document).width() - $('#' + ids.toggle).width();
 
+	    $('#' + ids.forms).css("display", "block");
+
     	$('#' + ids.forms).animate({
 	        //width: forms_width + "px"
 	        width: "95%"
@@ -210,7 +237,10 @@
 
     	$('#' + ids.forms).animate({
 	        width: '0%'
-	    }, "fast");
+	    }, "fast", 
+	    function () {
+		    $('#' + ids.forms).css("display", "none");
+	    });
 
     	$('#' + ids.toggle).html('<i class="fi-plus icon">');
 
@@ -343,9 +373,9 @@
 	   /*
 	    * returns a div containing the forms for an enw post
 	    */
-	    $.fn.Discussion.posterFormatter = function () {
-	    	return $("<li></li>").append(
-	    			$("<div></div", {class : "discussion-child poster"})
+	    $.fn.Discussion.postFormFormatter = function () {
+	    	return $("<li></li>", {class : "post-form"}).append(
+	    			$("<div></div", {class : "discussion-child"})
 	    				.append($("<form></form>", {class: "submit-post-form", 'data-abide' : 'ajax'})
 	    					.append($('<div></div>', {class : "post-text-field"})
 		    					.append($("<input></input", {placeholder: "Write a post...", required : ""}))
@@ -360,13 +390,15 @@
 	     */
 	     $.fn.Discussion.postFormatter = function (user, body, id, date) {
 	     	// list item
-	     	var top = $("<li></li>", {class : 'problem'});
+	     	var top = $("<li></li>", {class : ''});
 
 	     	// column container
-	     	var container = $("<div></div>", {class : "row"});
+	     	var container = $("<div></div>", {class : "post"});
 
 	     	// post body div
-	     	var post_body = $("<div></div>", {class : "small-7 columns"}).html(body);
+	     	var post_body = $("<div></div>", {class : ""}).html(body);
+	     	var poster = $("<div></div>", {class : "poster-id"}).html("<span>posted by " + user + " on " + date);
+	     	post_body.append(poster);
 
 	     	// put it all together
 	     	top.append(container.append(post_body));

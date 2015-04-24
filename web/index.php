@@ -44,7 +44,7 @@
 					<!-- title -->
 				    <div class="statement-field">
 				    	<label>problem statement
-				        	<input id="form_problem_statement" type="text" placeholder="Why can't I type with my mind yet?" required/>
+				        	<input id="form_problem_statement" type="text" maxlength="200" placeholder="Why can't I type with my mind yet?" required/>
 				     	</label>
 				     	<small class="error">What's your problem?</small>
 				    </div>
