@@ -12,7 +12,7 @@
 		$el.html(""); // Clears div
 
 		if(solutions.length == 0)
-			$el.html("<h4>No related solutions... yet!</h4>");
+			$el.html("<h4 id='no-display'>No related solutions... yet!</h4>");
 
 		$.each(solutions, function(key, value){
 			var $project_preview = $("<div></div>").addClass("solution-preview").attr("data-url", value.shorthand);
