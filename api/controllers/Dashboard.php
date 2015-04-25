@@ -65,7 +65,7 @@ class Dashboard {
 			while ($stmt->fetch()) {
 
 				$vote_count = Vote::fetchScore($this->_mysqli, "PROBLEM", $id);
-				$result['problems'][] = array("id" => $id, "title" => $pr_stmt, "data" => $date, "shorthand" => $shorthand, "votes" => $vote_count);
+				$result['problems'][] = array("id" => $id, "title" => htmlspecialchars_decode($pr_stmt, ENT_QUOTES), "data" => $date, "shorthand" => $shorthand, "votes" => $vote_count);
 				$problem_ids[] = $id;
 				//error_log(html_entity_decode($pr_stmt));	
 			}
@@ -168,7 +168,7 @@ class Dashboard {
 		while ($stmt->fetch()) {
 
 			$vote_count = Vote::fetchScore($this->_mysqli, "PROBLEM", $id);
-			$loaded_posts[] = array("id" => $id, "title" => $title, "date" => $created, "shorthand" => $shorthand, "votes" => $vote_count	);
+			$loaded_posts[] = array("id" => $id, "title" => htmlspecialchars_decode($title, ENT_QUOTES), "date" => $created, "shorthand" => $shorthand, "votes" => $vote_count	);
 		}
 
 		return $loaded_posts;
