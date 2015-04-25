@@ -35,16 +35,15 @@
 
 		<div id="pose_create">
 			<!-- pose-a-problem modal -->
-			<div id="pose_problem_modal" class="reveal-modal" data-reveal>
+			<div id="pose_problem_modal" class="reveal-modal creation_modal" data-reveal>
 			  <h2>Pose a problem</h2>
-			  <p class="lead">Your couch.  It is mine.</p>
 
 				<form data-abide="ajax" id="submit_problem">
 
 					<!-- title -->
 				    <div class="statement-field">
 				    	<label>problem statement
-				        	<input id="form_problem_statement" type="text" placeholder="Why can't I type with my mind yet?" required/>
+				        	<input id="form_problem_statement" type="text" maxlength="200" placeholder="Why can't I type with my mind yet?" required/>
 				     	</label>
 				     	<small class="error">What's your problem?</small>
 				    </div>
@@ -90,9 +89,9 @@
 
 
 			<!-- create-a-solution modal -->
-			<div id="create_solution_modal" class="reveal-modal" data-reveal>
-				<h2>Create a solution <small id="create_solution_for"> </small></h2>
-				<p class="lead">Fuck your couch.</p>
+			<div id="create_solution_modal" class="reveal-modal creation_modal" data-reveal>
+				<h2>Create a solution</h2>
+				<h2 class="subtitle"><small class="subtitle_for">For </small><small id="create_solution_for"> </small></h2>
 
 				<form data-abide="ajax" id="submit_solution">
 

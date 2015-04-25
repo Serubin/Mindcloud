@@ -6,7 +6,8 @@
 
 var wiky = {
     options: {
-        'link-image': true //Preserve backward compat
+        'link-image': true, //Preserve backward compat
+        'wiky.options.strip': false
     }
 }
 
@@ -21,16 +22,19 @@ wiky.process = function(wikitext, options) {
 	for (i=0;i<lines.length;i++)
 	{
 		line = lines[i];
-		if (line.match(/^===/)!=null && line.match(/===$/)!=null)
-		{
-			html += "<h3>"+line.substring(3,line.length-3)+"</h3>";
-		}
-		else if (line.match(/^==/)!=null && line.match(/==$/)!=null)
-		{
-			html += "<h2>"+line.substring(2,line.length-2)+"</h2>";
-		}
-		else if (line.match(/^:+/)!=null)
-		{
+		if (line.match(/^===/)!=null && line.match(/===$/)!=null) {
+			// H3
+			if(!wiky.options.strip) 
+				html += "<h3>"+line.substring(3,line.length-3)+"</h3>";
+			else
+				html += line.substring(3,line.length-3);
+		} else if (line.match(/^==/)!=null && line.match(/==$/)!=null) {
+			// H2
+			if(!wiky.options.strip) 
+				html += "<h2>"+line.substring(2,line.length-2)+"</h2>";
+			else 
+				html += line.substring(2,line.length-2);
+		} else if (line.match(/^:+/)!=null) {
 			// find start line and ending line
 			start = i;
 			while (i < lines.length && lines[i].match(/^\:+/)!=null) i++;
@@ -105,14 +109,15 @@ wiky.process_indent = function(lines,start,end) {
 
 wiky.process_bullet_point = function(lines,start,end) {
 	var i = start;
-	
-	var html = (lines[start].charAt(0)=='*')?"<ul>":"<ol>";
+	var html;
+	if(!wiky.options.strip)
+		var html = (lines[start].charAt(0)=='*')?"<ul>":"<ol>";
 
     html += '\n';
 	
 	for(var i=start;i<=end;i++) {
-		
-		html += "<li>";
+		if(!wiky.options.strip)
+			html += "<li>";
 		
 		var this_count = lines[i].match(/^(\*+|\#+) /)[1].length;
 		
@@ -128,7 +133,10 @@ wiky.process_bullet_point = function(lines,start,end) {
 					break;
 				else {
 					if (lines[j].charAt(nested_count) == ':') {
-						html += "<br/>" + wiky.process_normal(lines[j].substring(nested_count + 2));
+						if(!wiky.options.strip)
+							html += "<br/>" + wiky.process_normal(lines[j].substring(nested_count + 2));
+						else
+							html += wiky.process_normal(lines[j].substring(nested_count + 2));
 						nested_end = j;
 					} else {
 						break;
@@ -179,7 +187,8 @@ wiky.process_bullet_point = function(lines,start,end) {
 			i = nested_end;
 		}
 		
-		html += "</li>\n";
+		if(!wiky.options.strip)
+			html += "</li>\n";
 	}
 	
 	html += (lines[start].charAt(0)=='*')?"</ul>":"</ol>";
@@ -198,7 +207,14 @@ wiky.process_url = function(txt) {
 		url = txt.substring(0, index);
 		label = txt.substring(index + 1);
 	}
-	return '<a href="' + url + '"' + (wiky.options['link-image'] ? css : '') + '>' + label + '</a>';
+	var result;
+
+	if(!wiky.options.strip)
+		result = '<a href="' + url + '"' + (wiky.options['link-image'] ? css : '') + '>' + label + '</a>';
+	else
+		result = label;
+
+	return result;
 };
 
 wiky.process_image = function(txt) {
@@ -211,9 +227,14 @@ wiky.process_image = function(txt) {
 		url = txt.substring(0,index);
 		label = txt.substring(index+1);
 	}
+	var result;
+
+	if(!wiky.options.strip)
+		result = "<img src='"+url+"' alt=\""+label+"\" />";	
+	else
+		result = label;
 	
-	
-	return "<img src='"+url+"' alt=\""+label+"\" />";
+	return result;
 }
 
 wiky.process_video = function(url) {
@@ -227,9 +248,14 @@ wiky.process_video = function(url) {
 	{
 		url = "http://www.youtube.com/embed/"+result[4];
 	}
+	var result;
+
+	if(!wiky.options.strip)
+		result = '<iframe width="480" height="390" src="'+url+'" frameborder="0" allowfullscreen></iframe>';
+	else
+		result = "";
 	
-	
-	return '<iframe width="480" height="390" src="'+url+'" frameborder="0" allowfullscreen></iframe>';
+	return result;
 }
 
 wiky.process_normal = function(wikitext) {

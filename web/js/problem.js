@@ -4,8 +4,6 @@
  * 13 Febuary 2015
  * Javascript for problem pages
  *****************************************************************************/
- var problem_id;
- var problem_title;
 
 function problem(url){
 
@@ -28,11 +26,8 @@ function problem(url){
 	function onDataLoad (result) {
 
 		if (result) {
-			// set id
-			problem_id = result.id;
-			problem_title = result.title;
 
-			$("#create_solution_for").html(problem_title);
+			updateCreateSolution(result.id, result.title); // Updates create solution modal
 
 			// Loads problem
 			populatePage(result);
@@ -43,7 +38,7 @@ function problem(url){
 			alertHandler("alert", "Sorry, we couldn't find that problem.");
 		}
 	}
-
+	//TODO take a look, modify
 	// voting 
 	$(document).on("click", ".vote", function (event) {
 
@@ -76,24 +71,7 @@ function problem(url){
 		}
 	});
 
-	// new thread listener
-	$("#submit_thread").submit( function (event) {
 
-		//log.debug("submitting thread to", problem_id);
-
-		// prevent default submission
-		event.preventDefault();
-
-		var subject = $("#new_thread_subject").val();
-		var body = $("#new_thread_body").val();
-
-		// hide forms
-		$("#discussions_container_toggle").click();
-
-		// add the thread
-		$discussions.createThread(problem_id, subject, body);
-
-	});
 
 	// TODO: post listener
 	// Add listener for creating threads
@@ -121,7 +99,7 @@ function problem(url){
 		$("#description").html(wiky.process(data.description, {}));
 
 		// set contributors
-		$("#contributors").empty();
+		$("#contributors").html("");
 		$.each(data.contributors, function(key, value){
 			$("#contributors").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
 		});
@@ -134,12 +112,12 @@ function problem(url){
 		} else if(data.current_user_vote  == 1) { 
 			$(".upvote-btn").addClass("selected-vote");
 		}
-
+		
 		// set score
 		$("#score").html(data.score);
 
 		// set popuate related projects
-		// TODO
+		$("#related-solutions").relatedProjects(data.related_solutions);
 
 		// add threads and posts
 		$("#discussions_container").clearAll();

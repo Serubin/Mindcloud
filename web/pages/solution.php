@@ -6,7 +6,7 @@
 			<h2 id="subtitle"><small>Solves: <a id="solves_for"> </a></small></h2>
 		</div>
 		<div class="small-12 medium-4 columns" id="meta">
-			<ul id="contributers" class="text-right">
+			<ul id="contributors" class="text-right">
 
 			</ul>
 		</div>
@@ -32,14 +32,14 @@
 	<div id="description">
 
 	</div> <!-- end problem description -->
-	<hr>
+	<hr />
 	<div id="discussions_container">
 
 	</div><!-- end discussion thread list-->
 
-
+	<hr />
 	<!-- related projects -->
-	<div id="related_projects">
+	<div id="related-solutions">
 
 
 	</div> <!-- end related projects -->

@@ -10,7 +10,7 @@ function solution(url){
 
 	// get the problem's numeric id
 	var req = new APICaller('solution', 'getId');
-	var params = {shorthand: url[1]};
+	var params = {shorthand: url[1].toLowerCase()};
 	req.send(params, function(result){
 		// populate the problem data
 		var req = new APICaller('solution', 'load');
@@ -28,6 +28,8 @@ function solution(url){
 			// set id
 			id = result.id;
 
+			updateCreateSolution(result.problem_id, result.problem.title); // Updates create solution modal
+
 			// Loads problem
 			populatePage(result);
 		}
@@ -44,8 +46,8 @@ function solution(url){
 		var params = {pid: id, vote: -1};
 		req.send(params, function(){
 			log.debug("Problem", "User down voted solution " + id);
-			$("#solution_upvotes").removeClass("project_vote_hover");
-			$("#solution_downvotes").addClass("project_vote_hover");
+			$("#solution_upvotes").removeClass("selected-vote");
+			$("#solution_downvotes").addClass("selected-vote");
 			getScore();
 		});
 	});
@@ -56,8 +58,8 @@ function solution(url){
 		var params = {pid: id, vote: 1};
 		req.send(params, function(){
 			log.debug("Problem", "User up voted problem " + id);
-			$("#solution_downvotes").removeClass("project_vote_hover");
-			$("#solution_upvotes").addClass("project_vote_hover");
+			$("#solution_downvotes").removeClass("selected-vote");
+			$("#solution_upvotes").addClass("selected-vote");
 			getScore();
 		});
 	})
@@ -102,6 +104,7 @@ function solution(url){
 		$("#banner #title").html(data.title);
 
 		$("#solves_for").html(data.problem.title).attr("href", "/problem/" + data.problem.shorthand);
+		ph.captureLink($("#solves_for"));
 
 
 		// set description
@@ -110,25 +113,27 @@ function solution(url){
 		// set contributors
 		$("#contributors").html("");
 		$.each(data.contributors, function(key, value){
-			$("#contributers").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
+			$("#contributors").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
 		});
 
 
 		// set vote count and vote status if set
 		if(data.current_user_vote < 0) {
-			$("#solution_downvotes").addClass("project_vote_hover");
+			$("#solution_downvotes").addClass("selected-vote");
 		} else if(data.current_user_vote > 0) { 
-			$("#solution_upvotes").addClass("project_vote_hover");
+			$("#solution_upvotes").addClass("selected-vote");
 		}
 
 		// set score
 		$("#score").html(data.score);
+		
 		// set popuate related projects
+		$("#related-solutions").relatedProjects(data.related_solutions);
 
 		// add threads and posts
-		$.each(data.threads, function(i, value) {
-			$("#discussions_container").loadThread(value);
-		});
+		$("#discussions_container").clearAll();
+		$("#discussions_container").addThreadThumbnails(data.threads);
+
 	}
 
 	function getScore() {
@@ -150,13 +155,11 @@ function presolution(url){
 		}
 	});
 
-
 	if($.isNumeric(url[1])) {
-		console.log(url[1])
 		var req = new APICaller('solution', 'getShorthand');
 		var params = {id:url[1]};
 		req.send(params, function(result) {
-			log.debug("result of getShorthand: " + result, "problem");
+			log.debug("result of getShorthand: " + result, "solution");
 			if(!result)
 				ph.pageRequest("/dashboard");
 

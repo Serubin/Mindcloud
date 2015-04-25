@@ -74,22 +74,16 @@ class Thread
 
 		try {
 
-			if (!isset($this->_params['id'])) {
+			if (!isset($this->_params['thread_id'])) {
 				throw new ThreadException("Failed to load thead, no id provided", __FUNCTION__);
 			}
 
 			// load the thread
 			$thread = new ThreadObject($this->_mysqli);
-			$thread->id = $this->_params['id'];
-			$thread->loadPreview();
+			$thread->id = $this->_params['thread_id'];
+			$thread->loadPosts();
 
-			$result = Array (
-				"id" => $thread->id,
-				"subject" => $thread->subject,
-				"body" => $thread->first_post->body
-			);
-
-			return $result;
+			return $thread->posts;
 
 		} catch (Exception $e) {
 			return $e;

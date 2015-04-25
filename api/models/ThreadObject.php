@@ -138,6 +138,43 @@ class ThreadObject {
 	}
 
 	/**
+	 * loadPosts
+	 * gets all the posts in the order they were posts on this thread
+	 */
+	public function loadPosts() {
+
+		// check that we have the required vars
+		if (!isset($this->id)) {
+			throw new ThreadException("Cannot load posts, no id provided", __FUNCTION__);
+		}
+
+		// begin the query
+		if (!$stmt = $this->_mysqli->prepare("SELECT `uid`, `body`, `created` FROM `posts` WHERE `thread_id` = ? ORDER BY `created` DESC")) {
+			throw new ThreadException("Prepare failed for loading thread: " . $this->_mysqli->error, __FUNCTION__);
+		}
+
+		// exec, etc.
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->store_result();
+		$stmt->bind_result($uid, $body, $created);
+
+		$posts = array();
+		while ($stmt->fetch()) {
+
+			// get user's name
+			$poster = new UserObject($this->_mysqli);
+			$poster->uid = $uid;
+			$poster->load();
+
+			$posts[] = array("user" => $poster->first_name . " " . $poster->last_name, "body" => $body, "date" => $created);
+
+		}
+
+		$this->posts = $posts;
+	}
+
+	/**
 	 *	Checks that a thread of this id exists in the database already. 
 	 */
 	public function exists() {

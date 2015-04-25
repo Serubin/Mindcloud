@@ -67,7 +67,7 @@ class Solution
 			
 			$solution->create();
 
-			return true;
+			return $solution->shorthand;
 		} catch (Exception $e) {
 			return $e;
 		} 
@@ -165,15 +165,34 @@ class Solution
 				throw new SolutionException("Could not load problem; no id provided.", __FUNCTION__);
 			}
 
-			// initialize problem object
+			// initialize solution object
 			$solution = new SolutionObject($this->_mysqli);
 			$solution->id = $this->_params['id'];
 
-			// inflate the problem with its own information
+			// inflate the solution with its own information
 			$solution->loadFull();
 
-			return $solution->toArray();
+			return $solution;
 		} catch (Exception $e){
+			return $e;
+		}
+	}
+
+	public function loadPreviewSolution(){
+		try {
+			if(!isset($this->_params['id'])){
+				throw new SolutionException("Could not load problem preview; no id provided", __FUNCTION__);
+			}
+
+			// initialize solution
+			$solution = new SolutionObject($this->_mysqli);
+			$solution->id = $this->_params['id'];
+
+			// inflate solution with preview info
+			$solution->loadPreview();
+
+			return $solution;
+		} catch(Exception $e) {
 			return $e;
 		}
 	}
@@ -213,7 +232,33 @@ class Solution
 			$solution->id = $this->_params['id'];
 			$solution->getShorthand();
 
-			return $problem->shorthand;
+			return $solution->shorthand;
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	public function getRelatedSolution(){
+		try {
+			if(!isset($this->_params['problem_id'])){
+				throw new SolutionException("Couldn't load related solutions, no id provided", __FUNCTION__);
+			}
+
+			$solution = new SolutionObject($this->_mysqli);
+			$solution->problem_id;
+			$related = $solution->getRelatedSolutions();
+
+			$result = Array();
+
+			foreach($related as $value) {
+				$related_solution = new SolutionObject($this->_mysqli);
+				$related_solution->id = $value;
+				$related_solution->loadPreview();
+
+				array_push($result, $related_solution);
+			}
+
+			return $result;
 		} catch (Exception $e) {
 			return $e;
 		}
