@@ -35,6 +35,9 @@ function register(){
 		processRegistration();
 	});
 	
+
+	$("#splash-background").css("background-image", randImgSelect());
+
 	/**
 	 * processRegistration()
 	 * Executes api requests to register user.
