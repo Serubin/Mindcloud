@@ -51,3 +51,14 @@ var log = function(){
  	secondary_dark: '#e56a00',
  	secondary_dark_2: '#cc5e00'
  }
+
+/* 
+ * select a ranom image
+ */
+ function randImgSelect () {
+
+ 	var no = Math.floor(Math.random()*7 + 1);
+
+ 	return 'url("/assets/images/splash/' + no + '.jpg")';
+
+ }

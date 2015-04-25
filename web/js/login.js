@@ -20,6 +20,8 @@ function login(){
 		}
 	});
 
+	// set background
+	$("#splash-background").css("background-image", randImgSelect());
 	window.document.title = "Mindcloud: Login";
 
 	$("#reload-captcha").click(function(){

@@ -1,4 +1,4 @@
-<div id="splash">
+<div id="login-page">
 	<!-- Background -->
 	<div id="splash-background">
 	</div>

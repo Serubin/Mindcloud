@@ -10,8 +10,10 @@ function predashboard(url){
 	var _this = this;
 	// Checks for user login
 	var req = new APICaller('user', 'check');
+
 	req.send({}, function(result){
 		if(!result){
+			// redirect to the landing page
 			ph.pageRequest("/login");
 		}
 	});

@@ -21,8 +21,10 @@ $(function(){
 
 	// if index page
 	if(ph.parseUrl()[0] == ""){
-		log.debug("App", "No start page, redirecting");
-		ph.pageRequest("/login");
+
+		//log.debug("App", "No start page, redirecting");
+		// redirect to landing intro page
+		ph.pageRequest("/about");
 		return;
 	}
 
