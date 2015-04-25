@@ -126,34 +126,13 @@ function solution(url){
 
 		// set score
 		$("#score").html(data.score);
+		
 		// set popuate related projects
+		$("#related-solutions").relatedProjects(data.related_solutions);
 
-		var $related_projects = $("#related-solutions");
-
-		$related_projects.html(""); // Clears div
-
-		if(data.related_solutions.length == 0)
-			$related_projects.html("<h4>No related solutions... yet!</h4>");
-
-		$.each(data.related_solutions, function(key, value){
-			var $project_preview = $("<div></div>").addClass("solution-preview").attr("data-url", value.shorthand);
-			var $title = $("<h4></h4>").html(value.title);
-			var $content = $("<p></p>").html(value.description.substr(0,50));
-
-			$project_preview.append($title).append($content);
-
-			$project_preview.click(function(){
-				ph.pageRequest("/solution/" + $(this).attr("data-url"));
-			})
-
-			$related_projects.append($project_preview);
-		});
-
-		// THIS IS BROKEN
 		// add threads and posts
-		$.each(data.threads, function(i, value) {
-			$("#discussions_container").loadThread(value);
-		});
+		$("#discussions_container").clearAll();
+		$("#discussions_container").addThreadThumbnails(data.threads);
 
 	}
 

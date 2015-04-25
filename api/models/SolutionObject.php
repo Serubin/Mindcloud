@@ -28,6 +28,8 @@ class SolutionObject {
 	public $userVote;
 
 	public $related_solutions;
+
+	public $threads;
 	// TODO
 	// TODO: content handlers
 	// TODO: activity
@@ -142,11 +144,15 @@ class SolutionObject {
 
 		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "SOLUTION", $this->id, $_SESSION['uid']);
 
+		// Get problem preview for title
 		$this->problem = new ProblemObject($this->_mysqli);
 		$this->problem->id = $this->problem_id;
 		$this->problem->loadPreview();
 		// get array of afficiliated thread ids
-		//$this->getThreads();
+		$this->problem->getThreads();
+		$this->threads = $this->problem->threads; // sets thread to solutions
+		unset($this->problem->threads);
+
 
 		$related = $this->getRelatedSolutions();
 
