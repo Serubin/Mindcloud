@@ -71,24 +71,7 @@ function problem(url){
 		}
 	});
 
-	// new thread listener
-	$("#submit_thread").submit( function (event) {
 
-		//log.debug("submitting thread to", problem_id);
-
-		// prevent default submission
-		event.preventDefault();
-
-		var subject = $("#new_thread_subject").val();
-		var body = $("#new_thread_body").val();
-
-		// hide forms
-		$("#discussions_container_toggle").click();
-
-		// add the thread
-		$discussions.createThread(problem_id, subject, body);
-
-	});
 
 	// TODO: post listener
 	// Add listener for creating threads

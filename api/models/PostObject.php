@@ -17,6 +17,7 @@ class PostObject {
 	public $body;
 	public $status;
 	public $created;
+	public $user_name;
 
 	/**
 	 * Constructor
@@ -49,6 +50,27 @@ class PostObject {
 
 		// set this post's id
 		$this->id = $this->_mysqli->insert_id;
+		$stmt->close();
+
+		// obtain the post date
+		if (!$stmt = $this->_mysqli->prepare("SELECT `created` FROM `posts` WHERE `id` = ?")) {
+			throw new PostException("Failed to retrieve post date: " . $this->_mysqli->error, __FUNCTION__);
+		}
+		$stmt->bind_param("i", $this->id);
+		$stmt->execute();
+		$stmt->store_result();
+		$stmt->bind_result($date);
+		$stmt->fetch();
+
+		$this->created = $date;
+		$stmt->close();
+
+		// obtain the poster's name
+		$user = new UserObject($this->_mysqli);
+		$user->uid = $this->uid;
+		$user->load();
+
+		$this->user_name = $user->first_name . " " . $user->last_name;
 
 		// finish
 		return true;
@@ -86,6 +108,10 @@ class PostObject {
 		$this->body = $body;
 		$this->created = $created;
 		$this->status = $status;
+
+		// query for poster's name
+		$stmt->close();
+		if ($stmt = $this->_mysqli->prepare("SELECT first_name"))
 
 		return true;
 
