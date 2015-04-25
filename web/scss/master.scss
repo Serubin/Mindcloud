@@ -130,3 +130,14 @@ body{
 	top: 0px;
 	left: 0px;
 }
+
+/* zurb fixes */
+.f-topbar-fixed {
+    @media #{$small-only} {
+        padding-top: 60px !important;
+    }
+
+    @media #{$large-up} {
+        padding-top: $topbar-height !important;
+    }
+}
