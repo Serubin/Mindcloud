@@ -35,6 +35,8 @@
 	}
 
 	#related-solutions {
+  		height: 230px;
+
 		display: flex;
 		display: -webkit-flex;
 		flex-direction: row;
@@ -65,6 +67,10 @@
 
 		.solution-preview:hover {
 			background-color: gray;
+		}
+
+		#no-display{
+			  padding-top: 90px;
 		}
 	}
 }
