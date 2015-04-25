@@ -124,7 +124,12 @@ class ProblemObject {
 		$this->contributors->uid = $creator_id;
 		$this->contributors->load();
 
-		$this->contributors = Array($this->contributors);
+		$this->contributors = Array(
+			Array(	
+				"association" => contributors::$CREATOR,
+				"user" => $this->contributors->toArray()
+			)
+		);
 
 		// set score
 		$this->score = $this->getScore();

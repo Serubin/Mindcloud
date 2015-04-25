@@ -112,7 +112,7 @@ class SolutionObject {
 		// Fetch contributors
 		$contributors = Array();
 
-		if (!$stmt = $this->_mysqli->prepare("SELECT `cid`, `uid`, `association` FROM `contributors` WHERE `cid` = ?")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `cid`, `uid`, `association` FROM `contributors` WHERE `cid` = ? ORDER BY `association` ASC")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 		$stmt->bind_param("i", $this->id);

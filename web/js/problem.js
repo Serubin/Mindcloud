@@ -118,8 +118,7 @@ function problem(url){
 		// set contributors
 		$("#contributors").html("");
 		$.each(data.contributors, function(key, value){
-			console.log(value);
-			$("#contributors").append("<li><small>" + value.association + "</small> " + value.first_name + " " +  value.last_name + "</li>");
+			$("#contributors").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
 		});
 
 		// set vote count and vote status if set
