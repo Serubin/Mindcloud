@@ -32,16 +32,17 @@
 
 	</div> <!-- end problem description -->
 	<hr />
-	<div id="discussions_container" class="clearfix">
-	<hr />
+	<div id="discussions_container">
+
 	</div><!-- end discussion thread list-->
 
-
+	<hr />
 	<!-- related projects -->
-	<div id="related-solutions" class="clearfix">
+	<div id="related-solutions">
 
 
 	</div> <!-- end related projects -->
+
 
 	</div>
 </div>
