@@ -79,7 +79,7 @@ function prelogin(){
 	if(url[1] == "validate" && url.length == 4){
 		log.debug("Login","processesing validate");
 		var req = new APICaller('user', 'verify');
-		var params = {hash: url[2], email: url[3].replace("-", ".")};
+		var params = {hash: url[2], email: url[3].replace(/-/g, ".")};
 		req.send(params, function(result) {
 			if(result === true){
 				ph.pageRequest("/login");
