@@ -27,6 +27,9 @@ class Dashboard {
 		$this->_mysqli = $mysqli;
 	}
 
+	// number of problems to load
+	private $_load_amount = 6;
+
 	/**
 	 * load()
 	 * Inital load of user logging in.
@@ -50,11 +53,12 @@ class Dashboard {
 			// if problems are to be loaded
 			// load most recent 10
 			// TODO change constant 10 to be however many can fit on screen
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand` FROM `problems` ORDER BY `created` LIMIT 20")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand` FROM `problems` ORDER BY `created` LIMIT ?")) {
 				error_log("failing");
 				throw new DashboardException($this->_mysqli->error, __FUNCTION__);
 			}
 
+			$stmt->bind_param("i", $this->_load_amount);
 			$stmt->execute();
 			$stmt->store_result();
 			$stmt->bind_result($id, $pr_stmt, $date, $shorthand);
@@ -97,6 +101,7 @@ class Dashboard {
 			$params = array_merge(array($typesByString, &$_SESSION['uid']), $problem_args);
 
 			if (!$stmt = $this->_mysqli->prepare($query)) {
+				error_log($query);
 				throw new DashboardException("prepare failed: " . $this->_mysqli->error, __FUNCTION__);
 			}
 
@@ -132,6 +137,42 @@ class Dashboard {
 	*/
 	public function searchDashboard() {
 		// TODO
+	}
+
+	/**
+	 * extendDashboard()
+	 * Get more problems for automatic scrolling
+	 */
+	public function extendDashboard() {
+
+		// make sure we have which pagination to load
+		if (!isset($this->_params['page'])) {
+			throw new ProblemException("No page provided, cannot get more problems", __FUNCTION__);
+		}
+
+		// Which subset of problems to load
+		$offset = $this->_load_amount * $this->_params['page'];
+
+		// Prepare mysql statement
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand` FROM `problems` ORDER BY `created` LIMIT ? OFFSET ?")) {
+			throw new DashboardException("Prepare failed: " . $this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("ii", $this->_load_amount, $offset);
+		$stmt->execute();
+		$stmt->store_result();
+		$stmt->bind_result($id, $title, $created, $shorthand);
+
+		$loaded_posts = array();
+
+		while ($stmt->fetch()) {
+			$loaded_posts[] = array("id" => $id, "title" => $title, "date" => $created, "shorthand" => $shorthand);
+		}
+
+		error_log(json_encode($loaded_posts));
+
+		return $loaded_posts;
+
 	}
 
 }

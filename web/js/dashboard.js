@@ -17,6 +17,9 @@ function predashboard(url){
 	});
 }
 
+// var page number
+var page = 0;
+
 function dashboard() {
 
 	window.document.title = "Mindcloud: Dashboard"
@@ -105,38 +108,47 @@ function dashboard() {
 		// append new problems		
 		$.each(new_problems, function(i, value) {
 
-			// overall container
-			new_problems[i] = $('<li></li>', {id: value[0], datetime: value[2], class: 'problem', 'data-title' : value[3]}).append(
-				// row div 
-				$('<div></div>', {class: 'row'})
-				.append(
-					// vote button containers
-					$('<div></div>', {class: 'small-2 column voter'})
-						.append( $("<div></div>", {class:'problem-btn vote upvote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
-						.append( $("<div></div>", {class: 'vote-counter'}).html("<span>" + value[4] + "</span>"))
-						.append( $("<div></div>", {class:'problem-btn vote downvote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
-					)
-				.append(
-				// description, etc. container
-					$('<div></div>', {class: 'small-9 column problem-statement'})
-						.append( $('<span></span>', {class: 'text-left'}).text(value[1]))
-				// flag button and menu
-				).append(
-
-					$('<div></div>', {class: 'small-1 column problem-btn flag-reveal'}).html("<i class='fi-flag'></i></div>")
-							.append( $("<div></div>", {class: "dropdown"})
-								.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
-									.append($("<li></li>").html('<a data-value="1" class="flag-val keep-native" href="#">duplicate</a>'))
-									.append($("<li></li>").html('<a data-value="2" class="flag-val keep-native" href="#">innapropriate</a>'))
-									//.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
-									)
-							)
-					)
-			);
+			new_problems[i] = problemFormatter (value);
 
 			$problems.append(new_problems[i]);
 
 		});
+	}
+
+	function problemFormatter (problem) {
+
+		// overall container
+		var new_problem = $('<li></li>', {id: problem[0], datetime: problem[2], class: 'problem', 'data-title' : problem[3]}).append(
+
+			// row div 
+			$('<div></div>', {class: 'row'})
+			.append(
+				// vote button containers
+				$('<div></div>', {class: 'small-2 column voter'})
+					.append( $("<div></div>", {class:'problem-btn vote upvote', 'data-value' : '1'}).html("<i class='fi-arrow-up'>"))
+					.append( $("<div></div>", {class: 'vote-counter'}).html("<span>" + problem[4] + "</span>"))
+					.append( $("<div></div>", {class:'problem-btn vote downvote', 'data-value' : '-1'}).html("<i class='fi-arrow-down'></i></div>"))
+				)
+			.append(
+			// description, etc. container
+				$('<div></div>', {class: 'small-9 column problem-statement'})
+					.append( $('<span></span>', {class: 'text-left'}).text(problem[1]))
+			// flag button and menu
+			).append(
+
+				$('<div></div>', {class: 'small-1 column problem-btn flag-reveal'}).html("<i class='fi-flag'></i></div>")
+						.append( $("<div></div>", {class: "dropdown"})
+							.append( $("<ul></ul>", { tabindex : "-1", role: "menu", 'aria-hidden': "true"})
+								.append($("<li></li>").html('<a data-value="1" class="flag-val keep-native" href="#">duplicate</a>'))
+								.append($("<li></li>").html('<a data-value="2" class="flag-val keep-native" href="#">innapropriate</a>'))
+								//.append($("<li></li>").html('<a class="flag-stupid" href="#">stupid</a>'))
+								)
+						)
+				)
+		);
+
+		return new_problem;
+
 	}
 
 	// Problem create form
@@ -237,3 +249,39 @@ function dashboard() {
 			})
 	});
 }
+
+// auto load on pagination
+$(window).scroll(function() {
+
+	// if the botom of the page is reached, request more problems
+	if($(window).scrollTop() + $(window).height() == $(document).height()) {
+		
+		// prepare 
+		var req = new APICaller("dashboard", "extend");
+		var params = {
+			"page" : page
+		};
+
+		// send the request
+		req.send(params, function (result) {
+
+			if (result) {
+
+				// cycle through the new problems and append them
+				$.each(result, function (i, value) {
+
+					$problems.append(problemFormatter(value));
+
+				});
+
+				page++;
+
+			} else {
+				alertHandler("alert", "Failed to load more problems");
+			}
+
+		});	
+
+
+	}
+});
