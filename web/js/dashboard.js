@@ -216,13 +216,14 @@ function dashboard() {
 				}
 			})
 	});
+	
 }
 
 // auto load on pagination
 $(window).scroll(function() {
 
 	// if the botom of the page is reached, request more problems
-	if($(window).scrollTop() + $(window).height() == $(document).height()) {
+	if($(window).scrollTop() + $(window).height() == $(document).height() && ph.currentPage == "dashboard") {
 		
 		// prepare 
 		var req = new APICaller("dashboard", "extend");
