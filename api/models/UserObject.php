@@ -401,8 +401,7 @@ class UserObject
 		$stmt->bind_result($db_id, $db_email, $db_password, $db_id, $db_first_name, $db_last_name, $db_gender, $db_year, $db_join_date, $db_permission, $db_id, $db_verified, $db_notification_hash);
 		$stmt->fetch();
 
-		// Will not store email for user privacy
-		//$this->email = $db_email;
+		$this->email = $db_email;
 		$this->first_name = $db_first_name;
 		$this->last_name = $db_last_name;
 		$this->year = $db_year;
