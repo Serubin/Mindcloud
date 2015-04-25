@@ -134,7 +134,7 @@ body{
 /* zurb fixes */
 .f-topbar-fixed {
     @media #{$small-only} {
-        padding-top: 60px !important;
+        padding-top: 45px !important;
     }
 
     @media #{$large-up} {

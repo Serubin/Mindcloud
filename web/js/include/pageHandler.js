@@ -4,6 +4,7 @@
  * 13 Febuary 2015
  * Javascript for async page handling
  *****************************************************************************/
+
 /**
  * pageHandler()
  * Page requests dynamicly loads in a new content
@@ -27,6 +28,7 @@ function pageHandler(args) {
 	var pageRequest;
 	var parseUrl;
 	var captureLink;
+	var currentPage;
 
 	// class options
 	var pageLoc;
@@ -35,7 +37,6 @@ function pageHandler(args) {
 	var animations = false;
 
 	var preloadStatus;
-
 
 	function construct() {
 
@@ -62,22 +63,27 @@ function pageHandler(args) {
 	this.pageRequest = function(page, historypush, callback){
 		preloadStatus = undefined;
 
+		// Slices string into array
 		if(typeof page == "string"){
 			if(page.indexOf("/") == 0)
 				page = page.slice(1,page.length);
 			page = page.split("/");
 		}
 
+		// Determines history
 		if(historypush || typeof historypush == "undefined"){
 			var joinedPage = page;
 			if(typeof page == "object")
 				joinedPage = page.join("/");
 
-			history.pushState({}, '', "/" + joinedPage);
+			history.pushState({}, '', "/" + joinedPage); // Pushes history of flag is set
 		}
 
+		// Gets first index of page to load
 		if(typeof page == "object")
 			page = page[0];
+
+		_this.currentPage = page;
 
 		log.info("PageHandler", "Loading " + page);
 
@@ -87,6 +93,7 @@ function pageHandler(args) {
 			page_handler_global();
 		}
 
+		// Actual page load
 		pageLoad(page, callback);
 	}
 	/**
@@ -97,7 +104,7 @@ function pageHandler(args) {
 	function pageLoad(page, callback) {
 	 	var $content = $(contentDiv);
 
-
+	 	// Checks for error result
 		function processError(xhr, ajaxOptions, thrownError){
 			if(xhr.status==404) {
 				_this.pageRequest("error-404", false);
@@ -115,6 +122,8 @@ function pageHandler(args) {
 		 */
 		function success(result){
 			log.debug("PageHandler", "Loaded " + page);
+
+			// Handles animations
 			if(!animations)
 				return process(result);
 
@@ -137,10 +146,11 @@ function pageHandler(args) {
 
 			$(document).foundation('reflow'); // Updates foundation stuff
 
+			// Registers click events if flag is set
 			if(registerEvents) {
 				log.debug(pkg, "Registering link events");
 				$("a").not(".keep-native").each(function(){
-					_this.captureLink($(this));
+					_this.captureLink($(this)); // Actual capture event
 				});
 				
 			}
