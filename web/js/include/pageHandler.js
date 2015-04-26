@@ -24,7 +24,7 @@ function pageHandler(args) {
 
 	var pkg = "pageHandler"; // For logger
 
-	var extention = "loc";
+	var extention = "io";
 
 	// public functions
 	var pageRequest;
