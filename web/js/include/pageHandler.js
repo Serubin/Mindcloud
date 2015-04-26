@@ -24,6 +24,8 @@ function pageHandler(args) {
 
 	var pkg = "pageHandler"; // For logger
 
+	var extention = "loc";
+
 	// public functions
 	var pageRequest;
 	var parseUrl;
@@ -216,7 +218,7 @@ function pageHandler(args) {
 
 		// remove prefix and suffix
 
-		aURL = aURL.slice(aURL.indexOf('.loc') + 5)
+		aURL = aURL.slice(aURL.indexOf('.' + extention) + (extention.lenght + 2))
 
 		if(aURL.lastIndexOf("#") > 0)
 			aURL = aURL.substr(0, aURL.lastIndexOf("#"));
