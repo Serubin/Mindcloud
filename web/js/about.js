@@ -11,4 +11,7 @@ function about() {
 
 	$("#splash-background").css("background-image", thing);
 
+	$("$splash-background").css("height", "115%");
+	$("$splash-background").css("margin-top","-45px");
+
 }
