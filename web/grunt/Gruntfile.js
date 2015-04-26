@@ -51,6 +51,20 @@ module.exports = function(grunt) {
 				src: ['../js/framework/*.js'],
 				dest: '../assets/js/frameworks.js'
 			}
+		},
+		uglify: {
+			options: {
+				mangle: {
+					except: ['jQuery']
+				}
+			},
+			my_target: {
+				files: {
+					'../assets/js/includes.js': ['../assets/js/includes.js'],
+					'../assets/js/apps.js': ['../assets/js/apps.js'],
+					'../assets/js/frameworks.js': ['../assets/js/frameworks.js']
+				}
+			}
 		}
 	});
 
@@ -58,7 +72,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
 
 	grunt.registerTask('build', ['clean','sass','concat']);
+	grunt.registerTask('prd', ['clean','sass','concat','uglify']);
 	grunt.registerTask('default', ['build','watch']);
 }

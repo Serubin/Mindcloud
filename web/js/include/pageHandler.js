@@ -216,7 +216,7 @@ function pageHandler(args) {
 
 		// remove prefix and suffix
 
-		aURL = aURL.slice(aURL.indexOf('.io') + 4)
+		aURL = aURL.slice(aURL.indexOf('.loc') + 5)
 
 		if(aURL.lastIndexOf("#") > 0)
 			aURL = aURL.substr(0, aURL.lastIndexOf("#"));
