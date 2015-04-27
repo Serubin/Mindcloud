@@ -6,7 +6,7 @@
  *****************************************************************************/
 function solution(url){
 	// id var for access from all functions
-	var id;
+	var solution_id;
 
 	// get the problem's numeric id
 	var req = new APICaller('solution', 'getId');
@@ -26,7 +26,7 @@ function solution(url){
 
 		if (result) {
 			// set id
-			id = result.id;
+			solution_id = result.id;
 
 			updateCreateSolution(result.problem_id, result.problem.title); // Updates create solution modal
 
@@ -78,7 +78,7 @@ function solution(url){
 		$("#discussions_container_toggle").click();
 
 		// add the thread
-		$discussions.createThread(id, subject, body);
+		$discussions.createThread(problem_id, subject, body);
 
 	});
 
