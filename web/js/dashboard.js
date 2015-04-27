@@ -147,8 +147,8 @@ function dashboard() {
 		if (!$btn.hasClass("selected")) {
 			var req = new APICaller("problem", "vote");
 			req.send({
-				vote: $(this).attr("data-value"),
-				problem_id: $parent.attr('id')
+				id: $parent.attr('id'),
+				vote: $(this).attr("data-value")
 			}, function (result) {
 				if (result) {
 					$btn.addClass("selected");
