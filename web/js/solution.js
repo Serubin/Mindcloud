@@ -40,29 +40,8 @@ function solution(url){
 		}
 	}
 
-	// downvote listener
-	$("#solution_downvotes").click(function(){
-		var req = new APICaller("solution", "vote");
-		var params = {pid: id, vote: -1};
-		req.send(params, function(){
-			log.debug("Problem", "User down voted solution " + id);
-			$("#solution_upvotes").removeClass("selected-vote");
-			$("#solution_downvotes").addClass("selected-vote");
-			getScore();
-		});
-	});
-	
-	// upvote listener
-	$("#solution_upvotes").click(function(){
-		var req = new APICaller("solution", "vote");
-		var params = {pid: id, vote: 1};
-		req.send(params, function(){
-			log.debug("Problem", "User up voted problem " + id);
-			$("#solution_downvotes").removeClass("selected-vote");
-			$("#solution_upvotes").addClass("selected-vote");
-			getScore();
-		});
-	})
+	$(".vote").voter("solution", solution_id);
+
 	// new thread listener
 	$("#submit_thread").submit( function (event) {
 
@@ -118,10 +97,11 @@ function solution(url){
 
 
 		// set vote count and vote status if set
-		if(data.current_user_vote < 0) {
-			$("#solution_downvotes").addClass("selected-vote");
-		} else if(data.current_user_vote > 0) { 
-			$("#solution_upvotes").addClass("selected-vote");
+		
+		if(data.current_user_vote == -1) { // downvote 
+			$(".downvote-btn").addClass("selected-vote");
+		} else if(data.current_user_vote  == 1) { //upvote
+			$(".upvote-btn").addClass("selected-vote");
 		}
 
 		// set score
