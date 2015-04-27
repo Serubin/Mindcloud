@@ -137,14 +137,19 @@ class Problem
 	}
 
 	/** 
-	 * upvoteProblem() 
-	 * Give the specified problem an upvote
+	 * voteProblem() 
+	 * Vote problem
+	 *
+	 * @param id - problem id
+	 * @param vote - vote value (1, -1)
+	 * @param session uid
+	 * @return returns new score of solution
 	 */
 	public function voteProblem() {
 
 		try {
 			// check that we have the appropriate data
-			if (!isset($this->_params['problem_id'], $this->_params['vote'], $_SESSION['uid'])) {
+			if (!isset($this->_params['id'], $this->_params['vote'], $_SESSION['uid'])) {
 				error_log("Request parameter dump" . json_encode($this->_params));
 				throw new ProblemException("Unset vars", __FUNCTION__);
 			}
@@ -156,16 +161,11 @@ class Problem
 
 			// submit vote
 			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
 
-			$problem->id = $this->_params['problem_id'];
-			$problem->creator = $_SESSION['uid'];
 			$problem->vote($_SESSION['uid'], $this->_params['vote']);
 
-			return Vote::fetchScore( $this->_mysqli, "PROBLEM", $this->_params['problem_id']);
-
-			$problem->id = $this->_params['pid'];
-
-			return $problem->vote($_SESSION['uid'], $this->_params['vote']);
+			return Vote::fetchScore( $this->_mysqli, "PROBLEM", $this->_params['id']);
 		} catch (ProblemException $e) {
 			return $e;
 		}
