@@ -188,7 +188,7 @@ function pageHandler(args) {
 		if(typeof $el.attr("href") == "undefined" ||
 		   $el.attr("href").toLowerCase() == "javascript:void(0);" ||
 		   $el.attr("href").toLowerCase() == "javascript:void(0)" || 
-		   $el.attr("href").toLowerCase() == "#" ||
+		   $el.attr("href").toLowerCase().match(/^#/) ||
 		   $el.hasClass("keep-native"))
 				return;
 
