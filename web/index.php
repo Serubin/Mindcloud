@@ -52,10 +52,12 @@
 				    <div class="shorthand-field row collapse">
 						<label>problem url</label>
 						<div class="small-4 large-3 columns">
-							<span class="prefix">mindcloud.io/problem/</span>
+							<span class="prefix show-for-medium-up">mindcloud.io/problem/</span>
+							<span class="prefix show-for-small-only">problem/</span> <!-- fix for mobile -->
 						</div>
 						<div class="small-8 large-9 columns">
-							<input id="form_problem_shorthand" type="text" maxlength="200" placeholder="cant-type-with-mind"/>
+							<input id="form_problem_shorthand" type="text" maxlength="100" placeholder="cant-type-with-mind"/>
+							<small class="error">shorthand taken</small>
 						</div>
 					</div>
 				    <!-- category -->
@@ -123,10 +125,12 @@
 					<div class="shorthand-field row collapse">
 						<label>solution url</label>
 						<div class="small-4 large-3 columns">
-							<span class="prefix">mindcloud.io/solution/</span>
+							<span class="prefix show-for-medium-up">mindcloud.io/solution/</span>
+							<span class="prefix show-for-small-only">solution/</span> <!-- fix for mobile -->
 						</div>
 						<div class="small-8 large-9 columns">
-							<input id="form_solution_shorthand" type="text" maxlength="200" placeholder="typing-without-typing"/>
+							<input id="form_solution_shorthand" type="text" maxlength="100" placeholder="typing-without-typing"/>
+							<small class="error">shorthand taken</small>
 						</div>
 					</div>
 
