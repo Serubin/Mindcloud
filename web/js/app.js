@@ -82,6 +82,8 @@ $(function(){
 
 	function initPoseProblem(){
 
+		var error = false;
+
 		// request current list of categories
 		var req = new APICaller("problem", "getcategories");
 		req.send({}, function (result) {
@@ -100,10 +102,33 @@ $(function(){
 			}
 		});
 
+		// regex replacements for shorthand
+		$("#form_problem_shorthand").on("keyup", function(){
+			var val = $(this).val();
+			val = val.replace(/ /g, "-"); // remove spaces
+			val = val.replace(/[,!@#$%^&*()=\[\]{};:\'\"<>.,\/?\\~`]+/g, ""); // nasty characters
+			$(this).val(val);
+
+			// checks if shorthand is avalible
+			var req = new APICaller("problem", "validateShorthand");
+			var params = {shorthand: val};
+
+			req.send(params, function(result){
+				if(!result){
+					$(".shorthand-field").addClass("error");
+					error = true;
+				} else {
+					$(".shorthand-field").removeClass("error");
+					error = false;
+				}
+			});
+		});
+
 		// preview listener
 		$("#problem-preview-button").click(function(){
 			$("#problem-text-preview").html(wiky.process($("#form_problem_desc").val(),{}));
 		});
+
 
 		// initalize tag handler
 		$('#tag_container').tagsInput({
@@ -123,6 +148,8 @@ $(function(){
 		
 		// Problem creation submission listener
 		$('#submit_problem').on('valid', function() {
+			if(error) // return if shorthand is taken
+				return;
 			$("#tag_container").getAllTags();
 			var req = new APICaller('problem', 'create');
 			var params = {
@@ -171,6 +198,29 @@ $(function(){
 
 	function initCreateSolution(){
 
+		var error = false;
+
+		// regex replacements for shorthand
+		$("#form_solution_shorthand").on("keyup", function(){
+			var val = $(this).val();
+			val = val.replace(/ /g, "-"); // remove spaces
+			val = val.replace(/[,!@#$%^&*()=\[\]{};:\'\"<>.,\/?\\~`]+/g, ""); // nasty characters
+			$(this).val(val);
+
+			var req = new APICaller("solution", "validateShorthand");
+			var params = {shorthand: val};
+
+			req.send(params, function(result){
+				if(!result){
+					$(".shorthand-field").addClass("error");
+					error = true;
+				} else {
+					$(".shorthand-field").removeClass("error");
+					error = false;
+				}
+			});
+		});
+
 		// preview listener
 		$("#solution-preview-button").click(function(){
 			$("#solution-text-preview").html(wiky.process($("#form_solution_desc").val(),{}));
@@ -179,6 +229,9 @@ $(function(){
 
 		// Problem creation submission listener
 		$('#submit_solution').on('valid', function() {
+			if(error) // return if shorthand is taken
+				return;
+
 			var req = new APICaller('solution', 'create');
 			var params = {
 				problem_id: problem_id,
