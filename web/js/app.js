@@ -133,18 +133,24 @@ $(function(){
 				category: $("#form_problem_cat").val()
 			};
 
+			// checks for short hand
 			if($("#form_problem_shorthand").val()) {
 				params["shorthand"] = $("#form_problem_shorthand").val();
 			}
 			
+			// Submiting
+			var loadingAlert = new alertHandler("info", "Submitting problem"); // alert for info
 			req.send(params, function(result) {
+					loadingAlert.close();
 					if (result) {
-						$("#pose_problem_modal").foundation('reveal', 'close');
 						$("#submit_problem").trigger("reset");
 						ph.pageRequest("/problem/" + result);
 						$("#tag_container").clearTags();
+					} else {
+						new alertHandler("alert", "There was an error submitting your problem.");
 					}
 				});
+				$("#pose_problem_modal").foundation('reveal', 'close');
 		}).on('invalid', function() {
 			//problem_tags.getAllTags();
 		});
@@ -183,13 +189,17 @@ $(function(){
 			if($("#form_solution_shorthand").val()) {
 				params["shorthand"] = $("#form_solution_shorthand").val();
 			}
+			var loadingAlert = new alertHandler("info", "Submitting solution");
 			req.send(params, function(result) {
-					if (result) {
-						$("#create_solution_modal").foundation('reveal', 'close');
-						$("#submit_solution").trigger("reset");
-						ph.pageRequest("/solution/" + result);
-					}
-				});
+				loadingAlert.close();
+				if (result) {
+					$("#submit_solution").trigger("reset");
+					ph.pageRequest("/solution/" + result);
+				} else {
+					new alertHandler("alert", "There was an error submitting your solution.");
+				}
+			});
+			$("#create_solution_modal").foundation('reveal', 'close');
 		}).on('invalid', function() {
 			//problem_tags.getAllTags();
 		});
