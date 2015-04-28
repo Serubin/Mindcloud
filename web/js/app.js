@@ -5,6 +5,13 @@
  * Javascript for main app
  *****************************************************************************/
 
+// Configureation
+//
+var mindcloud_protocol = "http"
+var mindcloud_url = "mindcloud";
+var mindcloud_ext = "loc";
+var mindcloud_full_url = mindcloud_protocol + "://" + mindcloud_url + "." + mindcloud_ext;
+
 var ph; // page handler global variable
 var tp;
 
@@ -52,7 +59,7 @@ $(function(){
 		var req = new APICaller("user", "loadConfidential");
 		req.send({}, function(user){
 			log.debug("Notification Listener", "Started!");
-			var socket = io('http://mindcloud.loc:8000', {
+			var socket = io(mindcloud_full_url + ':8000', {
 		        transports: ['websocket'],
 		        reconnection: false
 		    });
