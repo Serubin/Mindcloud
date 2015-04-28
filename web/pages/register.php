@@ -41,9 +41,9 @@
 
 				<!-- password -->
 				<div class="password-field">
-					<label for="register_password"><span class="label">password</span>		<small>required</small></label>
+					<label for="register_password"><span class="label">password</span>		<small><span data-tooltip aria-haspopup="true" class="has-tip" title="Passwords must be at least 8 charaters long and may only contain numbers, letters, and these charaters: @*#&.^!">required</span></small></label>
 						<input type="password" required id="register_password" name="register_password" pattern="password" placeholder="password" />
-						<small id="login_pass_err" class="error">Please enter a valid password</small>
+						<small id="login_pass_err" class="error">Passwords must be at least 8 charaters long and may only contain numbers, letters, and these charaters: @*#&.^!"</small>
 				</div>
 
 				<!-- password confirm -->
