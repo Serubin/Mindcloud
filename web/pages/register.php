@@ -76,7 +76,7 @@
 						<div class="large-6 medium-6 small-6 columns">
 							<img src="/assets/images/captcha.php" id="captcha-img" />
 						</div>
-						<div class="large-5 medium-5 small-5 columns" id="c_input">
+						<div class="large-4 medium-4 small-4 columns" id="c_input">
 							<input type="text" name="register_captcha" id="register_captcha" required />
 						</div>
 						<div class="large-1 medium-1 small-1 columns">

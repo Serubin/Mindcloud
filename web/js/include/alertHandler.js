@@ -27,12 +27,14 @@ function alertHandler(type, html) {
 	$alertClose.addClass(".keep-native");
 	$alertClose.addClass("close");
 	$alertClose.html("&times;")
-	$alertClose.click(close);
 
 	$alertBox.append($alertInner);
 	$alertBox.append($alertClose);
 
 	$("#alert-wrapper").prepend($alertBox);
+	$alertClose.click(function(){
+		$alertBox.remove();
+	});
 
 	$(document).foundation('alert', 'reflow');
 
