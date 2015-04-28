@@ -78,6 +78,20 @@ class Problem
 		}
 	}
 
+	/** validateShorthand()
+	 * Verifies that shorthand is avalible
+	 *
+	 */
+	public function validateShorthandProblem(){
+		if(!isset($this->_params['shorthand'])){
+			throw new ProblemException("Couldn't verify; no shorthand provided", __FUNCTION__);
+		}
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->shorthand = $this->_params['shorthand'];
+
+		return $problem->validateShorthand();
+	}
+
 	/**
 	 * getIdProblem()
 	 * Loads id from shorthand

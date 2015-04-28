@@ -62,7 +62,7 @@ class Solution
 			$solution->shorthand = strtolower($solution->shorthand); // Get's ride of those cocky captials.
 			$solution->shorthand = substr($solution->shorthand,0 ,200); // Shortens the fatter of the bunch.
 			if(!$solution->validateShorthand()){
-				$solution->shorthand = $solution->shorthand . substr(md5($solution->shorthand),0, 4); // Makes unquif if not?
+				$solution->shorthand = $solution->shorthand . "-" . substr(md5($solution->shorthand),0, 4); // Makes unquif if not?
 			}
 			
 			$solution->create();
@@ -72,6 +72,21 @@ class Solution
 			return $e;
 		} 
 	}
+
+	/** validateShorthand()
+	 * Verifies that shorthand is avalible
+	 *
+	 */
+	public function validateShorthandSolution(){
+		if(!isset($this->_params['shorthand'])){
+			throw new ProblemException("Couldn't verify; no shorthand provided", __FUNCTION__);
+		}
+		$solution = new SolutionObject($this->_mysqli);
+		$solution->shorthand = $this->_params['shorthand'];
+
+		return $solution->validateShorthand();
+	}
+
 
 	public function updateSolution(){
 		try {
