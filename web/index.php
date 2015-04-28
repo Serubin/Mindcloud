@@ -67,9 +67,27 @@
 					</div>
 
 				    <!-- description -->
-				    <div class="description-field">
+				    <div class="description-field clearfix">
 				     	<label>description</label>
-				        	<textarea id="form_problem_desc" class="small-12 columns" placeholder="Keyboards have been around since like the 1930s..." required></textarea>
+			     		<!-- tabs for edit and preview-->
+			     		<ul class="tabs right" data-tab role="tablist">
+							<li class="tab-title active" role="presentational" >
+								<a href="#problem-editing" role="tab" tabindex="0" aria-selected="true" controls="problem-editing">Editing</a>
+							</li>
+							<li class="tab-title" role="presentational">
+								<a href="#problem-preview" id="problem-preview-button" role="tab" tabindex="0" aria-selected="false" controls="problem-preview">Preview</a>
+							</li>
+						</ul>
+						<!-- editing and preview tab content -->
+						<div class="tabs-content">
+							<div class="content active" id="problem-editing">
+							<textarea id="form_problem_desc" class="small-12 columns" placeholder="Keyboards have been around since the 1930s..." rows="8" required></textarea>
+							</div>
+							<div class="content" id="problem-preview">
+								<div id="problem-text-preview">
+								</div>
+							</div>
+						</div>
 				     	<small class="error">Please elaborate on your problem.</small>
 				    </div>
 
@@ -113,9 +131,27 @@
 					</div>
 
 				    <!-- description -->
-				    <div class="description-field">
+				    <div class="description-field clearfix">
 				     	<label>description</label>
-				        <textarea id="form_solution_desc" class="small-12 columns" placeholder="All you have to do is think it and Typing without Typing will do it for you." required></textarea>
+				     	<!-- tabs for edit and preview-->
+			     		<ul class="tabs right" data-tab role="tablist">
+							<li class="tab-title active" role="presentational" >
+								<a href="#solution-editing" role="tab" tabindex="0" aria-selected="true" controls="solution-editing">Editing</a>
+							</li>
+							<li class="tab-title" role="presentational">
+								<a href="#solution-preview" id="solution-preview-button" role="tab" tabindex="0" aria-selected="false" controls="solution-preview">Preview solut</a>
+							</li>
+						</ul>
+						<!-- editing and preview tab content -->
+						<div class="tabs-content">
+							<div class="content active" id="solution-editing">
+								<textarea id="form_solution_desc" class="small-12 columns" placeholder="All you have to do is think it and Typing without Typing will do it for you." rows="8" required></textarea>
+							</div>
+							<div class="content" id="solution-preview">
+								<div id="solution-text-preview">
+								</div>
+							</div>
+						</div>
 				     	<small class="error">Please elaborate on your solution</small>
 				    </div>
 

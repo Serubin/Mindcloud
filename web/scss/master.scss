@@ -108,6 +108,16 @@ body{
 	.subtitle_for{
 		color: #000;
 	}
+
+	#problem-text-preview, #solution-text-preview{ // for preview pane
+		resize: both;
+		overflow-x: scroll; // enables scrolling and resize
+		height: 150px;
+		width: 100%;
+		max-width: 100%;
+		border: 1px solid #ccc; // matches text box
+		padding: 5px;
+	}
 }
 
 /* other */

@@ -93,6 +93,10 @@ $(function(){
 			}
 		});
 
+		// preview listener
+		$("#problem-preview-button").click(function(){
+			$("#problem-text-preview").html(wiky.process($("#form_problem_desc").val(),{}));
+		});
 
 		// initalize tag handler
 		$('#tag_container').tagsInput({
@@ -153,6 +157,12 @@ $(function(){
 	}
 
 	function initCreateSolution(){
+
+		// preview listener
+		$("#solution-preview-button").click(function(){
+			$("#solution-text-preview").html(wiky.process($("#form_solution_desc").val(),{}));
+		});
+
 
 		// Problem creation submission listener
 		$('#submit_solution').on('valid', function() {
