@@ -45,8 +45,8 @@
 					</div>
 				</div>
 
+		<a href="/register" class="button btn-login">register</a>
 		<button type="submit" class="button btn-login">login</button>
-		<button id="login_forgot" class="button btn-login">help</button>
 	</form>
 
 
