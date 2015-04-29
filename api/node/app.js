@@ -2,9 +2,9 @@ var https = require('https'),
 	fs = require('fs');
 
 var options = {
-    key: 	fs.readFileSync('/etc/apache/ssl/mindcloud_io/mindcloud_io.key'),
-    cert: 	fs.readFileSync('/etc/apache/ssl/mindcloud_io/mindcloud_io.crt'),
-    ca: 	fs.readFileSync('/etc/apache/ssl/mindcloud_io/mindcloud_io.ca-bundle')
+    key: 	fs.readFileSync('/etc/apache2/ssl/mindcloud_io/mindcloud_io.key'),
+    cert: 	fs.readFileSync('/etc/apache2/ssl/mindcloud_io/mindcloud_io.crt'),
+    ca: 	fs.readFileSync('/etc/apache2/ssl/mindcloud_io/mindcloud_io.ca-bundle')
 }
 
 var serverForUI = https.createServer(options),
