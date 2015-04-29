@@ -166,5 +166,11 @@
 			  <a href="#" class="close-reveal-modal keep-native">&#215;</a>
 			</div>
 		</div>
+
+		<!-- social beta feedback -->
+		<div id="social">
+			<a href="https://www.facebook.com/mindcloudio" class="keep-native" target="_blanks" ><i class="fi-social-facebook"></i>	<small>like us</small></a>
+			<small>&#169; mindcloud - beta</small>
+		</div>
 	</body>
 </html>
