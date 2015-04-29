@@ -18,7 +18,7 @@ function register(){
 	$(document).foundation({
 		abide: {
 			patterns: {
-				password: /^([a-zA-Z0-9@*#&!]{8,25})$/
+				password: /^([a-zA-Z0-9@*#&.^!]{8,64})$/
 			}
 		}
 	});

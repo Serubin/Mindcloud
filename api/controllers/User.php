@@ -94,7 +94,7 @@ class User
 			// submit email
 			$emailBody = "<h2>Welcome to mindcloud!</h2>
 					  <p>Hi $first_name $last_name, <br />
-					  We've noticed that you created an account! We're very excited to have you! All you have left todo is verify your account by clicking the link below! <br/>
+					  We've noticed that you created an account! We're very excited to have you! All you have left to do is verify your account by clicking the link below! <br/>
 					  See you on the other side!<br />
 
 					  <a href='https://mindcloud.io/login/validate/" . hash("sha512", $new_user->uid . $new_user->first_name . $new_user->last_name . $new_user->email) . "/" . str_replace(".", "-", $new_user->email) . "'>Validate your account!</a> <br/>

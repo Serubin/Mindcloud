@@ -15,7 +15,7 @@ function login(){
 	$(document).foundation({
 		abide: {
 			patterns: {
-				password: /^([a-zA-Z0-9@*#&!]{8,25})$/
+				password: /^([a-zA-Z0-9@*#&.^!]{8,64})$/
 			}
 		}
 	});
@@ -37,15 +37,20 @@ function login(){
 		var req = new APICaller('user', 'login');
 		var params = {email: $("#login_email").val(), password:hex_sha512($("#login_password").val()), login_captcha:$("#login_captcha").val()};
 		req.send(params, function(result) {
+			// handles return cases
 			switch (result) {
 				case "unverified":
-					alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");
+					new alertHandler("info" ,"Your account has not been verified. Please check your email to verify the account.");
 					return;
 					break;
 				case "captcha":
-					alertHandler("alert", "You have logged in incorrectly too many times. Please verify that you are not a robot.");
+					new alertHandler("alert", "You have logged in incorrectly too many times. Please verify that you are not a robot.");
 					$("#c_input").html('<input type="text" name="login_captcha" id="login_captcha" required />');
-					$(".captcha").fadeIn(300);
+					// reloads captcha
+					d = new Date();
+					$("#captcha-img").attr("src","/assets/images/captcha.php?"+d);
+
+					$(".captcha").fadeIn(300);// fades in
 					return;
 				case true:
 					tp.reload();
@@ -53,7 +58,7 @@ function login(){
 					break;
 				default:
 					$("#password").val("");
-					alertHandler("alert", "Incorrect username or password")
+					var alert = new alertHandler("alert", "Incorrect username or password");
 					break;
 				}
 			});

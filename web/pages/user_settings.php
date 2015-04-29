@@ -1,4 +1,18 @@
 <div class="row">
+	<!-- coming soon overlay -->
+	<div class="overlay" style="background-color: rgba(0, 0, 0, 0.6);" id="about-page">
+		<div class="row" style="margin: 10rem 0;">
+			<div class="small-12 medium-6 column small-centered">
+				<div class="float-pane">
+					<br/>
+					<h3>Account settings coming soon!</h3>
+					<br/>
+					<p>Account settings and many more exciting features are on their way to you!</p>
+				</div>
+			</div>
+		</div>		
+	</div>
+
 	<div class="small-12 columns">
 		<h1> Account Settings </h1>
 	</div>

@@ -5,6 +5,7 @@
  * Handles alert utility
  *****************************************************************************/
 function alertHandler(type, html) {
+	var _this = this;
 
 	var timeout = 30 * 1000; // 30 seconds
 
@@ -26,21 +27,23 @@ function alertHandler(type, html) {
 	$alertClose.addClass(".keep-native");
 	$alertClose.addClass("close");
 	$alertClose.html("&times;")
-	$alertClose.click(close);
 
 	$alertBox.append($alertInner);
 	$alertBox.append($alertClose);
 
 	$("#alert-wrapper").prepend($alertBox);
+	$alertClose.click(function(){
+		$alertBox.remove();
+	});
 
 	$(document).foundation('alert', 'reflow');
 
 	$alertBox.fadeIn(300);
 
-	setTimeout(close, timeout);
+	setTimeout(_this.close, timeout);
 
 
-	 function close(){
+	this.close = function(){
 		$alertBox.fadeOut(300, function(){
 			$alertBox.remove();
 		});

@@ -25,7 +25,7 @@ class SolutionObject {
 	public $status;
 
 	public $score;
-	public $userVote;
+	public $current_user_vote;
 
 	public $related_solutions;
 
@@ -151,8 +151,7 @@ class SolutionObject {
 		// get array of afficiliated thread ids
 		$this->problem->getThreads();
 		$this->threads = $this->problem->threads; // sets thread to solutions
-		unset($this->problem->threads);
-
+		unset($this->problem->threads); // removes duplicate data from being sent
 
 		$related = $this->getRelatedSolutions();
 

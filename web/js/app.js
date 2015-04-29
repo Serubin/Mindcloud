@@ -5,6 +5,13 @@
  * Javascript for main app
  *****************************************************************************/
 
+// Configureation
+//
+var mindcloud_protocol = "https"
+var mindcloud_url = "mindcloud";
+var mindcloud_ext = "io";
+var mindcloud_full_url = mindcloud_protocol + "://" + mindcloud_url + "." + mindcloud_ext;
+
 var ph; // page handler global variable
 var tp;
 
@@ -52,7 +59,7 @@ $(function(){
 		var req = new APICaller("user", "loadConfidential");
 		req.send({}, function(user){
 			log.debug("Notification Listener", "Started!");
-			var socket = io('http://mindcloud.loc:8000', {
+			var socket = io(mindcloud_full_url + ':8000', {
 		        transports: ['websocket'],
 		        reconnection: false
 		    });
@@ -75,6 +82,8 @@ $(function(){
 
 	function initPoseProblem(){
 
+		var error = false;
+
 		// request current list of categories
 		var req = new APICaller("problem", "getcategories");
 		req.send({}, function (result) {
@@ -91,6 +100,33 @@ $(function(){
 				// report failure
 				alertHandler("alert", "Failed to load categories for problem creation");
 			}
+		});
+
+		// regex replacements for shorthand
+		$("#form_problem_shorthand").on("keyup", function(){
+			var val = $(this).val();
+			val = val.replace(/ /g, "-"); // remove spaces
+			val = val.replace(/[,!@#$%^&*()=\[\]{};:\'\"<>.,\/?\\~`]+/g, ""); // nasty characters
+			$(this).val(val);
+
+			// checks if shorthand is avalible
+			var req = new APICaller("problem", "validateShorthand");
+			var params = {shorthand: val};
+
+			req.send(params, function(result){
+				if(!result){
+					$(".shorthand-field").addClass("error");
+					error = true;
+				} else {
+					$(".shorthand-field").removeClass("error");
+					error = false;
+				}
+			});
+		});
+
+		// preview listener
+		$("#problem-preview-button").click(function(){
+			$("#problem-text-preview").html(wiky.process($("#form_problem_desc").val(),{}));
 		});
 
 
@@ -112,6 +148,8 @@ $(function(){
 		
 		// Problem creation submission listener
 		$('#submit_problem').on('valid', function() {
+			if(error) // return if shorthand is taken
+				return;
 			$("#tag_container").getAllTags();
 			var req = new APICaller('problem', 'create');
 			var params = {
@@ -122,18 +160,24 @@ $(function(){
 				category: $("#form_problem_cat").val()
 			};
 
+			// checks for short hand
 			if($("#form_problem_shorthand").val()) {
 				params["shorthand"] = $("#form_problem_shorthand").val();
 			}
 			
+			// Submiting
+			var loadingAlert = new alertHandler("info", "Submitting problem"); // alert for info
 			req.send(params, function(result) {
+					loadingAlert.close();
 					if (result) {
-						$("#pose_problem_modal").foundation('reveal', 'close');
 						$("#submit_problem").trigger("reset");
 						ph.pageRequest("/problem/" + result);
 						$("#tag_container").clearTags();
+					} else {
+						new alertHandler("alert", "There was an error submitting your problem.");
 					}
 				});
+				$("#pose_problem_modal").foundation('reveal', 'close');
 		}).on('invalid', function() {
 			//problem_tags.getAllTags();
 		});
@@ -154,8 +198,40 @@ $(function(){
 
 	function initCreateSolution(){
 
+		var error = false;
+
+		// regex replacements for shorthand
+		$("#form_solution_shorthand").on("keyup", function(){
+			var val = $(this).val();
+			val = val.replace(/ /g, "-"); // remove spaces
+			val = val.replace(/[,!@#$%^&*()=\[\]{};:\'\"<>.,\/?\\~`]+/g, ""); // nasty characters
+			$(this).val(val);
+
+			var req = new APICaller("solution", "validateShorthand");
+			var params = {shorthand: val};
+
+			req.send(params, function(result){
+				if(!result){
+					$(".shorthand-field").addClass("error");
+					error = true;
+				} else {
+					$(".shorthand-field").removeClass("error");
+					error = false;
+				}
+			});
+		});
+
+		// preview listener
+		$("#solution-preview-button").click(function(){
+			$("#solution-text-preview").html(wiky.process($("#form_solution_desc").val(),{}));
+		});
+
+
 		// Problem creation submission listener
 		$('#submit_solution').on('valid', function() {
+			if(error) // return if shorthand is taken
+				return;
+
 			var req = new APICaller('solution', 'create');
 			var params = {
 				problem_id: problem_id,
@@ -166,13 +242,17 @@ $(function(){
 			if($("#form_solution_shorthand").val()) {
 				params["shorthand"] = $("#form_solution_shorthand").val();
 			}
+			var loadingAlert = new alertHandler("info", "Submitting solution");
 			req.send(params, function(result) {
-					if (result) {
-						$("#create_solution_modal").foundation('reveal', 'close');
-						$("#submit_solution").trigger("reset");
-						ph.pageRequest("/solution/" + result);
-					}
-				});
+				loadingAlert.close();
+				if (result) {
+					$("#submit_solution").trigger("reset");
+					ph.pageRequest("/solution/" + result);
+				} else {
+					new alertHandler("alert", "There was an error submitting your solution.");
+				}
+			});
+			$("#create_solution_modal").foundation('reveal', 'close');
 		}).on('invalid', function() {
 			//problem_tags.getAllTags();
 		});
