@@ -70,7 +70,7 @@ function dashboard() {
 							voteClass = ".downvote";
 							break;
 						default:
-							alertHandler("alert", "Received an invalid vote");
+							new alertHandler("alert", "Received an invalid vote");
 							break;
 					}
 
@@ -233,6 +233,7 @@ $(window).scroll(function() {
 			"page" : page
 		};
 
+		log.debug("Dashboard", "Loading page " + page);
 		// send the request
 		req.send(params, function (result) {
 
@@ -249,7 +250,7 @@ $(window).scroll(function() {
 				$(document).foundation('reflow');
 
 			} else {
-				alertHandler("alert", "Failed to load more problems");
+				new alertHandler("alert", "Failed to load more problems");
 			}
 
 		});	
