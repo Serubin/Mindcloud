@@ -41,9 +41,9 @@
 
 				<!-- password -->
 				<div class="password-field">
-					<label for="register_password"><span class="label">password</span>		<small>required</small></label>
+					<label for="register_password"><span class="label">password</span>		<small><span data-tooltip aria-haspopup="true" class="has-tip" title="Passwords must be at least 8 charaters long and may only contain numbers, letters, and these charaters: @*#&.^!">required</span></small></label>
 						<input type="password" required id="register_password" name="register_password" pattern="password" placeholder="password" />
-						<small id="login_pass_err" class="error">Please enter a valid password</small>
+						<small id="login_pass_err" class="error">Passwords must be at least 8 charaters long and may only contain numbers, letters, and these charaters: @*#&.^!"</small>
 				</div>
 
 				<!-- password confirm -->
@@ -76,7 +76,7 @@
 						<div class="large-6 medium-6 small-6 columns">
 							<img src="/assets/images/captcha.php" id="captcha-img" />
 						</div>
-						<div class="large-5 medium-5 small-5 columns" id="c_input">
+						<div class="large-4 medium-4 small-4 columns" id="c_input">
 							<input type="text" name="register_captcha" id="register_captcha" required />
 						</div>
 						<div class="large-1 medium-1 small-1 columns">

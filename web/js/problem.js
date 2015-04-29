@@ -38,38 +38,9 @@ function problem(url){
 			alertHandler("alert", "Sorry, we couldn't find that problem.");
 		}
 	}
-	//TODO take a look, modify
+	
 	// voting 
-	$(document).on("click", ".vote", function (event) {
-
-		var $btn = $(this);
-		//var $parent = $(this).parents(".problem");
-		var oppositeVote = ($btn.hasClass("upvote-btn")) ? ".downvote-btn" : ".upvote-btn";
-
-		// only submit the vote if the user has not voted already
-		if (!$btn.hasClass("selected-vote")) {
-			var req = new APICaller("problem", "vote");
-			req.send({
-				vote: $(this).attr("data-value"),
-				problem_id: problem_id
-			}, function (result) {
-				if (result) {
-					$btn.addClass("selected-vote");
-					
-					// deselect the opposite vote button
-					$(oppositeVote).removeClass("selected-vote");
-
-					// update the vote total
-					$("#score").html(result);
-
-				}
-				else {
-					console.log("vote submit failed");
-					alertHandler("alert", "Failed to submit vote");
-				}
-			});
-		}
-	});
+	$(".vote").voter("problem", problem_id);
 
 
 
@@ -105,11 +76,9 @@ function problem(url){
 		});
 
 		// set vote count and vote status if set
-		// downvote 
-		if(data.current_user_vote == -1) {
+		if(data.current_user_vote == -1) { // downvote 
 			$(".downvote-btn").addClass("selected-vote");
-		//upvote
-		} else if(data.current_user_vote  == 1) { 
+		} else if(data.current_user_vote  == 1) { //upvote
 			$(".upvote-btn").addClass("selected-vote");
 		}
 		

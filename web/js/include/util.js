@@ -11,7 +11,7 @@
 // 2 - info (default for develop)
 // 3 - debug 
 //
-var LEVEL = 3;
+var LEVEL = 0;
 
 var log = function(){
 	return{

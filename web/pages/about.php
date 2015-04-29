@@ -10,7 +10,7 @@
 
 	<div class="row">
 		<div class="small-11 medium-8 column small-centered">
-		<img class="logo text-center" src="/assets/images/logo/mindcloud_logo_invert_full.png">
+		<img class="logo text-center" src="/assets/images/logo/splash_logo_shadow.png">
 
 		<div class="float-pane">
 			<br>

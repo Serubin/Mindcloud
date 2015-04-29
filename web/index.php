@@ -52,10 +52,12 @@
 				    <div class="shorthand-field row collapse">
 						<label>problem url</label>
 						<div class="small-4 large-3 columns">
-							<span class="prefix">mindcloud.io/problem/</span>
+							<span class="prefix show-for-medium-up">mindcloud.io/problem/</span>
+							<span class="prefix show-for-small-only">problem/</span> <!-- fix for mobile -->
 						</div>
 						<div class="small-8 large-9 columns">
-							<input id="form_problem_shorthand" type="text" maxlength="200" placeholder="cant-type-with-mind"/>
+							<input id="form_problem_shorthand" type="text" maxlength="100" placeholder="cant-type-with-mind"/>
+							<small class="error">shorthand taken</small>
 						</div>
 					</div>
 				    <!-- category -->
@@ -67,9 +69,27 @@
 					</div>
 
 				    <!-- description -->
-				    <div class="description-field">
+				    <div class="description-field clearfix">
 				     	<label>description</label>
-				        	<textarea id="form_problem_desc" class="small-12 columns" placeholder="Keyboards have been around since like the 1930s..." required></textarea>
+			     		<!-- tabs for edit and preview-->
+			     		<ul class="tabs right" data-tab role="tablist">
+							<li class="tab-title active" role="presentational" >
+								<a href="#problem-editing" role="tab" tabindex="0" aria-selected="true" controls="problem-editing">Editing</a>
+							</li>
+							<li class="tab-title" role="presentational">
+								<a href="#problem-preview" id="problem-preview-button" role="tab" tabindex="0" aria-selected="false" controls="problem-preview">Preview</a>
+							</li>
+						</ul>
+						<!-- editing and preview tab content -->
+						<div class="tabs-content">
+							<div class="content active" id="problem-editing">
+							<textarea id="form_problem_desc" class="small-12 columns" placeholder="Keyboards have been around since the 1930s..." rows="8" required></textarea>
+							</div>
+							<div class="content" id="problem-preview">
+								<div id="problem-text-preview">
+								</div>
+							</div>
+						</div>
 				     	<small class="error">Please elaborate on your problem.</small>
 				    </div>
 
@@ -105,17 +125,37 @@
 					<div class="shorthand-field row collapse">
 						<label>solution url</label>
 						<div class="small-4 large-3 columns">
-							<span class="prefix">mindcloud.io/solution/</span>
+							<span class="prefix show-for-medium-up">mindcloud.io/solution/</span>
+							<span class="prefix show-for-small-only">solution/</span> <!-- fix for mobile -->
 						</div>
 						<div class="small-8 large-9 columns">
-							<input id="form_solution_shorthand" type="text" maxlength="200" placeholder="typing-without-typing"/>
+							<input id="form_solution_shorthand" type="text" maxlength="100" placeholder="typing-without-typing"/>
+							<small class="error">shorthand taken</small>
 						</div>
 					</div>
 
 				    <!-- description -->
-				    <div class="description-field">
+				    <div class="description-field clearfix">
 				     	<label>description</label>
-				        <textarea id="form_solution_desc" class="small-12 columns" placeholder="All you have to do is think it and Typing without Typing will do it for you." required></textarea>
+				     	<!-- tabs for edit and preview-->
+			     		<ul class="tabs right" data-tab role="tablist">
+							<li class="tab-title active" role="presentational" >
+								<a href="#solution-editing" role="tab" tabindex="0" aria-selected="true" controls="solution-editing">Editing</a>
+							</li>
+							<li class="tab-title" role="presentational">
+								<a href="#solution-preview" id="solution-preview-button" role="tab" tabindex="0" aria-selected="false" controls="solution-preview">Preview solut</a>
+							</li>
+						</ul>
+						<!-- editing and preview tab content -->
+						<div class="tabs-content">
+							<div class="content active" id="solution-editing">
+								<textarea id="form_solution_desc" class="small-12 columns" placeholder="All you have to do is think it and Typing without Typing will do it for you." rows="8" required></textarea>
+							</div>
+							<div class="content" id="solution-preview">
+								<div id="solution-text-preview">
+								</div>
+							</div>
+						</div>
 				     	<small class="error">Please elaborate on your solution</small>
 				    </div>
 
@@ -125,6 +165,12 @@
 				</form>
 			  <a href="#" class="close-reveal-modal keep-native">&#215;</a>
 			</div>
+		</div>
+
+		<!-- social beta feedback -->
+		<div id="social">
+			<a href="https://www.facebook.com/mindcloudio" class="keep-native" target="_blanks" ><i class="fi-social-facebook"></i>	<small>like us</small></a>
+			<small>&#169; mindcloud - beta</small>
 		</div>
 	</body>
 </html>

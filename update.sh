@@ -18,3 +18,10 @@ cd $grunt_dir
 grunt build $build_options
 
 exit
+git checkout $branch
+git pull
+
+cd $grunt_dir
+grunt $build_options
+
+exit

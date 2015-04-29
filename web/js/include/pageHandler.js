@@ -23,9 +23,7 @@ function pageHandler(args) {
 	var history = window.history;
 
 	var pkg = "pageHandler"; // For logger
-
-	var extention = "io";
-
+	
 	// public functions
 	var pageRequest;
 	var parseUrl;
@@ -188,7 +186,7 @@ function pageHandler(args) {
 		if(typeof $el.attr("href") == "undefined" ||
 		   $el.attr("href").toLowerCase() == "javascript:void(0);" ||
 		   $el.attr("href").toLowerCase() == "javascript:void(0)" || 
-		   $el.attr("href").toLowerCase() == "#" ||
+		   $el.attr("href").toLowerCase().match(/^#/) ||
 		   $el.hasClass("keep-native"))
 				return;
 
@@ -217,7 +215,7 @@ function pageHandler(args) {
 		aURL = aURL[0];
 
 		// remove prefix and suffix
-		aURL = aURL.slice(aURL.indexOf('.' + extention) + (extention.length + 2));
+		aURL = aURL.slice(aURL.indexOf('.' + mindcloud_ext) + (mindcloud_ext.length + 2));
 
 		if(aURL.lastIndexOf("#") > 0)
 			aURL = aURL.substr(0, aURL.lastIndexOf("#"));

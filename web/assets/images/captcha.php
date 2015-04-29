@@ -22,7 +22,7 @@ $lightcolor = imagecolorallocate($img, 255-$r, 255-$g, 255-$b);
 imagecolortransparent($img, $black);
 
 // Rendering
-$imgstr = $code1 . " + " . $code2;
+$imgstr = $code1 . " + " . $code2 . " =";
 $imgfont = "../fonts/GenW-Regular.ttf";
 imagettftext($img, 20, 0, 10, 25, $darkcolor, $imgfont, $imgstr);
 

@@ -8,7 +8,7 @@
 	var forms ='<form id="submit_thread">' +
 						'<p>stir the pot.</p>' +
 						'<input type="text" id="new_thread_subject" class="thread-subject" maxlength="200" placeholder="What would you like to say?" required/>' +
-						'<input type="text" id="new_thread_body" class="thread-desc" style="height:100px" placeholder="Elaborate on that?" required/>' +
+						'<textarea type="text" id="new_thread_body" class="thread-desc" style="height:100px" placeholder="Elaborate on that?" required></textarea>' +
 						'<button id="submit_thread_btn" class="button btn-login">create</button>' +
 				'</form>';
 
@@ -132,7 +132,7 @@
 
 			// request parameter array
 			var params = {
-				'post_body' : $(this).find("input").val(),
+				'post_body' : $(this).find("textarea").val(),
 				'thread_id' : $posts_list.attr('data-title')
 			};
 			
@@ -375,12 +375,12 @@
 	    */
 	    $.fn.Discussion.postFormFormatter = function () {
 	    	return $("<li></li>", {class : "post-form"}).append(
-	    			$("<div></div", {class : "discussion-child"})
+	    			$("<div></div>", {class : "discussion-child"})
 	    				.append($("<form></form>", {class: "submit-post-form", 'data-abide' : 'ajax'})
 	    					.append($('<div></div>', {class : "post-text-field"})
-		    					.append($("<input></input", {placeholder: "Write a post...", required : ""}))
+		    					.append($("<textarea></textarea>", {placeholder: "Write a post...", required : ""}))
 		    				)
-		    				.append($("<button></button", {class: "button keep-native", type:"submit"}).text("submit"))
+		    				.append($("<button></button>", {class: "button keep-native", type:"submit"}).text("submit"))
 		    			)
 		    		);
 	    }

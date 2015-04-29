@@ -134,6 +134,7 @@ class ProblemObject {
 		// set score
 		$this->score = $this->getScore();
 
+		// get vote
 		$this->current_user_vote = Vote::fetchVote($this->_mysqli, "PROBLEM", $this->id, $_SESSION['uid']);
 
 		// get array of afficiliated thread ids
