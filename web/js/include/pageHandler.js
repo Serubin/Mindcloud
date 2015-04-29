@@ -24,8 +24,6 @@ function pageHandler(args) {
 
 	var pkg = "pageHandler"; // For logger
 
-	var extention = "loc";
-
 	// public functions
 	var pageRequest;
 	var parseUrl;
@@ -217,7 +215,7 @@ function pageHandler(args) {
 		aURL = aURL[0];
 
 		// remove prefix and suffix
-		aURL = aURL.slice(aURL.indexOf('.' + extention) + (extention.length + 2));
+		aURL = aURL.slice(aURL.indexOf('.' + mindcloud_ext) + (mindcloud_ext.length + 2));
 
 		if(aURL.lastIndexOf("#") > 0)
 			aURL = aURL.substr(0, aURL.lastIndexOf("#"));
