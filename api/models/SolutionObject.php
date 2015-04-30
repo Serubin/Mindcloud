@@ -27,6 +27,8 @@ class SolutionObject {
 	public $score;
 	public $current_user_vote;
 
+	public $can_edit = false;
+
 	public $related_solutions;
 
 	public $threads;
@@ -129,6 +131,9 @@ class SolutionObject {
 			$user->uid = $uid_db;
 			$user->load();
 
+			if($user->uid == $_SESSION['uid'] && $db_association == Contributors::$CREATOR)
+				$this->can_edit = true;
+
 			array_push($contributors, Array(
 				"association" => $db_association, 
 				"user" => $user
@@ -176,7 +181,7 @@ class SolutionObject {
 		}
 
 		// fetch from the db the information about this problem
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid`, `shorthand`, `title`, `description`, `created` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid`, `shorthand`, `title`, `description`, `created`, `status` FROM `solutions` WHERE `id` = ? LIMIT 1")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -188,18 +193,49 @@ class SolutionObject {
 			throw new SolutionException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
 		}
 
-		$stmt->bind_result($id, $pid, $shorthand, $title, $description, $created);
+		$stmt->bind_result($id, $pid, $shorthand, $title, $description, $created, $status);
 		$stmt->fetch();
-
 
 		// Set this object's member vars
 		$this->problem_id = $pid;
 		$this->shorthand = $shorthand;
 		$this->title = $title;
 		$this->description = $description;
-		//$this->created = $created;
+		$this->status = $status;
 
 		$stmt->close();
+
+		// Fetch contributors
+		$contributors = Array();
+
+		if (!$stmt = $this->_mysqli->prepare("SELECT `cid`, `uid`, `association` FROM `contributors` WHERE `cid` = ? ORDER BY `association` ASC")) {
+			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
+		}
+		$stmt->bind_param("i", $this->id);
+
+		$stmt->execute();
+		$stmt->store_result();
+
+		$stmt->bind_result($cid_db, $uid_db, $db_association);
+
+		while($stmt->fetch()) {
+			$user = new UserObject($this->_mysqli);
+			$user->uid = $uid_db;
+			$user->load();
+			
+			if($user->uid == $_SESSION['uid'] && $db_association == Contributors::$CREATOR)
+				$this->can_edit = true;
+
+			array_push($contributors, Array(
+				"association" => $db_association, 
+				"user" => $user
+			));
+		}
+
+		$stmt->close();
+
+		$this->contributors = $contributors;
+
 	}
 
 	/**
@@ -208,18 +244,15 @@ class SolutionObject {
 	 */
 	public function update() {
 		// Checks that all required post variables are set
-		if (!isset($this->id, $this->shorthand, $this->title, $this->description, $this->status)) {
+		if (!isset($this->id, $this->title, $this->description, $this->status)) {
 			throw new SolutionException("unset vars.", __FUNCTION__);
 		}
 
-		// Prepares variables
-		$this->shorthand = strtolower($this->shorthand);
-
-		if ($stmt = $this->_mysqli->prepare("UPDATE solutions SET `shorthand`=?,`title`=?,`description`=?,`status`=? WHERE `id` = ?")) {
+		if (!$stmt = $this->_mysqli->prepare("UPDATE solutions SET `title`=?,`description`=?,`status`=? WHERE `id` = ?")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("sssii", $this->shorthand, $this->title, $this->description, $this->status,$this->id);
+		$stmt->bind_param("ssii", $this->title, $this->description, $this->status ,$this->id);
 		$stmt->execute();
 
 		$stmt->close();
@@ -367,7 +400,7 @@ class SolutionObject {
 			throw new SolutionException("Unset var: id, problem_id", __FUNCTION__);
 		}
 
-		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid` FROM `solutions` WHERE `pid` = ? AND NOT `id` = ?")) {
+		if(!$stmt = $this->_mysqli->prepare("SELECT `id`, `pid`, `status` FROM `solutions` WHERE `pid` = ? AND NOT `id` = ? AND NOT `status` = 3")) {
 			throw new SolutionException($this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -375,7 +408,7 @@ class SolutionObject {
 		$stmt->execute();
 		$stmt->store_result();
 
-		$stmt->bind_result($db_id, $db_pid);
+		$stmt->bind_result($db_id, $db_pid, $db_status);
 
 		$result = Array();
 		while($stmt->fetch()) {

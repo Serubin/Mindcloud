@@ -22,9 +22,12 @@ class ProblemObject {
 	public $contributors;
 	public $tags;
 	public $trial_no;
+	public $status;
 
 	public $score;
 	public $current_user_vote;
+
+	public $can_edit = false;
 	
 	public $related_solutions;
 	
@@ -127,9 +130,12 @@ class ProblemObject {
 		$this->contributors = Array(
 			Array(	
 				"association" => contributors::$CREATOR,
-				"user" => $this->contributors->toArray()
+				"user" => $this->contributors
 			)
 		);
+
+		if($creator_id == $_SESSION['uid'])
+			$this->can_edit = true;
 
 		// set score
 		$this->score = $this->getScore();
@@ -163,12 +169,12 @@ class ProblemObject {
 	 * For obtaining less innformation to display on dashboard.
 	 */
 	public function loadPreview() {
-		if (!isset($this->id)) {
+		if (!isset($this->id, $_SESSION['uid'])) {
 			throw new ProblemException("Could not load preview: id not set.", __FUNCTION__);
 		}
 
 		// fetch from the db the information about this problem
-		if (!$stmt = $this->_mysqli->prepare("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial` FROM `problems` WHERE `id` = ? LIMIT 1")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `shorthand`, `title`, `description`, `created`, `creator`, `current_trial`, `status` FROM `problems` WHERE `id` = ? LIMIT 1")) {
 			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -180,7 +186,7 @@ class ProblemObject {
 			throw new ProblemException("Unable to fetch problem data: " . $stmt->num_rows . " returned.", __FUNCTION__);
 		}
 
-		$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $current_trial);
+		$stmt->bind_result($shorthand, $title, $description, $created, $creator_id, $current_trial, $status);
 		$stmt->fetch();
 
 
@@ -190,10 +196,36 @@ class ProblemObject {
 		$this->description = $description;
 		$this->created = $created;
 		$this->trial_no = $current_trial;
+		$this->status = $status;
+
+		if($creator_id == $_SESSION['uid'])
+			$this->can_edit = true;
 
 		$stmt->close();
 	}
 	
+		/**
+	 * update()
+	 * Updates information in database
+	 */
+	public function update() {
+		// Checks that all required post variables are set
+		if (!isset($this->id, $this->title, $this->description, $this->status)) {
+			throw new ProblemException("unset vars.", __FUNCTION__);
+		}
+
+		if (!$stmt = $this->_mysqli->prepare("UPDATE `problems` SET `title`=?,`description`=?,`status`=? WHERE `id` = ?")) {
+			throw new ProblemException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("ssii", $this->title, $this->description, $this->status, $this->id);
+		$stmt->execute();
+
+		$stmt->close();
+
+		return true;
+	}
+
 	/**
 	 * getId()
 	 * Gets ID from shorthand

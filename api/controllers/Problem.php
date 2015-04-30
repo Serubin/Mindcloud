@@ -129,25 +129,65 @@ class Problem
 	 * Function for loading content of problem page.
 	 */
 	public function loadProblem() {
-		try {
-
-			if (!isset($this->_params['id'])) {
-				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
-			}
-
-			// initialize problem object
-			$problem = new ProblemObject($this->_mysqli);
-			$problem->id = $this->_params['id'];
-
-			// inflate the problem with its own information
-			$problem->loadFull();
-
-			return $problem;
-
-		} catch (ProblemException $e) {
-			return $e;
+		if (!isset($this->_params['id'])) {
+			throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
 		}
 
+		// initialize problem object
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->id = $this->_params['id'];
+
+		// inflate the problem with its own information
+		$problem->loadFull();
+
+		return $problem;
+	}
+
+	/**
+	 * loadProblem()
+	 * Function for loading content of problem page.
+	 */
+	public function loadPreviewProblem() {
+		if (!isset($this->_params['id'])) {
+			throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
+		}
+
+		// initialize problem object
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->id = $this->_params['id'];
+
+		// inflate the problem with its own information
+		$problem->loadPreview();
+
+		return $problem;
+	}
+
+	public function updateProblem(){
+		try { 
+			if(!isset($this->_params['id'], $this->_params['title'], $this->_params['description'], $this->_params['status'], $_SESSION['uid'])) {
+				throw new ProblemException("Couldn't update problem; missing paramters", __FUNCTION__);
+			}
+
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
+			$problem->loadPreview();
+
+			if(!$problem->can_edit)
+				throw new ProblemException("Unauthorized request", __FUNCTION__);
+
+			$problem->title = $this->_params['title'];
+			$problem->description = $this->_params['description'];
+			$problem->status = $this->_params['status'];
+
+			// sanitize strings
+			$problem->title = filter_var($problem->title, FILTER_SANITIZE_STRING);
+			$problem->description = strip_tags($problem->description);
+			$problem->status = filter_var($problem->status, FILTER_SANITIZE_NUMBER_INT);
+			
+			return $problem->update();
+		} catch(Exception $e) {
+			return $e;
+		}
 	}
 
 	/** 
