@@ -249,7 +249,7 @@ var notificationTopbar;
 				// Handles no notifications
 				if(data.length == 0) {
 					var $message = $("<p></p>").html("No Notifications");
-					$nfDropdown.append(createTopbarItem("#", $message));
+					$nfDropdown.append(createTopbarItem("#", $message).addClass("text-center"));
 				}
 
 				// Populates notification dropdown
