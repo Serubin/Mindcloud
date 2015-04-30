@@ -9,7 +9,7 @@ function alertHandler(type, html) {
 
 	var timeout = 30 * 1000; // 30 seconds
 
-	if(arguments.length == 3){
+	if (arguments.length == 3) {
 		timeout = arguments[2];
 	}
 
@@ -32,7 +32,7 @@ function alertHandler(type, html) {
 	$alertBox.append($alertClose);
 
 	$("#alert-wrapper").prepend($alertBox);
-	$alertClose.click(function(){
+	$alertClose.click(function() {
 		$alertBox.remove();
 	});
 
@@ -43,8 +43,8 @@ function alertHandler(type, html) {
 	setTimeout(_this.close, timeout);
 
 
-	this.close = function(){
-		$alertBox.fadeOut(300, function(){
+	this.close = function() {
+		$alertBox.fadeOut(300, function() {
 			$alertBox.remove();
 		});
 	}

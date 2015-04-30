@@ -2,10 +2,9 @@
 	<!-- Background -->
 	<div id="splash-background">
 	</div>
-
 	<!-- Register page -->
 	<div id="title">
-		<div id="title"> 
+		<div id="title">
 			<h1 class="subtitle">403</h1>
 			<h1 class="title">you shouldn't be here</h1>
 		</div>

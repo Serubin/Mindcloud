@@ -5,12 +5,12 @@
 
 (function($) {
 
-	var forms ='<form id="submit_thread">' +
-						'<p>stir the pot.</p>' +
-						'<input type="text" id="new_thread_subject" class="thread-subject" maxlength="200" placeholder="What would you like to say?" required/>' +
-						'<textarea type="text" id="new_thread_body" class="thread-desc" style="height:100px" placeholder="Elaborate on that?" required></textarea>' +
-						'<button id="submit_thread_btn" class="button btn-login">create</button>' +
-				'</form>';
+	var forms = '<form id="submit_thread">' +
+		'<p>stir the pot.</p>' +
+		'<input type="text" id="new_thread_subject" class="thread-subject" maxlength="200" placeholder="What would you like to say?" required/>' +
+		'<textarea type="text" id="new_thread_body" class="thread-desc" style="height:100px" placeholder="Elaborate on that?" required></textarea>' +
+		'<button id="submit_thread_btn" class="button btn-login">create</button>' +
+		'</form>';
 
 	/*
 	 * options must include:
@@ -31,19 +31,33 @@
 		var ids = $.fn.getIds(id);
 
 		// create initial button instance
-		var $button = $('<div></div>', {id: ids.toggle, class: 'text-center thread-btn'}).html('<i class="fi-plus icon">');
+		var $button = $('<div></div>', {
+			id: ids.toggle,
+			class: 'text-center thread-btn'
+		}).html('<i class="fi-plus icon">');
 
 		// create forms
-		var $forms = $('<div></div>', {id: ids.forms, class: 'thread-forms'}).html(forms);
+		var $forms = $('<div></div>', {
+			id: ids.forms,
+			class: 'thread-forms'
+		}).html(forms);
 
 		// create div for threads
-		var $thread_container = $('<div></div>', {id: ids.thread_container, class: 'threads-container'});
+		var $thread_container = $('<div></div>', {
+			id: ids.thread_container,
+			class: 'threads-container'
+		});
 
 		// create viewer for threads
-		var $thread_viewer = $('<div></div>', {id: ids.thread_viewer, class: 'thread-viewer row'});
+		var $thread_viewer = $('<div></div>', {
+			id: ids.thread_viewer,
+			class: 'thread-viewer row'
+		});
 
 		// holds individual posts
-		var $posts = $('<div></div', {class: "posts small-11 small-centered medium-8 columns"});
+		var $posts = $('<div></div', {
+			class: "posts small-11 small-centered medium-8 columns"
+		});
 
 		// setup the create new thread prompt
 		// thread_toggle is the entire div that grows to contain forms, or stays small to contain a button div
@@ -57,13 +71,13 @@
 				// TODO
 
 				$(this).parent().showForms();
-			    mode = "forms";
+				mode = "forms";
 
-		    } else {
+			} else {
 
-		    	$(this).parent().hideForms();
-			    mode = "button";
-		    }
+				$(this).parent().hideForms();
+				mode = "button";
+			}
 
 		});
 
@@ -81,7 +95,7 @@
 
 		// create listener for showing threads' posts
 		// TODO load posts
-		$(id).on("click", ".thread-preview", function (event) {
+		$(id).on("click", ".thread-preview", function(event) {
 
 			// handle on the thread id
 			var thread_id = $(this).attr('data-title');
@@ -90,7 +104,10 @@
 			$posts.empty();
 
 			// initialize the list of posts
-			$posts_list = $("<ul></ul>", {class : "posts-list small-block-grid-1", 'data-title' : thread_id});
+			$posts_list = $("<ul></ul>", {
+				class: "posts-list small-block-grid-1",
+				'data-title': thread_id
+			});
 
 			// append the initial block grid list
 			$posts.append($posts_list);
@@ -98,11 +115,13 @@
 			// request all problems of this thread
 			var req = new APICaller("thread", "load");
 
-			req.send({thread_id : thread_id}, function (result) {
+			req.send({
+				thread_id: thread_id
+			}, function(result) {
 
 				if (result) {
 
-					$.each(result, function (i, value) {
+					$.each(result, function(i, value) {
 						$posts_list.prepend($.fn.Discussion.postFormatter(value.user, value.body, value.id, value.date));
 					});
 
@@ -125,19 +144,19 @@
 		});
 
 		// post submission listener
-		$(id).on("valid", '.submit-post-form', function (event) {
+		$(id).on("valid", '.submit-post-form', function(event) {
 
 			// handle on parent list of posts
 			$posts_list = $(this).parents(".posts-list");
 
 			// request parameter array
 			var params = {
-				'post_body' : $(this).find("textarea").val(),
-				'thread_id' : $posts_list.attr('data-title')
+				'post_body': $(this).find("textarea").val(),
+				'thread_id': $posts_list.attr('data-title')
 			};
-			
+
 			var req = new APICaller("post", "create");
-			req.send(params, function (result) {
+			req.send(params, function(result) {
 
 				if (result) {
 
@@ -159,7 +178,7 @@
 		});
 
 		// new thread listener
-		$(id).on('submit', "#submit_thread", function (event) {
+		$(id).on('submit', "#submit_thread", function(event) {
 
 			//log.debug("submitting thread to", problem_id);
 
@@ -178,7 +197,7 @@
 		});
 	};
 
-	$.fn.loadThreads = function (problem_id) {
+	$.fn.loadThreads = function(problem_id) {
 
 		// handle on discussion conatiner id
 		var id = $(this).selector;
@@ -190,10 +209,10 @@
 	/**
 	 * faster way to get handle on ids
 	 */
-	$.fn.getIds = function (id) {
+	$.fn.getIds = function(id) {
 
 		// take out the hash if it's there
-		if (id.substring(0,1) === "#") {
+		if (id.substring(0, 1) === "#") {
 			id = id.substring(1, id.length);
 		}
 
@@ -210,44 +229,44 @@
 	}
 
 	/*
-	 * show the thread submission forms 
+	 * show the thread submission forms
 	 */
-	 $.fn.showForms = function() {
+	$.fn.showForms = function() {
 
-	 	var ids = $.fn.getIds($(this).attr('id'));
+		var ids = $.fn.getIds($(this).attr('id'));
 
-	 	var forms_width = $(document).width() - $('#' + ids.toggle).width();
+		var forms_width = $(document).width() - $('#' + ids.toggle).width();
 
-	    $('#' + ids.forms).css("display", "block");
+		$('#' + ids.forms).css("display", "block");
 
-    	$('#' + ids.forms).animate({
-	        //width: forms_width + "px"
-	        width: "95%"
-	    }, "fast");
+		$('#' + ids.forms).animate({
+			//width: forms_width + "px"
+			width: "95%"
+		}, "fast");
 
-    	$('#' + ids.toggle).html('<i class="fi-minus icon">');
-	 }
+		$('#' + ids.toggle).html('<i class="fi-minus icon">');
+	}
 
 	/*
-	 * hide thread submission forms 
+	 * hide thread submission forms
 	 */
-	$.fn.hideForms = function () {
+	$.fn.hideForms = function() {
 
-	 	var ids = $.fn.getIds($(this).attr('id'));
+		var ids = $.fn.getIds($(this).attr('id'));
 
-    	$('#' + ids.forms).animate({
-	        width: '0%'
-	    }, "fast", 
-	    function () {
-		    $('#' + ids.forms).css("display", "none");
-	    });
+		$('#' + ids.forms).animate({
+				width: '0%'
+			}, "fast",
+			function() {
+				$('#' + ids.forms).css("display", "none");
+			});
 
-    	$('#' + ids.toggle).html('<i class="fi-plus icon">');
+		$('#' + ids.toggle).html('<i class="fi-plus icon">');
 
 	}
 
-	$.fn.loadThreadPosts = function () {
-		
+	$.fn.loadThreadPosts = function() {
+
 	}
 
 	/*
@@ -255,25 +274,28 @@
 	 */
 	$.fn.createThread = function(problem_id, title, body) {
 
-	 	var ids = $.fn.getIds($(this).selector);
+		var ids = $.fn.getIds($(this).selector);
 
 		var req = new APICaller("thread", "create");
 		var params = {
-			problem_id : problem_id,
-			subject : title,
-			body : body
+			problem_id: problem_id,
+			subject: title,
+			body: body
 		};
 		req.send(params, function(result) {
 			if (result) {
 
 				// create an array with just this new thread to append
-				var thread = {id: result['thread_id'], subject:title, body:body};
+				var thread = {
+					id: result['thread_id'],
+					subject: title,
+					body: body
+				};
 
 				var new_threads = [thread];
 
 				$.fn.addThreadThumbnails(new_threads, ids);
-			}
-			else
+			} else
 				alertHandler("alert", "<p>Failed to submit thread</p>");
 		});
 	};
@@ -282,128 +304,156 @@
 	 * empty
 	 * called clearAll instead of empty() because the JQuery method will get called and fail
 	 */
-	 $.fn.clearAll = function() {
+	$.fn.clearAll = function() {
 
-	 	var ids = $.fn.getIds($(this).selector);
-	 	var $thread_container = $("#" + ids.thread_container);
-	 	$thread_container.children().remove();
+		var ids = $.fn.getIds($(this).selector);
+		var $thread_container = $("#" + ids.thread_container);
+		$thread_container.children().remove();
 
-	 }
+	}
 
 	/*
 	 * Append a preview to the end of the previews list
 	 * takes an array of thread objects containing at least an id, title, and body
 	 */
-	 $.fn.addThreadThumbnails = function (threads, ids) {
+	$.fn.addThreadThumbnails = function(threads, ids) {
 
 
-	 	if (!ids) ids = $.fn.getIds($(this).selector);
+		if (!ids) ids = $.fn.getIds($(this).selector);
 		$(".placeholder").remove();
 
-	 	if (threads.length == 0) {
-	 		console.log("no threads to display");
-	 		$.fn.Discussion.showEmpty(ids);
-	 	}
-	 	else {
+		if (threads.length == 0) {
+			console.log("no threads to display");
+			$.fn.Discussion.showEmpty(ids);
+		} else {
 
-		 	$.each(threads, function (i, value) {
+			$.each(threads, function(i, value) {
 
 				$("#" + ids.thread_container).prepend($.fn.Discussion.threadPrevFormatter(ids, value.id, value.subject, value.body));
 
-		 	});
-		 }
-	 }
+			});
+		}
+	}
 
 	/*
 	 * Add a post to a thread
 	 */
-	 $.fn.addPost = function (threadid, body) {
+	$.fn.addPost = function(threadid, body) {
 
-	 	var req = new APICaller("post", "create");
-	 	var params = {
-	 		'thread_id' : threadid,
-	 		'body' : body
-	 	};
-	 	req.send(params, function(result) {
-	 		if (result) {
-			 	$("#thread_" + threadid).append($.fn.Discussion.postDivFormatter(body));
-	 		}
-	 		else
+		var req = new APICaller("post", "create");
+		var params = {
+			'thread_id': threadid,
+			'body': body
+		};
+		req.send(params, function(result) {
+			if (result) {
+				$("#thread_" + threadid).append($.fn.Discussion.postDivFormatter(body));
+			} else
 				alertHandler("alert", "<p>Failed to submit post</p>");
-	 	})
-	 }
+		})
+	}
 
 	/**
 	 * Add a message say there are no threads to append
 	 */
-	 $.fn.Discussion.showEmpty = function(ids) {
+	$.fn.Discussion.showEmpty = function(ids) {
 
-	 	var $thread_container = $("#" + ids.thread_container);
+		var $thread_container = $("#" + ids.thread_container);
 
-	 	$thread_container.append($("<div></div>", {class: "placeholder"}).html("<span>No threads to display</span>"));
-	 }
+		$thread_container.append($("<div></div>", {
+			class: "placeholder"
+		}).html("<span>No threads to display</span>"));
+	}
 
-	 /*
-	  * format a thread element for loading
-	  */
-	 $.fn.Discussion.loadingFormatter = function() {
+	/*
+	 * format a thread element for loading
+	 */
+	$.fn.Discussion.loadingFormatter = function() {
 
-	 	var result = $('<div></div>', {class: "placeholder loading"}).html('<img src="/assets/images/ajax-loader.gif">');
-	 	return result;
-	 } 
+		var result = $('<div></div>', {
+			class: "placeholder loading"
+		}).html('<img src="/assets/images/ajax-loader.gif">');
+		return result;
+	}
 
-	 /*
-	  * format a post for appending
-	  */
-	  $.fn.Discussion.postDivFormatter = function(body) {
-	  	return "<div class='post'>" +
-	  				"<p class='post-body'>" + body + "</p>" +
-	  			"</div>";
-	  }
+	/*
+	 * format a post for appending
+	 */
+	$.fn.Discussion.postDivFormatter = function(body) {
+		return "<div class='post'>" +
+			"<p class='post-body'>" + body + "</p>" +
+			"</div>";
+	}
 
-	  /*
-	   * returns a div for the preview of a thread
-	   */
-	   $.fn.Discussion.threadPrevFormatter = function(ids, id, subject, body) {
-	   	return $("<div></div>", {'data-title' : id, class: "thread-preview"})
-	   	.append($("<h4></h4>").html(subject))
-	   	.append($("<p></p>").text(body));
-	   }
+	/*
+	 * returns a div for the preview of a thread
+	 */
+	$.fn.Discussion.threadPrevFormatter = function(ids, id, subject, body) {
+		return $("<div></div>", {
+			'data-title': id,
+			class: "thread-preview"
+		})
+			.append($("<h4></h4>").html(subject))
+			.append($("<p></p>").text(body));
+	}
 
-	   /*
-	    * returns a div containing the forms for an enw post
-	    */
-	    $.fn.Discussion.postFormFormatter = function () {
-	    	return $("<li></li>", {class : "post-form"}).append(
-	    			$("<div></div>", {class : "discussion-child"})
-	    				.append($("<form></form>", {class: "submit-post-form", 'data-abide' : 'ajax'})
-	    					.append($('<div></div>', {class : "post-text-field"})
-		    					.append($("<textarea></textarea>", {placeholder: "Write a post...", required : ""}))
-		    				)
-		    				.append($("<button></button>", {class: "button keep-native", type:"submit"}).text("submit"))
-		    			)
-		    		);
-	    }
+	/*
+	 * returns a div containing the forms for an enw post
+	 */
+	$.fn.Discussion.postFormFormatter = function() {
+		return $("<li></li>", {
+			class: "post-form"
+		}).append(
+			$("<div></div>", {
+				class: "discussion-child"
+			})
+			.append($("<form></form>", {
+					class: "submit-post-form",
+					'data-abide': 'ajax'
+				})
+				.append($('<div></div>', {
+						class: "post-text-field"
+					})
+					.append($("<textarea></textarea>", {
+						placeholder: "Write a post...",
+						required: ""
+					}))
+				)
+				.append($("<button></button>", {
+					class: "button keep-native",
+					type: "submit"
+				}).text("submit"))
+			)
+		);
+	}
 
-	    /**
-	     * postFormatter - creates an element out of a post data
-	     */
-	     $.fn.Discussion.postFormatter = function (user, body, id, date) {
-	     	// list item
-	     	var top = $("<li></li>", {class : ''});
+	/**
+	 * postFormatter - creates an element out of a post data
+	 */
+	$.fn.Discussion.postFormatter = function(user, body, id, date) {
+		// list item
+		var top = $("<li></li>", {
+			class: ''
+		});
 
-	     	// column container
-	     	var container = $("<div></div>", {class : "post"});
+		// column container
+		var container = $("<div></div>", {
+			class: "post"
+		});
 
-	     	// post body div
-	     	var post_body = $("<div></div>", {class : ""}).html(body);
-	     	var poster = $("<div></div>", {class : "poster-id"}).html("<span>posted by " + user + " on " + date);
-	     	post_body.append(poster);
+		// post body div
+		var post_body = $("<div></div>", {
+			class: ""
+		}).html(body);
+		var poster = $("<div></div>", {
+			class: "poster-id"
+		}).html("<span>posted by " + user + " on " + date);
+		post_body.append(poster);
 
-	     	// put it all together
-	     	top.append(container.append(post_body));
+		// put it all together
+		top.append(container.append(post_body));
 
-	     	return top;
-	     }
+		return top;
+	}
 
 })(jQuery);

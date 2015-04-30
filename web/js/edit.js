@@ -1,5 +1,5 @@
-function edit(url){
-	
+function edit(url) {
+
 	var id;
 	var title;
 	var description;
@@ -7,30 +7,34 @@ function edit(url){
 
 	var project_type
 
-	if(url.length < 2) // Handles no get input
+	if (url.length < 2) // Handles no get input
 		returnTo("/dashboard");
 
-	if(url[1].toLowerCase() == "problem"){
+	if (url[1].toLowerCase() == "problem") {
 		project_type = "problem";
-	} else if(url[1].toLowerCase() == "solution") {
+	} else if (url[1].toLowerCase() == "solution") {
 		project_type = "solution";
 	}
 
 	var req = new APICaller(project_type, "getId");
-	var params = {shorthand: url[2]}
-	req.send(params, function(result){
-		if(!result) // return to dashboard if no problem is found
+	var params = {
+		shorthand: url[2]
+	}
+	req.send(params, function(result) {
+		if (!result) // return to dashboard if no problem is found
 			returnTo("/dashboard");
 
 		id = result;
 
 		var req = new APICaller(project_type, "loadPreview");
-		var params = {id: result}
-		req.send(params, function(result){
-			if(!result) // Returns back to problem if there is an issue loading
+		var params = {
+			id: result
+		}
+		req.send(params, function(result) {
+			if (!result) // Returns back to problem if there is an issue loading
 				returnTo("/" + project_type + "/" + url[2]);
 
-			if(!result.can_edit) // returns to problem if cannot edit
+			if (!result.can_edit) // returns to problem if cannot edit
 				returnTo("/" + project_type + "/" + url[2]);
 
 			title = result.title;
@@ -40,8 +44,8 @@ function edit(url){
 			$("#edit-title").html(title);
 			$("#form_edit_statement").val(title);
 			$("#form_edit_desc").val(description);
-			$("#form_edit_hide").prop('checked', status == 3).val(status).change(function(){
-				if($(this).prop("checked"))
+			$("#form_edit_hide").prop('checked', status == 3).val(status).change(function() {
+				if ($(this).prop("checked"))
 					$(this).val(3);
 				else
 					$(this).val(1);
@@ -59,8 +63,8 @@ function edit(url){
 			status: $("#form_edit_hide").val()
 		}
 
-		req.send(params, function(result){
-			if(!result) {
+		req.send(params, function(result) {
+			if (!result) {
 				new alertHandler("alert", "There was an error submiting your edit.");
 				return;
 			}
@@ -69,7 +73,7 @@ function edit(url){
 	});
 
 	// preview listener
-	$("#edit-preview-button").click(function(){
-		$("#edit-text-preview").html(wiky.process($("#form_edit_desc").val(),{}));
-	});		
+	$("#edit-preview-button").click(function() {
+		$("#edit-text-preview").html(wiky.process($("#form_edit_desc").val(), {}));
+	});
 }
