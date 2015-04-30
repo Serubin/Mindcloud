@@ -73,12 +73,16 @@ body{
   		background: $primary-color-light !important;
 	}
 
+	#notification-dropdown::-webkit-scrollbar{
+		background-color: $primary-color-dark;
+	}
+
 	#notification-dropdown{
 		//color: $white;
 
 		@media #{$medium-up} { 
 			width: 300px;
-			height: 400px !important;
+			max-height: 400px !important;
   			overflow-y: scroll;
 		}
 

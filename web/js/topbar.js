@@ -200,7 +200,9 @@ var notificationTopbar;
 			return internalRecount();
 		}
 
-
+		/** repopulate()
+		 * repopulates notifications
+		 */
 		this.repopulate = function(population){
 			return internalPopulate(population);
 		};
@@ -220,10 +222,10 @@ var notificationTopbar;
 				$notificationNum.html(total);
 
 				// adds/removes dropdown ability
-				if(total > 0)
+				//if(total > 0)
 					$notificationEl.addClass("has-dropdown");
-				else
-					$notificationEl.removeClass("has-dropdown");
+				//else
+					//$notificationEl.removeClass("has-dropdown");
 
 				// saves
 				notificationIds = result;
@@ -243,15 +245,28 @@ var notificationTopbar;
 
 			$nfDropdown.html("");
 			req.send(params, function(data){
+				
+				// Handles no notifications
+				if(data.length == 0) {
+					var $message = $("<p></p>").html("No Notifications");
+					$nfDropdown.append(createTopbarItem("#", $message));
+				}
+
+				// Populates notification dropdown
 				for(var i = 0;i < displayed + population;i++){
+
 					if(typeof data[i] == "undefined")
 						continue;
-						var dashFind = new RegExp("-", 'g');
-						var time = data[i].time.replace(dashFind, "/");
+					
+					var dashFind = new RegExp("-", 'g'); // Replaces dashes (firefox fix)
+					var time = data[i].time.replace(dashFind, "/"); // firefox fix
+
+					// Populates notification item
 					var $date = $("<small></small>").addClass("text-right time").html(new Date(time).toLocaleString());
 					var $message = $("<p></p>").html(data[i].message).append($date);
 					$nfDropdown.append(createTopbarItem("/user/notification/" + data[i].id, $message));
 				}
+				
 				displayed += population;
 				showMore();
 			});
