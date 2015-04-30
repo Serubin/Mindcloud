@@ -1,7 +1,11 @@
 <div id="edit-page">
 	<div class="row">
 		<form data-abide="ajax" id="edit-form" class="small-12 columns">
-		<h2><small>Editing</small><span id="edit-title"></span></h2>
+			<h2><small>Editing</small>&nbsp<span id="edit-title"></span></h2>
+			<small>Only the creator of problems and solutions has access to this page, no one else can edit your work.</small>
+
+			<hr />
+
 			<!-- title -->
 		    <div class="statement-field">
 		    	<label>statement
@@ -41,7 +45,6 @@
 
 			<button type="submit" class="button btn-login">save</button>
 
-		   	<!--<a role="button" type="submit" aria-label="submit form" href="#" class="button keep-native">submit</a>-->
 		</form>
 	</div>
 </div>

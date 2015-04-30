@@ -85,6 +85,12 @@ function solution(url){
 		$("#solves_for").html(data.problem.title).attr("href", "/problem/" + data.problem.shorthand);
 		ph.captureLink($("#solves_for"));
 
+		if(data.can_edit) {
+			$("<a></a>", {href: "/edit/solution/" + data.shorthand, class: "right", id: "edit-link"}) // creates initial link
+			.html($("<i></i>", {class: "fi-pencil"})) // adds icon
+			.append("edit") // adds text
+			.insertBefore("#description"); // adds before description
+		}
 
 		// set description
 		$("#description").html(wiky.process(data.description, {}));

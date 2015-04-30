@@ -62,3 +62,11 @@ var log = function(){
  	return 'url("/assets/images/splash/' + no + '.jpg")';
 
  }
+
+/**
+ * returns undefined and redirects to page
+ */
+function returnTo(location){
+	ph.pageRequest(location);
+	return;
+}

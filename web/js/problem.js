@@ -75,6 +75,13 @@ function problem(url){
 			$("#contributors").append("<li><small>" + value.association + "</small> " + value.user.first_name + " " +  value.user.last_name + "</li>");
 		});
 
+		if(data.can_edit) {
+			$("<a></a>", {href: "/edit/problem/" + data.shorthand, class: "right", id: "edit-link"}) // creates initial link
+			.html($("<i></i>", {class: "fi-pencil"})) // adds icon
+			.append("edit") // adds text
+			.insertBefore("#description"); // adds before description
+		}
+
 		// set vote count and vote status if set
 		if(data.current_user_vote == -1) { // downvote 
 			$(".downvote-btn").addClass("selected-vote");

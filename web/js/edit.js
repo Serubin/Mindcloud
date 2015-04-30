@@ -7,7 +7,6 @@ function edit(url){
 
 	var project_type
 
-
 	if(url.length < 2) // Handles no get input
 		returnTo("/dashboard");
 
@@ -72,10 +71,5 @@ function edit(url){
 	// preview listener
 	$("#edit-preview-button").click(function(){
 		$("#edit-text-preview").html(wiky.process($("#form_edit_desc").val(),{}));
-	});
-
-	function returnTo(location){
-		ph.pageRequest(location);
-		return;
-	}		
+	});		
 }
