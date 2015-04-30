@@ -37,7 +37,7 @@ session_start();
 		// authenticate requests that aren't for loggin in or registration
 		// do it before $controller is still a string
 		$user = new UserObject($mysqli);
-		if (!(strtolower($controller) == "user" && ($params['action'] == "create" || $params['action'] == "login" || $params['action'] == "check" || $params['action'] == "verify"))) {
+		if (!(strtolower($controller) == "user" && ($params['action'] == "create" || $params['action'] == "login" || $params['action'] == "check" || $params['action'] == "verify" || $params['action'] == "resendVerification"))) {
 			if (!$user->loginCheck()) {
 				throw new Exception('unauthorized request');
 			}
