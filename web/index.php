@@ -50,7 +50,13 @@
 
 				    <!-- shorthand -->
 				    <div class="shorthand-field row collapse">
-						<label>problem url</label>
+				    	<!-- shorthand label -->
+						<label><span data-tooltip aria-haspopup="true" class="has-tip" title="This will be the url used to access your problem. Note: this cannot be changed once selected">problem url</span>
+							<small>
+								&nbsp <span data-tooltip aria-haspopup="true" class="has-tip" title="one will automaticly be generated from your title if blank">optional</span>
+							</small>
+						</label>
+						<!-- shorthand input -->
 						<div class="small-4 large-3 columns">
 							<span class="prefix show-for-medium-up">mindcloud.io/problem/</span>
 							<span class="prefix show-for-small-only">problem/</span> <!-- fix for mobile -->
@@ -123,7 +129,13 @@
 				    </div>
 				    <!-- shorthand -->
 					<div class="shorthand-field row collapse">
-						<label>solution url</label>
+						<!-- shorthand label -->
+						<label><span data-tooltip aria-haspopup="true" class="has-tip" title="This will be the url used to access your solution. Note: this cannot be changed once selected">solution url</span>
+							<small>
+								&nbsp <span data-tooltip aria-haspopup="true" class="has-tip" title="one will automaticly be generated from your title if blank">optional</span>
+							</small>
+						</label>
+						<!-- shorthand input -->
 						<div class="small-4 large-3 columns">
 							<span class="prefix show-for-medium-up">mindcloud.io/solution/</span>
 							<span class="prefix show-for-small-only">solution/</span> <!-- fix for mobile -->
