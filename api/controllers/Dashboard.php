@@ -53,7 +53,7 @@ class Dashboard {
 			// if problems are to be loaded
 			// load most recent 10
 			// TODO change constant 10 to be however many can fit on screen
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand` FROM `problems` ORDER BY `created` LIMIT ?")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand`, `status` FROM `problems` WHERE NOT `status` = 3 ORDER BY `created` LIMIT ?")) {
 				error_log("failing");
 				throw new DashboardException($this->_mysqli->error, __FUNCTION__);
 			}
@@ -61,7 +61,7 @@ class Dashboard {
 			$stmt->bind_param("i", $this->_load_amount);
 			$stmt->execute();
 			$stmt->store_result();
-			$stmt->bind_result($id, $pr_stmt, $date, $shorthand);
+			$stmt->bind_result($id, $pr_stmt, $date, $shorthand, $status);
 			while ($stmt->fetch()) {
 
 				$vote_count = Vote::fetchScore($this->_mysqli, "PROBLEM", $id);
@@ -154,14 +154,14 @@ class Dashboard {
 		$offset = $this->_load_amount * $this->_params['page'];
 
 		// Prepare mysql statement
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand` FROM `problems` ORDER BY `created` LIMIT ? OFFSET ?")) {
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand`, `status` FROM `problems` WHERE NOT `status` = 3 ORDER BY `created` LIMIT ? OFFSET ?")) {
 			throw new DashboardException("Prepare failed: " . $this->_mysqli->error, __FUNCTION__);
 		}
 
 		$stmt->bind_param("ii", $this->_load_amount, $offset);
 		$stmt->execute();
 		$stmt->store_result();
-		$stmt->bind_result($id, $title, $created, $shorthand);
+		$stmt->bind_result($id, $title, $created, $shorthand, $status);
 
 		$loaded_posts = array();
 
