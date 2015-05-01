@@ -27,7 +27,7 @@
 				</div>
 
 				<div class="captcha" style="display: none;">
-					<label for="captcha"><span class="label">Human?</span></label>
+					<label for="captcha"><span class="label">Human?</span> <small>answer this simple math problem to prove yourself</small></label>
 					<div class="row">
 						<div class="large-6 medium-6 small-6 columns">
 							<img src="/assets/images/captcha.php" id="captcha-img" />
@@ -36,9 +36,11 @@
 							<!-- add input as needed -->
 						</div>
 						<div class="large-1 medium-1 small-1 columns">
-							<a class="keep-native" id="reload-captcha">
-								<i class="fi-loop"></i>
-							</a>
+							<span data-tooltip aria-haspopup="true" class="has-tip" title="click to reload if you have trouble seeing the image">
+								<a class="keep-native" id="reload-captcha">
+									<i class="fi-loop"></i>
+								</a>
+							</span>
 						</div>
 					</div>
 				</div>
