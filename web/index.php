@@ -80,10 +80,10 @@
 			     		<!-- tabs for edit and preview-->
 			     		<ul class="tabs right" data-tab role="tablist">
 							<li class="tab-title active" role="presentational" >
-								<a href="#problem-editing" role="tab" tabindex="0" aria-selected="true" controls="problem-editing">Editing</a>
+								<a href="#problem-editing" role="tab" tabindex="0" aria-selected="true" controls="problem-editing">editing</a>
 							</li>
 							<li class="tab-title" role="presentational">
-								<a href="#problem-preview" id="problem-preview-button" role="tab" tabindex="0" aria-selected="false" controls="problem-preview">Preview</a>
+								<a href="#problem-preview" id="problem-preview-button" role="tab" tabindex="0" aria-selected="false" controls="problem-preview">preview</a>
 							</li>
 						</ul>
 						<!-- editing and preview tab content -->
@@ -153,10 +153,10 @@
 				     	<!-- tabs for edit and preview-->
 			     		<ul class="tabs right" data-tab role="tablist">
 							<li class="tab-title active" role="presentational" >
-								<a href="#solution-editing" role="tab" tabindex="0" aria-selected="true" controls="solution-editing">Editing</a>
+								<a href="#solution-editing" role="tab" tabindex="0" aria-selected="true" controls="solution-editing">editing</a>
 							</li>
 							<li class="tab-title" role="presentational">
-								<a href="#solution-preview" id="solution-preview-button" role="tab" tabindex="0" aria-selected="false" controls="solution-preview">Preview solut</a>
+								<a href="#solution-preview" id="solution-preview-button" role="tab" tabindex="0" aria-selected="false" controls="solution-preview">preview</a>
 							</li>
 						</ul>
 						<!-- editing and preview tab content -->
@@ -276,6 +276,7 @@
 						<img src="https://mindcloud.io/assets/images/mindcloud.png" alt="Alternative Text" />
 					</div>
 				</div>
+				<a href="#" class="close-reveal-modal keep-native">&#215;</a>
 			</div>
 		</div>
 
