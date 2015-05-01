@@ -122,6 +122,7 @@ function topBar() {
 			// List for actual dropdown
 			var $dropdown = $("<ul><ul>").addClass("dropdown");
 			$dropdown.append(createTopbarItem("/user/settings", "account settings"));
+			$dropdown.append(createTopbarItem("/legal", "legal information"));
 			$dropdown.append(createTopbarItem("/user/logout", "log out"));
 			$dropdownWrapper.append($dropdown);
 
