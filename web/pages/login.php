@@ -7,7 +7,7 @@
 		<div id="login-pane" class="floating-pane small-10 medium-8 large-6 small-centered columns">
 
 			<!-- title -->
-			<img class="logo" src="/assets/images/logo/splash_logo.png">
+			<img class="logo" src="/assets/images/logo/welcome_logo.png">
 
 			<p>Please log in.</p>
 			<form id="login_form" data-abide="ajax">
