@@ -13,37 +13,46 @@ function alertHandler(type, html) {
 		timeout = arguments[2];
 	}
 
-	var $alertBox = $("<div></div>");
-	$alertBox.data("alert", true);
-	$alertBox.addClass("alert-box");
-	$alertBox.addClass(type);
-	$alertBox.css("display", "none");
+	var $alertBox = $("<div></div>")
+		.data("alert", true)
+		.addClass("alert-box")
+		.addClass(type)
+		.css("display", "none");
 
-	var $alertInner = $("<div></div>");
-	$alertInner.addClass("alert-inner");
-	$alertInner.html(html);
+	var $alertInner = $("<div></div>")
+		.addClass("alert-inner")
+		.html(html);
 
 	var $alertClose = $("<span></span>")
-	$alertClose.addClass(".keep-native");
-	$alertClose.addClass("close");
-	$alertClose.html("&times;")
+		.addClass(".keep-native")
+		.addClass("close")
+		.html("&times;");
 
-	$alertBox.append($alertInner);
-	$alertBox.append($alertClose);
+	$alertBox.append($alertInner)
+		.append($alertClose);
 
 	$("#alert-wrapper").prepend($alertBox);
 	$alertClose.click(function() {
-		$alertBox.remove();
+		inClose();
 	});
 
 	$(document).foundation('alert', 'reflow');
 
 	$alertBox.fadeIn(300);
 
-	setTimeout(_this.close, timeout);
+	log.debug("AlertHandler", "Opening alert");
+
+	setTimeout(function() {
+		log.debug("AlertHandler", "Closing alert after timer");
+		inClose();
+	}, timeout);
 
 
 	this.close = function() {
+		inClose()
+	}
+
+	function inClose() {
 		$alertBox.fadeOut(300, function() {
 			$alertBox.remove();
 		});
