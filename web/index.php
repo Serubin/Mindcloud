@@ -95,6 +95,7 @@
 								<div id="problem-text-preview">
 								</div>
 							</div>
+							<a href="#"  data-reveal-id="wiki_mark_modal" >descriptions support our wiki mark-up</a>
 						</div>
 				     	<small class="error">Please elaborate on your problem.</small>
 				    </div>
@@ -167,6 +168,7 @@
 								<div id="solution-text-preview">
 								</div>
 							</div>
+							<a href="#"  data-reveal-id="wiki_mark_modal" >descriptions support our wiki mark-up</a>
 						</div>
 				     	<small class="error">Please elaborate on your solution</small>
 				    </div>
@@ -176,6 +178,104 @@
 				   	<!--<a role="button" type="submit" aria-label="submit form" href="#" class="button keep-native">submit</a>-->
 				</form>
 			  <a href="#" class="close-reveal-modal keep-native">&#215;</a>
+			</div>
+		</div>
+
+		<div id="help-modals">
+			<div id="wiki_mark_modal" class="reveal-modal help_modal" data-reveal>
+				<h2>Wiki mark up, the basics</h2>
+				<p>We understand that your communication often requires more than just basic text. 
+				For just this reason we've developed a simple and easy to use version of standard wiki
+				markup to help spice up your ideas.</p>
+
+				<!-- Title -->
+				<div class="row">
+					<div class="small-12 columns">
+						<h3>Title tags</h3>
+					</div>
+					<div class="small-12 medium-6 columns">
+						<p> == Title == </p>
+						<br/>
+						<p> === Subtitle === </p>
+
+					</div>
+					<div class="small-12 medium-6 columns">
+						<h2> Title </h2>
+						<h3> Subtitle</h3>
+					</div>
+				</div>
+				<!-- text Style -->
+				<div class="row">
+					<div class="small-12 columns">
+						<hr/>
+						<h3>Text Styles</h3>
+					</div>
+					<div class="small-12 medium-6 columns">
+						<p> * Bold * </p>
+						<p> _ Underline _ </p>
+						<p> / Italics / </p>
+
+					</div>
+					<div class="small-12 medium-6 columns">
+						<p class="bold"> Bold </p>
+						<p class="underline"> Underline </p>
+						<p class="italics"> Italics </p>
+					</div>
+				</div>
+				<!-- Lists -->
+				<div class="row">
+					<div class="small-12 columns">
+						<hr/>
+						<h3>List Styles</h3>
+					</div>
+					<div class="small-12 medium-6 columns">
+						<p> * Unordered lists </p>
+						<p> * List Item </p>
+						<p> * List Item </p>
+						
+						<br />
+
+						<p> # Ordered lists </p>
+						<p> # List item </p>
+						<p> # List items </p>
+					</div>
+					<div class="small-12 medium-6 columns">
+						<ul>
+							<li> Unorder lists </li>
+							<br />
+							<li> List Item </li>
+							<br />
+							<li> List Item </li>
+							<br />
+						</ul>
+						
+						<ol>
+							<li> Ordered list </li>
+							<br />
+							<li> List item </li>
+							<br />
+							<li> List Item </li>
+							<br />
+						</ol>
+					</div>
+				</div>
+				<!-- text Style -->
+				<div class="row">
+					<div class="small-12 columns">
+						<hr/>
+						<h3>Links and Photos </h3>
+					</div>
+					<div class="small-12 medium-6 columns">
+						<p> [https://mindcloud.io Link Title] </p>
+						<p> [[File:https://mindcloud.io/assets<br/>/images/mindcloud.png Alternative Text]] </p>
+
+					</div>
+					<div class="small-12 medium-6 columns">
+						<a href="https://mindcloud.io">Link Title</a>
+						<br />
+						<img src="https://mindcloud.io/assets/images/mindcloud.png" alt="Alternative Text" />
+					</div>
+				</div>
 			</div>
 		</div>
 

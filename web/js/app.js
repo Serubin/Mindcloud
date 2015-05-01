@@ -18,6 +18,8 @@ var tp;
 var problem_id; // globals for create solutions
 var problem_title;
 
+var last_modal;
+
 
 $(function() {
 	log.info("Mindcloud", "Loading mindcloud");
@@ -86,6 +88,10 @@ $(function() {
 	function initPoseProblem() {
 
 		var error = false;
+
+		$(document).on('opened.fndtn.reveal', '#pose_problem_modal', function () {
+			last_modal = "pose_problem_modal";
+		});
 
 		fetchCategories(); // fetches categories
 
@@ -189,6 +195,10 @@ $(function() {
 
 		var error = false;
 
+		$(document).on('opened.fndtn.reveal', '#create_solution_modal', function () {
+			last_modal = "create_solution_modal";
+		});
+
 		// regex replacements for shorthand
 		$("#form_solution_shorthand").on("keyup", function() {
 			var val = $(this).val();
@@ -250,6 +260,12 @@ $(function() {
 
 		$(document).foundation('reflow');
 	}
+
+	// help modals
+	$(document).on('closed.fndtn.reveal', '#wiki_mark_modal', function () {
+		if(typeof last_modal != "undefined")
+  			$('#' + last_modal).foundation('reveal', 'open');
+	});
 });
 
 function fetchCategories(){
