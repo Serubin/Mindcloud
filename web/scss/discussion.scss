@@ -43,18 +43,20 @@
 	}
 
 	.threads-container {
-		display: flex;
-		display: -webkit-flex;
-		flex-direction: row;
-		overflow-x: auto;
-		overflow-y: auto;
 
+		align-items: flex-start;
+		display: flex;
+		flex-direction: row;
+
+		display: -webkit-flex;
 		-webkit-box-align: start;
 		-webkit-align-items: flex-start;
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: normal;
 		-webkit-flex-direction: row;
 
+		overflow-x: auto;
+		overflow-y: auto;
 
 		.thread-preview {
 			display: inline-block;
@@ -65,7 +67,7 @@
 			margin-bottom: 10px;
 			overflow: hidden;
 
-
+			flex: 0 0 210px;
 			-webkit-flex: 0 0 210px;
 
 			h4 {

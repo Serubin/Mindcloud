@@ -1,16 +1,14 @@
-<div id="login-page">
+<div class="pre-login">
 	<!-- Background -->
 	<div id="splash-background">
 	</div>
-
-	<!-- title -->
-	<div id="title"> 
-		<p class="subtitle">welcome to</p>
-		<h1 class="title">mindcloud</h1>
-	</div>
 			
 	<div class="row" id="body-row">
-		<div id="login-pane" class="floating-pane small-10 medium-4 column small-offset-1 medium-offset-4">
+		<div id="login-pane" class="floating-pane small-10 medium-8 large-6 small-centered columns">
+
+			<!-- title -->
+			<img class="logo" src="/assets/images/logo/splash_logo.png">
+
 			<p>Please log in.</p>
 			<form id="login_form" data-abide="ajax">
 				<!-- email -->
@@ -25,7 +23,7 @@
 					<label><span class="label">password</span>
 						<input type="password" id="login_password" name="login_password" required pattern="password" placeholder="password" />
 						</label>
-						<small id="login_pass_err" class="error">Passwords must be at least 8 charaters long and may only contain numbers, letters, and these charaters: @*#&.^!</small>
+						<small id="login_pass_err" class="error">Invalid password</small>
 				</div>
 
 				<div class="captcha" style="display: none;">
@@ -45,8 +43,9 @@
 					</div>
 				</div>
 
-		<a href="/register" class="button btn-login">register</a>
-		<button type="submit" class="button btn-login">login</button>
+		<button type="submit" class="button primary">login</button>
+		<hr>
+		<a href="/register" class="button secondary">still need to register?</a>
 	</form>
 
 

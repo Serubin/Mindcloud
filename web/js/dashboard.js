@@ -19,8 +19,9 @@ function predashboard(url) {
 	});
 }
 
-// var page number
-var page = 0;
+// pagination of problems with reference to db
+var page = 1;
+var more = true; // assume there are more until we get a result less then max
 
 function dashboard() {
 
@@ -31,6 +32,10 @@ function dashboard() {
 
 	// initial load
 	loadDashboard();
+
+	// initialize keeping track of auto load
+	page = 1;
+	more = true;
 
 	/**
 	 * Sets up the isotope container and loads inital content
@@ -56,6 +61,7 @@ function dashboard() {
 
 				// display problems from request
 				repopulateProblems(result.problems);
+				more = result.more;
 
 				// add votes
 				$.each(result.votes, function(i, value) {
@@ -225,7 +231,7 @@ function dashboard() {
 $(window).scroll(function() {
 
 	// if the botom of the page is reached, request more problems
-	if ($(window).scrollTop() + $(window).height() == $(document).height() && ph.currentPage == "dashboard") {
+	if ($(window).scrollTop() + $(window).height() == $(document).height() && ph.currentPage == "dashboard" && more) {
 
 		// prepare 
 		var req = new APICaller("dashboard", "extend");
@@ -239,15 +245,17 @@ $(window).scroll(function() {
 
 			if (result) {
 
-				// cycle through the new problems and append them
-				$.each(result, function(i, value) {
+					// cycle through the new problems and append them
+					$.each(result.problems, function(i, value) {
 
-					$("#problems").append(problemFormatter(value));
+						$("#problems").append(problemFormatter(value));
 
-				});
+					});
 
-				page++;
-				$(document).foundation('reflow');
+					page++;
+					$(document).foundation('reflow');
+
+					more = result.more;
 
 			} else {
 				new alertHandler("alert", "Failed to load more problems");

@@ -123,6 +123,8 @@ class Dashboard {
 
 			//error_log(json_encode($result));
 
+			$result['more'] = (sizeof($result['problems']) == $this->_load_amount);
+
 			return $result;
 
 		} catch (Exception $e) {
@@ -171,7 +173,7 @@ class Dashboard {
 			$loaded_posts[] = array("id" => $id, "title" => htmlspecialchars_decode($title, ENT_QUOTES), "date" => $created, "shorthand" => $shorthand, "votes" => $vote_count	);
 		}
 
-		return $loaded_posts;
+		return array("more" => (sizeof($loaded_posts) == $this->_load_amount), "problems" => $loaded_posts);
 
 	}
 

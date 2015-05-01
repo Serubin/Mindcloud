@@ -9,6 +9,8 @@
  ******************************************************************************/
 
 require_once("models/PostObject.php");
+require_once("models/NotificationObject.php");
+require_once("models/ThreadObject.php");
 
 class Post
 {
@@ -41,6 +43,19 @@ class Post
 			$new_post->thread_id = $this->_params['thread_id'];
 			$new_post->body = $body;
 			$new_post->create();
+
+			// obtain the poster of the thread and of the problem
+			$thread = new ThreadObject($this->_mysqli);
+			$thread->id = $this->_params['thread_id'];
+			$thread->loadPreview();
+
+			// create a notification if the post is not made by the poster of the thread
+			// here we're notifying only the creator of the thread
+			if ($thread->op != $_SESSION['uid']) {
+				NotificationObject::notify($thread->op, "/problem/" . $thread->problem_id, "A new post has been created on your thread, \"" .
+					$thread->subject . "\"",
+					$this->_mysqli);
+			}
 
 			// return success
 			return $new_post;

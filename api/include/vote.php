@@ -7,8 +7,13 @@
  * All lines will fit with 80 columns. 
  *****************************************************************************/
 
+require_once("models/NotificationObject.php");
+require_once("models/ProblemObject.php");
+
 define("UPVOTE", 1);
 define("DOWNVOTE", -1);
+
+define("VOTE_NOTIFY_INTEVERAL", 15);
 
 class Vote {
 
@@ -45,8 +50,36 @@ class Vote {
 
 		$stmt->bind_param("siii", $ctype, $cid, $uid, $vote);
 		$stmt->execute();
-
 		$stmt->close();
+
+		// if this vote marks a certain interval
+		if ($vote_count = Vote::fetchVote($mysqli, $ctype, $cid, $uid) % VOTE_NOTIFY_INTEVERAL == 0) {
+
+			$creator = -1;
+
+			// retrieve content creator's id
+			switch ($ctype) {
+
+				// retrieve problem
+				case "PROBLEM":
+					$problem = new ProblemObject($mysqli);
+					$problem->id = $cid;
+					$problem->loadPreview();
+					$creator = $problem->creator;
+
+				// retrieve solution
+				case "SOLUTION":
+					$solution = new ProblemObject($mysqli);
+					$solution->id = $cid;
+					$solution->loadPreview();
+					$creator = $solution->id;
+
+			}
+
+			if ($creator != -1)
+				NotificationObject::notify($creator, strtolower($ctype) . "/" . $cid, 
+					"Your " . strtolower($ctype) . "has received " . $vote_count . "votes");
+		}
 
 		return true;
 	}
