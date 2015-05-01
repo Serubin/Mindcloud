@@ -2,8 +2,8 @@
 session_start();
 
 // Random numbers
-$code1=rand(1,10);
-$code2=rand(1,10);
+$code1=rand(1,9);
+$code2=rand(1,9);
 
 // Code storage
 $_SESSION["captcha"]=$code1+$code2;
