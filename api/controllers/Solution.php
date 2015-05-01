@@ -8,6 +8,7 @@
  ******************************************************************************/
 
 require_once "models/SolutionObject.php";
+require_once "models/NotificationObject.php";
 require_once "include/vote.php";
 
 class Solution
@@ -66,6 +67,17 @@ class Solution
 			}
 			
 			$solution->create();
+
+			// load the problem data
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $problem_id;
+			$problem->loadPreview();
+
+			// create notification if user is not posting to his/her own problem
+			if ($problem->uid != $_SESSION['uid']) {
+				NotificationObject::notify($problem->uid, "/solution/" . $solution->shorthand, 
+					"A new solution has been created for \"" . $problem->title . "\"", $this->_mysqli);
+			}
 
 			return $solution->shorthand;
 		} catch (Exception $e) {
