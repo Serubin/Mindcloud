@@ -100,6 +100,8 @@ function solution(url) {
 			})) // adds icon
 			.append("edit") // adds text
 			.insertBefore("#description"); // adds before description
+
+			ph.captureLink($("#edit-link")); //link listener
 		}
 
 		// set description
