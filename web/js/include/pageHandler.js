@@ -140,8 +140,18 @@ function pageHandler(args) {
 		 */
 		function process(result) {
 			$content.html(result); // Changes content
-			if (typeof window[page] != "undefined") {
-				window[page](_this.parseUrl());
+
+
+			var page_func = page.split("-");
+			if(page_func.length > 1)
+				page_func = page_func[0];
+			else
+				page_func = page;
+
+			log.debug(pkg, "Executing function" + page_func);
+
+			if (typeof window[page_func] != "undefined") {
+				window[page_func](_this.parseUrl());
 			}
 
 			$(document).foundation('reflow'); // Updates foundation stuff
