@@ -71,7 +71,7 @@ body{
 
 	.hover{
 		background-color: #555555 !important;
-  		background: $primary-color-light !important;
+			background: $primary-color-light !important;
 	}
 
 	#notification-dropdown::-webkit-scrollbar{
@@ -84,7 +84,7 @@ body{
 		@media #{$medium-up} { 
 			width: 300px;
 			max-height: 400px !important;
-  			overflow-y: scroll;
+				overflow-y: scroll;
 		}
 
 		li a{
@@ -157,11 +157,11 @@ body{
 
 /* zurb fixes */
 .f-topbar-fixed {
-    @media #{$small-only} {
-        padding-top: 45px !important;
-    }
+		@media #{$small-only} {
+				padding-top: 45px !important;
+		}
 
-    @media #{$large-up} {
-        padding-top: $topbar-height !important;
-    }
+		@media #{$large-up} {
+				padding-top: $topbar-height !important;
+		}
 }
