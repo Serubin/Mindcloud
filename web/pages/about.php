@@ -7,7 +7,7 @@
 	<!-- title -->
 	<img class="logo" src="/assets/images/logo/welcome_logo.png">
 
-	<h4 class="text-center"> Welcome to Mindcloud! Mindcloud is a new type of social network aiming to tackle collaborative problem solving.</h3>
+	<h4 class="text-center"> Welcome to Mindcloud! Mindcloud is a new type of social network aiming to tackle collaborative problem solving.</h4>
 	
 	</div>
 </div>
