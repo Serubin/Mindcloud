@@ -58,7 +58,8 @@ function login() {
 					return;
 					break;
 				case true:
-					tp.reload();
+					tp.reload(); // reloads top bar
+					fetchCategories(); // fetches categories
 					ph.pageRequest("dashboard");
 					break;
 				default:

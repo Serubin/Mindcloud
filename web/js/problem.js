@@ -90,6 +90,8 @@ function problem(url) {
 			})) // adds icon
 			.append("edit") // adds text
 			.insertBefore("#description"); // adds before description
+
+			ph.captureLink($("#edit-link")); // link listener
 		}
 
 		// set vote count and vote status if set

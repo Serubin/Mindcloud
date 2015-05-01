@@ -6,217 +6,222 @@ $problem-height: 80px;
 
 
 #container {
-  margin: 15px;
+	margin: 15px;
 }
 
 .problem-stmt {
-  display: inline-block;
-  vertical-align: bottom;
-  line-height: 14px; /* <-- adjust this */
-  padding: 2px;
+	display: inline-block;
+	vertical-align: bottom;
+	line-height: 14px; /* <-- adjust this */
+	padding: 2px;
 }
 
 .selected {
-  border-bottom: 2px solid $primary-color;
+	border-bottom: 2px solid $primary-color;
 
 }
 
 .tag {
-  background-color: red;
-  color: white;
-  @include border-radius(10px);
-  padding: 5px;
-  margin: 5px;
+	background-color: red;
+	color: white;
+	@include border-radius(10px);
+	padding: 5px;
+	margin: 5px;
 }
 
 #temp {
-  padding: 200px;
-  font-size: 60px;
-  background-color: $secondary-color;
-  color: white;
+	padding: 200px;
+	font-size: 60px;
+	background-color: $secondary-color;
+	color: white;
 }
 
 /**
- *  JQUERY-TAGS-INPUT 
+ *	JQUERY-TAGS-INPUT 
  */
 
 div.tagsinput { 
-  border:1px solid #CCC; 
-  background-color: white; 
-  padding:5px; 
-  //width:300px;
-  //height:100px;
-  overflow-y: auto;
-  margin-bottom: 5px;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1) inset;
-  vertical-align: middle;
+	border:1px solid #CCC; 
+	background-color: white; 
+	padding:5px; 
+	//width:300px;
+	//height:100px;
+	overflow-y: auto;
+	margin-bottom: 5px;
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1) inset;
+	vertical-align: middle;
 }
 
 
 div.tagsinput span.tag { 
-  border: none; 
-  -moz-border-radius:2px; 
-  -webkit-border-radius:2px; 
-  display: block; 
-  float: left; 
-  padding: 5px; 
-  text-decoration:none; 
-  background: $secondary-color; 
-  color: white; 
-  //margin-right: 5px; 
-  //margin-bottom: 5px;
-  //font-family: helvetica;  
-  font-size:13px;
-  vertical-align: middle;
-  
+	border: none; 
+	-moz-border-radius:2px; 
+	-webkit-border-radius:2px; 
+	display: block; 
+	float: left; 
+	padding: 5px; 
+	text-decoration:none; 
+	background: $secondary-color; 
+	color: white; 
+	//margin-right: 5px; 
+	//margin-bottom: 5px;
+	//font-family: helvetica;	
+	font-size:13px;
+	vertical-align: middle;
+	
 }
 
 // links, including the delete icons
 div.tagsinput span.tag a { 
-  font-weight: bold; 
-  color: $white; 
-  text-decoration:none; 
-  font-size: 18px;    
+	font-weight: bold; 
+	color: $white; 
+	text-decoration:none; 
+	font-size: 18px;		
 } 
 
 div.tagsinput input { 
-  width:100px; 
-  //font-family: helvetica; 
-  font-size: 13px; 
-  border:1px solid transparent; 
-  padding:5px; 
-  background: transparent; 
-  color: #000; outline:0px; 
-  margin-top:5px; 
-  margin-right:5px; 
-  margin-bottom:5px; 
+	width:100px; 
+	//font-family: helvetica; 
+	font-size: 13px; 
+	border:1px solid transparent; 
+	padding:5px; 
+	background: transparent; 
+	color: #000; outline:0px; 
+	margin-top:5px; 
+	margin-right:5px; 
+	margin-bottom:5px; 
 }
 
 
 div.tagsinput div { 
-  display:block; 
-  float: left; 
+	display:block; 
+	float: left; 
 } 
 
 .tags_clear { 
-  clear: both; 
-  width: 100%; 
-  height: 0px; 
+	clear: both; 
+	width: 100%; 
+	height: 0px; 
 }
 
 .not_valid {
-  background: #FBD8DB !important; 
-  color: #90111A !important;
+	background: #FBD8DB !important; 
+	color: #90111A !important;
 }
 
 .thread {
-  border-style: solid;
-  border-width: 2px;
-  padding: 5px;
+	border-style: solid;
+	border-width: 2px;
+	padding: 5px;
 }
 
 .post {
-  border-style: solid;
-  border-width: 1px;
+	border-style: solid;
+	border-width: 1px;
 }
 
 #grid[data-columns]::before {
-  content: '3 .column.size-1of3';
+	content: '3 .column.size-1of3';
 }
 
 #problems {
-  margin: 0px;
+	margin: 0px;
 }
 
 .problem {
-  color: white;
-  //padding: 5px;
+	color: white;
+	//padding: 5px;
 
-  .row {
-    background-color: $secondary-color;
-  }
+	.row {
+		background-color: $secondary-color;
+	}
 
-  .problem-statement:hover {
-    background-color: $secondary-color-dark;
-  }
+	.row:hover{
+		 background-color: $secondary-color-light;
+	}
+	
+	.column {
+		padding: 0px;
+	}
 
-  .column {
-    padding: 0px;
-  }
+	.problem-statement {
+		height: 120px;
+		padding: 12px;
+	}
 
-  .problem-statement {
-    padding: 12px;
-  }
+	.voter {
+		line-height: $problem-height / 2; 
+		text-align: center;
+	}
+	
+	.vote:hover {
+		background-color: $secondary-color-dark;
+	}
 
-  .voter {
-    line-height: $problem-height / 2; 
-    text-align: center;
-  }
-  
-  .vote:hover {
-    background-color: $secondary-color-dark;
-  }
+	.problem-button {		
+		font: 32px !important;
+	}
 
-  .problem-button {    
-    font: 32px !important;
-  }
+	button {
+		padding: 0px;
+		margin: 0px;
+	}
 
-  button {
-    padding: 0px;
-    margin: 0px;
-  }
+	.dropdown {
+		position: absolute;
+		top: -10px;
+		right: 12px;
+		//width: 18px;
+		//height: 10px;
+		float: left;
+		overflow: hidden;
+		color: black;
 
-  .dropdown {
-    position: absolute;
-    top: -10px;
-    right: 12px;
-    //width: 18px;
-    //height: 10px;
-    float: left;
-    overflow: hidden;
-    color: black;
+		//top: 100%;
+		display: none;
+		float: left;
+		background: none repeat scroll 0% 0% padding-box #FFF;
+		border: 0px solid rgba(0, 0, 0, 0.25);
+		border-radius: 4px;
+		box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
 
-    //top: 100%;
-    display: none;
-    float: left;
-    background: none repeat scroll 0% 0% padding-box #FFF;
-    border: 0px solid rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+		ul {
+				margin: 0px;
+				list-style: outside none none;
+				text-align: left;
+				padding: 0px;
+				padding: 10px;
+				margin: 2px 0px 0px;
 
-    ul {
-        margin: 0px;
-        list-style: outside none none;
-        text-align: left;
-        padding: 0px;
-        padding: 10px;
-        margin: 2px 0px 0px;
+				a {
+					color: black;
+				}
 
-        a {
-          color: black;
-        }
-
-        a:hover {
-          color: $secondary-color;
-        }
+				a:hover {
+					color: $secondary-color;
+				}
 
 
-    }
-  }
-  
-  .dropdown.open {
-    display: block;
-    z-index: 100;
-  }
+		}
+	}
+	
+	.dropdown.open {
+		display: block;
+		z-index: 100;
+	}
 
-  .selected {
-    background-color: $secondary-color-dark;
-    border: none;
-  }
+	.selected {
+		background-color: $secondary-color-dark;
+		border: none;
+	}
 
-  .flag-reveal {
-    text-align: center;
-    padding-top: 5px;
-    padding-right: 5px;
-  }
+	.flag-reveal {
+		text-align: center;
+		padding-top: 5px;
+		padding-right: 5px;
+	}
+
+	.flag-reveal:hover{
+		background-color: $secondary-color;
+	}
 }

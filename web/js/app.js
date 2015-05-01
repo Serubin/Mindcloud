@@ -87,23 +87,7 @@ $(function() {
 
 		var error = false;
 
-		// request current list of categories
-		var req = new APICaller("problem", "getcategories");
-		req.send({}, function(result) {
-
-			// if the result is not false or null
-			// should contain categories
-			if (result) {
-				// display categories
-				$.each(result, function(i, value) {
-					$("#form_problem_cat").append("<option value='" + value[0] + "'>" + value[1] + "</option");
-				});
-
-			} else {
-				// report failure
-				alertHandler("alert", "Failed to load categories for problem creation");
-			}
-		});
+		fetchCategories(); // fetches categories
 
 		// regex replacements for shorthand
 		$("#form_problem_shorthand").on("keyup", function() {
@@ -267,6 +251,29 @@ $(function() {
 		$(document).foundation('reflow');
 	}
 });
+
+function fetchCategories(){
+
+	log.debug("Problem", "Fetching categories");
+
+	// request current list of categories
+	var req = new APICaller("problem", "getcategories");
+	req.send({}, function(result) {
+
+		// if the result is not false or null
+		// should contain categories
+		if (result) {
+			// display categories
+			$.each(result, function(i, value) {
+				$("#form_problem_cat").append("<option value='" + value[0] + "'>" + value[1] + "</option");
+			});
+
+		} else {
+			// report failure
+			new alertHandler("alert", "Failed to load categories for problem creation");
+		}
+	});
+}
 
 /* updateCreateSolution()
  * updates global problem id and title as well as updating the html in the modal
