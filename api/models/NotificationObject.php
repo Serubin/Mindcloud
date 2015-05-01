@@ -123,4 +123,25 @@ class NotificationObject {
 
 		return $notifications;
 	}
+
+	/**
+	 * static method for producing notifications
+	 */
+	public static function notify ($uid, $url, $msg, $mysqli) {
+
+		// ensure we have values
+		if (!isset($id, $url, $msg)) {
+			throw new UserException("Could not create notifcation. Got " . $id . " and " . $url . " and " . $msg);
+		}
+
+		// initialize a notification
+		$n = new NotificationObject($mysqli);
+		$n->uid = $uid;
+		$n->url = $url;
+		$n->msg = $msg;
+
+		// submit it
+		$n->create();
+
+	}
 }

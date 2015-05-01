@@ -82,7 +82,7 @@ class ThreadObject {
 				throw new ThreadException("thread doesn't exist", __FUNCTION__);
 			}
 
-			if (!$stmt = $this->_mysqli->prepare("SELECT `subject`, `created` FROM `threads` WHERE `id` = ?")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `subject`, `created`, `problem_id` FROM `threads` WHERE `id` = ?")) {
 				throw new ThreadException("prepare failed: " . $this->_mysqli->error, __FUNCTION__);
 			}
 
@@ -93,12 +93,13 @@ class ThreadObject {
 			if ($stmt->num_rows != 1) {
 				throw new ThreadException ("multiple threads found with that id", __FUNCTION__);
 			}
-			$stmt->bind_result($subject, $created);
+			$stmt->bind_result($subject, $created, $problem_id);
 			$stmt->fetch();
 
 			// set instance vars
 			$this->subject = $subject;
 			$this->created = $created;
+			$this->problem_id = $problem_id;
 
 			// load the first post as body of thread
 			$stmt->close();

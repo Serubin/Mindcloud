@@ -45,8 +45,8 @@
 					</div>
 				</div>
 
-		<a href="/register" class="button btn-login">register</a>
-		<button type="submit" class="button btn-login">login</button>
+		<a href="/register" class="button secondary">register</a>
+		<button type="submit" class="button">login</button>
 	</form>
 
 

@@ -47,6 +47,17 @@ class Thread
 			$new_thread->problem_id = $this->_params['problem_id'];
 			$new_thread->create();
 
+			// load the data on the problem so we can get a handle on the problem poser
+			$p = new ProblemObject($this->_mysqli);
+			$p->id = $this->_params['problem_id'];
+			$p->loadPreview();
+
+			// notify the poser of the problem if he is not also the poster of the thread
+			if ($_SESSION['id'] != $p->creator) {
+				NotificationObject::notify($p->creator, "/problem/" . $p->id, "A new thread has been created on \"" . 
+					$p->title . "\"", $this->_mysqli);
+			}
+
 			// return success
 			return array(
 				"thread_id" => $new_thread->id,
