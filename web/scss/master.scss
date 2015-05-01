@@ -123,6 +123,19 @@ body{
 		border: 1px solid #ccc; // matches text box
 		padding: 5px;
 	}
+
+	.description-field {
+		label {
+			  margin-bottom: -25px;
+		}
+
+		textarea {
+			  margin-bottom: 0px;
+		}
+		a {
+			font-size: 10pt;
+		}
+	}
 }
 
 /* other */
@@ -154,6 +167,20 @@ body{
 	text-shadow: 0px 0px 1px rgba(255,255,255,0.4);
 	padding: 0 5px;
 }
+
+/* typography */
+.bold {
+	font-weight: bold;
+}
+
+.underline {
+	text-decoration: underline;
+}
+
+.italics {
+	font-style: italic;
+}
+
 
 /* zurb fixes */
 .f-topbar-fixed {
