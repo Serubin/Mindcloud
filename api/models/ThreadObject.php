@@ -44,10 +44,16 @@ class ThreadObject {
 			throw new ThreadException("Insert failed: " . $this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("isi", $this->op, $this->subject, $this->problem_id);
+		error_log("submitting thread");
+
+		if (!$stmt->bind_param("isi", $this->op, $this->subject, $this->problem_id)) {
+			throw new ThreadException("Bind param failed: " . $stmt->error, __FUNCTION);
+		}
 
 		// submit thread
 		$stmt->execute();
+
+		error_log("Error? " . $stmt->error);
 
 		// store id
 		$this->id = $this->_mysqli->insert_id;
@@ -205,6 +211,17 @@ class ThreadObject {
 			return false;
 		}
 
+	}
+
+	public function getFirstPost() {
+
+		// check we have an id
+		if (!isset($this->id)) {
+			throw new ThreadException("Cannot load first post, no thread id provided");;
+		}
+
+		// do
+		// TODO
 	}
 
 	/**

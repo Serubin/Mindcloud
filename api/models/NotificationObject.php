@@ -130,8 +130,8 @@ class NotificationObject {
 	public static function notify ($uid, $url, $msg, $mysqli) {
 
 		// ensure we have values
-		if (!isset($id, $url, $msg)) {
-			throw new UserException("Could not create notifcation. Got " . $id . " and " . $url . " and " . $msg);
+		if (!isset($uid, $url, $msg)) {
+			throw new UserException("Could not create notifcation. Got " . $uid . " and " . $url . " and " . $msg, __FUNCTION__);
 		}
 
 		// initialize a notification

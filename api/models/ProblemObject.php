@@ -191,6 +191,7 @@ class ProblemObject {
 
 
 		// Set this object's member vars
+		$this->uid = $creator_id;
 		$this->shorthand = $shorthand;
 		$this->title = $title;
 		$this->description = $description;
