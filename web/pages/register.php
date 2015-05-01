@@ -1,18 +1,17 @@
-<div id="login-page">
+<div class="pre-login">
 	<!-- Background -->
 	<div id="splash-background">
 	</div>
 
 	<!-- Register page -->
-	<div id="title">
-		<div id="title"> 
-			<p class="subtitle">welcome to</p>
-			<h1 class="title">mindcloud</h1>
-	</div>
-	</div>
 	<div class="row">
-		<div id="registration-pane" class="floating-pane column small-10 small-offset-1 medium-8 medium-offset-2 large-6 large-offset-3" data-reveal>
+		<div id="registration-pane" class="floating-pane small-10 medium-8 large-6 small-centered columns">
 			
+			<div id="title">
+				<div id="title"> 
+					<h1 class="title">register</h1>
+			</div>
+
 			<p class="lead">Please fill all of these fields</p>
 
 
@@ -70,6 +69,8 @@
 						<input type="radio" name="register_gender" value="F" id="register_gender-f" required><label for="register_gender-f">Female</label>
 						<input type="radio" name="register_gender" value="O" id="register_gender-o" required><label for="register_gender-o">Other</label>
 				</div>
+
+				<!-- captcha -->
 				<div class="captcha">
 					<label for="captcha"><span class="label">Human?</span></label>
 					<div class="row">
@@ -87,9 +88,10 @@
 					</div>
 				</div>
 				<br/>
-				<button type="submit">register</button>
-				<a href="login" class="button secondary" id="reg_to_login">Already have an account?</a>
+				<button type="submit" class="button primary">register</button>
+				</hr>
+				<button href="/login" class="button secondary">Already have an account?</button>
 			</form>
 		</div>
-	</div> <!-- end regiser modal -->
+	</div> <!-- end regisetr modal -->
 </div>
