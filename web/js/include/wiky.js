@@ -33,6 +33,24 @@ wiky.process = function(wikitext, options) {
 				html += "<h2>" + line.substring(2, line.length - 2) + "</h2>";
 			else
 				html += line.substring(2, line.length - 2);
+		} else if (line.match(/^\*/) != null && line.match(/\*$/) != null) {
+			// strong
+			if (!wiky.options.strip)
+				html += "<span class='bold'>" + line.substring(1, line.length - 1) + "</span>";
+			else
+				html += line.substring(1, line.length - 1);
+		} else if (line.match(/^_/) != null && line.match(/_$/) != null) {
+			// underline
+			if (!wiky.options.strip)
+				html += "<span class='underline'>" + line.substring(1, line.length - 1) + "</span>";
+			else
+				html += line.substring(1, line.length - 1);
+		} else if (line.match(/^\//) != null && line.match(/\/$/) != null) {
+			// italics
+			if (!wiky.options.strip)
+				html += "<span class='italics'>" + line.substring(1, line.length - 1) + "</span>";
+			else
+				html += line.substring(1, line.length - 1);
 		} else if (line.match(/^:+/) != null) {
 			// find start line and ending line
 			start = i;
@@ -276,7 +294,7 @@ wiky.process_normal = function(wikitext) {
 
 
 	// URL
-	var protocols = ["http", "ftp", "news"];
+	var protocols = ["https", "http", "ftp", "news"];
 
 	for (var i = 0; i < protocols.length; i++) {
 		var index = wikitext.indexOf("[" + protocols[i] + "://");
