@@ -63,10 +63,7 @@ class Thread
 			}
 
 			// return success
-			return array(
-				"thread_id" => $new_thread->id,
-				"post_id" => $new_thread->first_post->id
-			);
+			return $new_thread;
 
 		} catch (ThreadException $e) {
 			return $e;

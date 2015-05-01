@@ -7,6 +7,7 @@
  *****************************************************************************/
 
 require_once "models/SolutionObject.php";
+require_once "models/ThreadObject.php";
 
 class ProblemObject {
 
@@ -358,7 +359,8 @@ class ProblemObject {
 		}
 
 		// prepare statement
-		if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `subject`, `created` FROM `threads` WHERE `problem_id` = ? ORDER BY `created` DESC")) {
+		// TODO: join tables so this can be done with one query
+		if (!$stmt = $this->_mysqli->prepare("SELECT `id` FROM `threads` WHERE `problem_id` = ? ORDER BY `created` DESC")) {
 			throw new ProblemException("Prepared failed: " . $this->_mysqli->error, __FUNCTION__);
 		}
 
@@ -366,12 +368,16 @@ class ProblemObject {
 		$stmt->execute();
 		$stmt->store_result();
 
-		$stmt->bind_result($thread_id, $subject, $created);
-		$result = array();
+		$stmt->bind_result($thread_id);
+		$threads = array();
 		while ($stmt->fetch()) {
-			$result[] = array("id" => $thread_id, "subject" => $subject, "created" => $created);
+
+			$current = new ThreadObject($this->_mysqli);
+			$current->id = $thread_id;
+			$current->loadPreview();
+			$threads[] = $current;
 		}
 
-		$this->threads = $result;
+		$this->threads = $threads;
 	}
 }

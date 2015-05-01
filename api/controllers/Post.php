@@ -10,6 +10,7 @@
 
 require_once("models/PostObject.php");
 require_once("models/NotificationObject.php");
+require_once("models/ThreadObject.php");
 
 class Post
 {

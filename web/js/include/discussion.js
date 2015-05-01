@@ -286,13 +286,8 @@
 			if (result) {
 
 				// create an array with just this new thread to append
-				var thread = {
-					id: result['thread_id'],
-					subject: title,
-					body: body
-				};
 
-				var new_threads = [thread];
+				var new_threads = [result];
 
 				$.fn.addThreadThumbnails(new_threads, ids);
 			} else
@@ -329,7 +324,7 @@
 
 			$.each(threads, function(i, value) {
 
-				$("#" + ids.thread_container).prepend($.fn.Discussion.threadPrevFormatter(ids, value.id, value.subject, value.body));
+				$("#" + ids.thread_container).prepend($.fn.Discussion.threadPrevFormatter(ids, value.id, value.subject, value.first_post.body));
 
 			});
 		}
@@ -389,6 +384,7 @@
 	 * returns a div for the preview of a thread
 	 */
 	$.fn.Discussion.threadPrevFormatter = function(ids, id, subject, body) {
+
 		return $("<div></div>", {
 			'data-title': id,
 			class: "thread-preview"
