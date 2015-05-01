@@ -25,7 +25,7 @@
 					<label><span class="label">password</span>
 						<input type="password" id="login_password" name="login_password" required pattern="password" placeholder="password" />
 						</label>
-						<small id="login_pass_err" class="error">Passwords must be at least 8 charaters long and may only contain numbers, letters, and these charaters: @*#&.^!</small>
+						<small id="login_pass_err" class="error">Invalid password</small>
 				</div>
 
 				<div class="captcha" style="display: none;">
