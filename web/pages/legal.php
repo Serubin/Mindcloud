@@ -1,10 +1,10 @@
-<div id="legal-page">
-
+<div id="legal-page" class="pre-login">
 	<!-- Background -->
 	<div id="splash-background">
 	</div>
-	<div id="content-pane" class="floating-pane column small-11 small-offset-1 medium-9 medium-offset-2 large-8 large-offset-2">
-		<ul class="tabs vertical" data-tab>
+
+	<div id="content-pane" class="floating-pane column small-12 medium-10 medium-offset-1 large-10 large-offset-1">
+		<ul class="tabs" data-tab>
 			<li class="tab-title active"><a href="#legal-overview">Overview</a></li>
 			<li class="tab-title"><a href="#privacy-policy">Privacy Policy</a></li>
 			<li class="tab-title"><a href="#terms-conditions">Terms and Conditions</a></li>
@@ -12,7 +12,7 @@
 		<div class="tabs-content">
 			<div id="legal-overview" class="content active">
 				<h2>Overview</h2>
-				<p>We want make sure that our users know that their data and ideas are secure and protected. Your protection is a priority to us and we want to make sure you know. We encourage you to take a look through our terms and conditions as well as our privacy police to ensure you understand how we protect you.</p>
+				<p>We want make sure that our users know that their data and ideas are secure and protected; your protection is a priority to us. We encourage you to take a look through our terms and conditions as well as our privacy police to ensure you understand how we protect you.</p>
 			</div>
 			<div id="privacy-policy" class="content">
 				<h2>Privacy Policy</h2>
