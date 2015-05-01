@@ -59,7 +59,8 @@ function login() {
 					break;
 				case true:
 					tp.reload(); // reloads top bar
-					fetchCategories(); // fetches categories
+					initPoseProblem(); // initiates pose/create
+					initCreateSolution();
 					ph.pageRequest("dashboard");
 					break;
 				default:
