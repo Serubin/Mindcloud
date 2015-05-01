@@ -7,7 +7,7 @@
 function alertHandler(type, html) {
 	var _this = this;
 
-	var timeout = 30 * 1000; // 30 seconds
+	var timeout = 15 * 1000; // 15 seconds
 
 	if (arguments.length == 3) {
 		timeout = arguments[2];
