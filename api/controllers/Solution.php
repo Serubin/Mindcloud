@@ -9,6 +9,7 @@
 
 require_once "models/SolutionObject.php";
 require_once "models/NotificationObject.php";
+require_once "models/ProblemObject.php";
 require_once "include/vote.php";
 
 class Solution
