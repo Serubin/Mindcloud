@@ -23,3 +23,7 @@ $mysqli = new mysqli(HOST, USER, PASSWORD, DATABASE);
 // Specify cookie security details
 define("SECURE", false);
 define("DOMAIN", "mindcloud.loc");
+
+// authorized user ids
+define('RUBIN', 0);
+define('SHULLICK', 1);
