@@ -28,7 +28,7 @@ class Dashboard {
 	}
 
 	// number of problems to load
-	private $_load_amount = 6;
+	private $_load_amount = 15;
 
 	/**
 	 * load()
