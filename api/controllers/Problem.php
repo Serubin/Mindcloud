@@ -307,8 +307,27 @@ class Problem
 	 * Begins the next trial of a problem, presuming it is now inactive.
 	 * @return true on success, exception on fail
 	 */
-	public function activateProblem() {
-		// TODO
+	public function showProblem() {
+		
+		// verify identity
+		if ($_SESSION['uid'] != RUBIN && $_SESSION['uid'] != SHULLICK) {
+			error_log("WARNING: ATTEMPT TO SHOW PROBLEM FROM UNAUTHORIZED USER");
+			return false;
+		}
+
+		// check that an id was passed
+		if (!isset($this->_params['id'])) {
+			error_log("Failed to hide problem, id provided");
+			return false;
+		}
+
+		// show the problem
+		if (!$stmt = $this->_mysqli->prepare("UPDATE `problems` SET `status` = 1 WHERE `id` = ?")) {
+			throw new ProblemException("Prepare failed for hiding problem: " . $this->_mysqli->error, __FUNCTION__);
+		}
+		$stmt->bind_param("i", $this->_params['id']);
+		$stmt->execute();
+		return true;
 	}
 
 	/**
@@ -316,8 +335,27 @@ class Problem
 	 * Ends the current trial and marks this problem as inactive.
 	 * @return true on success, exception on fail
 	 */
-	public function deactivateProblem() {
-		// TODO
+	public function hideProblem() {
+		
+		// verify identity
+		if ($_SESSION['uid'] != RUBIN && $_SESSION['uid'] != SHULLICK) {
+			error_log("WARNING: ATTEMPT TO HIDE PROBLEM FROM UNAUTHORIZED USER");
+			return false;
+		}
+
+		// check that we got an id to use
+		if (!isset($this->_params['id'])) {
+			error_log("Failed to hide problem, id provided");
+			return false;
+		}
+		
+		// hide the problem
+		if (!$stmt = $this->_mysqli->prepare("UPDATE `problems` SET `status` = 0 WHERE `id` = ?")) {
+			throw new ProblemException("Prepare failed for hiding problem: " . $this->_mysqli->error, __FUNCTION__);
+		}
+		$stmt->bind_param("i", $this->_params['id']);
+		$stmt->execute();
+		return true;
 	}
 
 	/**

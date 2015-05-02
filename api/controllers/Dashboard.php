@@ -53,7 +53,7 @@ class Dashboard {
 			// if problems are to be loaded
 			// load most recent 10
 			// TODO change constant 10 to be however many can fit on screen
-			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand`, `status` FROM `problems` WHERE NOT `status` = 3 ORDER BY `created` LIMIT ?")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `id`, `title`, `created`, `shorthand`, `status` FROM `problems` WHERE `status` = 1 ORDER BY `created` LIMIT ?")) {
 				error_log("failing");
 				throw new DashboardException($this->_mysqli->error, __FUNCTION__);
 			}
