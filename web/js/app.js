@@ -36,7 +36,7 @@ $(function() {
 
 		//log.debug("App", "No start page, redirecting");
 		// redirect to landing intro page
-		ph.pageRequest("/about");
+		ph.pageRequest("/dashboard");
 		return;
 	}
 
