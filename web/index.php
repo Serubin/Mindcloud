@@ -4,8 +4,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Mindcloud</title>
-		<link rel="icon" href="favicon.png" sizes="128x128" type="image/png">
-		<!--[if IE]><link rel="shortcut icon" href="path/to/favicon.ico"><![endif]-->
+		<link rel="icon" href="/favicon.png" sizes="128x128" type="image/png">
+		<!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
 		<link rel="stylesheet" href="/assets/css/master.css" />
 		<!--<link rel="stylesheet" href="/grunt/bower_components/jquery-tags-input/jquery.tagsinput.css" />-->
 
