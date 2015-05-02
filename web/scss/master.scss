@@ -29,6 +29,13 @@
 		font-style: normal;
 }
 
+@font-face {
+		font-family: $bold-font;
+			src: url('/assets/fonts/GenW-Regular.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
+}
+
 body{
 	min-width: 350px;
 }
@@ -170,7 +177,7 @@ body{
 
 /* typography */
 .bold {
-	font-weight: bold;
+	font-family: $bold-font;
 }
 
 .underline {
