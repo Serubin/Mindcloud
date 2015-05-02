@@ -9,7 +9,7 @@ session_start();
  ******************************************************************************/
 
 	// sessions
-	//require_once "include/utils.php";
+	require_once "include/utils.php";
 	//sec_session_start();
 
 	// include db and errors

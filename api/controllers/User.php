@@ -282,6 +282,8 @@ class User
 		if ($user->loginCheck() == true) {
 			return $user->logout();
 		}
+
+		unset($_SESSION['uid']);
 	}
 
 	public function resendVerificationUser(){

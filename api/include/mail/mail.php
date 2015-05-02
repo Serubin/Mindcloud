@@ -55,7 +55,13 @@ class Mail{
 		$mail->SetFrom($from, $from_name);
 		$mail->Subject = $subject;
 		$mail->Body = str_replace('%BODY%',$body,$master);
-		$mail->AddAddress($to);
+		if(is_array($to)){
+			foreach($to as $email){
+				$mail->AddAddress($email);
+			}
+		} else { 
+			$mail->AddAddress($to);
+		}
 		if(!$mail->Send()) {
 			return false;
 		} else {

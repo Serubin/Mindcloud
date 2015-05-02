@@ -25,5 +25,5 @@ define("SECURE", false);
 define("DOMAIN", "mindcloud.loc");
 
 // authorized user ids
-define('RUBIN', 0);
-define('SHULLICK', 1);
+define('RUBIN', 1);
+define('SHULLICK', 2);

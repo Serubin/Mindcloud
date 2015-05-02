@@ -13,9 +13,11 @@
 			<form id="login_form" data-abide="ajax">
 				<!-- email -->
 				<div class="email-field">
-					<span class="label">email</span>
+					<label><span class="label">email</span>
 						<input type="email" required id="login_email" name="login_email" placeholder="you@example.com" />
+						</label>
 						<small class="error">email invalid</small>
+
 				</div>
 				
 				<!-- password -->
