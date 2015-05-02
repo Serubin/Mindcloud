@@ -43,7 +43,7 @@
 				// creates request with params
 				var req = new APICaller(project_type, "vote");
 				var params = {
-					id: problem_id,
+					id: project_id,
 					vote: $(this).attr("data-value")
 				};
 
