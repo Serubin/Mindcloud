@@ -5,6 +5,8 @@
  * Javascript for problem pages
  *****************************************************************************/
 
+var problem_id;
+
 function problem(url) {
 
 
@@ -19,6 +21,7 @@ function problem(url) {
 		shorthand: url[1]
 	};
 	req.send(params, function(result) {
+
 		// populate the problem data
 		var req = new APICaller('problem', 'load');
 		var params = {
@@ -33,6 +36,9 @@ function problem(url) {
 
 			updateCreateSolution(result.id, result.title); // Updates create solution modal
 
+			// voting
+			$(".vote").voter("problem", problem_id);
+			
 			// Loads problem
 			populatePage(result);
 		}
@@ -42,10 +48,6 @@ function problem(url) {
 			alertHandler("alert", "Sorry, we couldn't find that problem.");
 		}
 	}
-
-	// voting 
-	$(".vote").voter("problem", problem_id);
-
 
 
 	// TODO: post listener

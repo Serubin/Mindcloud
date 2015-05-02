@@ -32,8 +32,7 @@
 	}
 
 	$.fn.voter = function(project_type, project_id) {
-		this.click(function(event) {
-
+		this.click(function() {
 			var $btn = $(this);
 			var oppositeVote = ($btn.hasClass("upvote-btn")) ? ".downvote-btn" : ".upvote-btn";
 

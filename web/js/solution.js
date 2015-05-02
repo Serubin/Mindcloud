@@ -34,6 +34,8 @@ function solution(url) {
 
 			updateCreateSolution(result.problem_id, result.problem.title); // Updates create solution modal
 
+			$(".vote").voter("solution", solution_id);
+			
 			// Loads problem
 			populatePage(result);
 		}
@@ -43,8 +45,6 @@ function solution(url) {
 			alertHandler("alert", "Sorry, we couldn't find that solution.");
 		}
 	}
-
-	$(".vote").voter("solution", solution_id);
 
 	// new thread listener
 	$("#submit_thread").submit(function(event) {
