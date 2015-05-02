@@ -16,6 +16,8 @@ function edit(url) {
 		project_type = "solution";
 	}
 
+	window.document.title = "Mindcloud: Edit";
+
 	var req = new APICaller(project_type, "getId");
 	var params = {
 		shorthand: url[2]

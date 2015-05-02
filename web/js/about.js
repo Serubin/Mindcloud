@@ -3,7 +3,8 @@
  * removes the top bar
  */
 function about() {
-
+	window.document.title = "Mindcloud: About";
+	
 	$(".top-bar").css("display", "none");
 
 	var thing = randImgSelect();
