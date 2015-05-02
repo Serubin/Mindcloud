@@ -70,6 +70,8 @@ class Dashboard {
 				//error_log(html_entity_decode($pr_stmt));	
 			}
 
+			usort($result['problems'], "sort_by_score");
+
 			// end
 			$stmt->close();
 
