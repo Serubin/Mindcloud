@@ -89,6 +89,11 @@
 						</div>
 					</div>
 				</div>
+				<div class="terms-agreement">
+					<label>Term of Service and Privacy Policy</label>
+					<input id="terms_of_use" type="checkbox" required><label for="terms_of_use">Do you accept our <a href="/legal" class="keep-native" target="_blank">terms of service and privacy policy</a>?</label>
+
+				</div>
 				<br/>
 				<button type="submit" class="button primary">register</button>
 				</hr>
