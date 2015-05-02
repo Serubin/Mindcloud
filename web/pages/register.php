@@ -89,6 +89,12 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- accept terms -->
+		    	<div class="accept-terms">
+					<input type="checkbox" id="terms-check" required></input>
+		    		<label for="terms-check">I have read and accept the <a href="/legal" class="keep-native" target="_blank">Terms of Service</a></label>
+				</div>
 				<br/>
 				<button type="submit" class="button primary">register</button>
 				</hr>

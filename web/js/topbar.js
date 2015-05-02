@@ -121,9 +121,11 @@ function topBar() {
 
 			// List for actual dropdown
 			var $dropdown = $("<ul><ul>").addClass("dropdown");
-			$dropdown.append(createTopbarItem("/user/settings", "account settings"));
-			$dropdown.append(createTopbarItem("/legal", "legal information"));
-			$dropdown.append(createTopbarItem("/user/logout", "log out"));
+			$dropdown.append(createTopbarItem("/user/settings", "settings <i class=\"fi-widget right\"></i>"));
+			$dropdown.append(createTopbarItem("/legal", "legal <i class=\"fi-torso-business right\"></i>"));
+			$dropdown.append(createTopbarItem("/help", "help <i class=\"fi-alert right\"></i>"));
+			$dropdown.append(createTopbarItem("/problem/feedback", "feedback <i class=\"fi-results-demographics right\"></i>"));
+			$dropdown.append(createTopbarItem("/user/logout", "log out <i class=\"fi-arrow-right right\"></i>"));
 			$dropdownWrapper.append($dropdown);
 
 			// Adds bar to page and allows foundation to do it's magic.

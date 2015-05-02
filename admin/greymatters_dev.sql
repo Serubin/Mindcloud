@@ -43,7 +43,7 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,'art'),(2,'automotive'),(3,'education'),(4,'electronics'),(5,'entertainment'),(6,'food'),(7,'household'),(8,'medical'),(9,'music'),(10,'science'),(11,'society'),(12,'sustainability');
+INSERT INTO `categories` VALUES (1,'art'),(2,'automotive'),(3,'education'),(4,'electronics'),(5,'entertainment'),(6,'food'),(7,'household'),(8,'medical'),(9,'music'),(10,'science'),(11,'society'),(12,'sustainability'),(13,'work place'),(14,'software'),(15,'utility'),(16,'other');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
