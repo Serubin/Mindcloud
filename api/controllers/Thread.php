@@ -10,6 +10,8 @@
 
 require_once("models/ThreadObject.php");
 require_once("models/PostObject.php");
+require_once("models/NotificationObject.php");
+require_once("models/ProblemObject.php");
 
 class Thread
 {
@@ -45,13 +47,23 @@ class Thread
 			$new_thread->subject = $subject;
 			$new_thread->body = $body;
 			$new_thread->problem_id = $this->_params['problem_id'];
-			$new_thread->create();
+			if (!$new_thread->create()) {
+				throw new ThreadException("Something went wrong?", __FUNCTION__);
+			}
+
+			// load the data on the problem so we can get a handle on the problem poser
+			$p = new ProblemObject($this->_mysqli);
+			$p->id = $this->_params['problem_id'];
+			$p->loadPreview();
+
+			// notify the poser of the problem if he is not also the poster of the thread
+			if ($_SESSION['uid'] != $p->uid) {
+				NotificationObject::notify($p->uid, "/problem/" . $p->id, "A new thread has been created on \"" . 
+					$p->title . "\"", $this->_mysqli);
+			}
 
 			// return success
-			return array(
-				"thread_id" => $new_thread->id,
-				"post_id" => $new_thread->first_post->id
-			);
+			return $new_thread;
 
 		} catch (ThreadException $e) {
 			return $e;

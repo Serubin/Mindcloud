@@ -1,18 +1,17 @@
-<div id="login-page">
+<div class="pre-login">
 	<!-- Background -->
 	<div id="splash-background">
 	</div>
 
 	<!-- Register page -->
-	<div id="title">
-		<div id="title"> 
-			<p class="subtitle">welcome to</p>
-			<h1 class="title">mindcloud</h1>
-	</div>
-	</div>
 	<div class="row">
-		<div id="registration-pane" class="floating-pane column small-10 small-offset-1 medium-8 medium-offset-2 large-6 large-offset-3" data-reveal>
+		<div id="registration-pane" class="floating-pane small-10 medium-8 large-6 small-centered columns">
 			
+			<div id="title">
+				<div id="title"> 
+					<h1 class="title">register</h1>
+			</div>
+
 			<p class="lead">Please fill all of these fields</p>
 
 
@@ -70,26 +69,31 @@
 						<input type="radio" name="register_gender" value="F" id="register_gender-f" required><label for="register_gender-f">Female</label>
 						<input type="radio" name="register_gender" value="O" id="register_gender-o" required><label for="register_gender-o">Other</label>
 				</div>
+
+				<!-- captcha -->
 				<div class="captcha">
-					<label for="captcha"><span class="label">Human?</span></label>
+					<label for="captcha"><span class="label">Human?</span> <small>answer this simple math problem to prove yourself</small></label>
 					<div class="row">
-						<div class="large-6 medium-6 small-6 columns">
+						<div class="large-5 medium-5 small-5 columns">
 							<img src="/assets/images/captcha.php" id="captcha-img" />
 						</div>
 						<div class="large-4 medium-4 small-4 columns" id="c_input">
 							<input type="text" name="register_captcha" id="register_captcha" required />
 						</div>
-						<div class="large-1 medium-1 small-1 columns">
-							<a class="keep-native" id="reload-captcha">
-								<i class="fi-loop"></i>
-							</a>
+						<div class="large-2 medium-2 small-2 columns">
+							<span data-tooltip aria-haspopup="true" class="has-tip" title="click to reload if you have trouble seeing the image">
+								<a class="keep-native" id="reload-captcha">
+									<i class="fi-loop"></i>
+								</a>
+							</span>
 						</div>
 					</div>
 				</div>
 				<br/>
-				<button type="submit">register</button>
-				<a href="login" class="button secondary" id="reg_to_login">Already have an account?</a>
+				<button type="submit" class="button primary">register</button>
+				</hr>
+				<button href="/login" class="button secondary">Already have an account?</button>
 			</form>
 		</div>
-	</div> <!-- end regiser modal -->
+	</div> <!-- end regisetr modal -->
 </div>

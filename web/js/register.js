@@ -8,7 +8,7 @@
 /**
  *  User registration
  */
-function register(){
+function register() {
 	/**
 	 * Overrides 
 	 * + password: Match all alphanumeric character and predefined wild characters.
@@ -25,16 +25,16 @@ function register(){
 
 	window.document.title = "Mindcloud: Register";
 
-	$("#reload-captcha").click(function(){
+	$("#reload-captcha").click(function() {
 		d = new Date();
-		$("#captcha-img").attr("src","/assets/images/captcha.php?"+d);
+		$("#captcha-img").attr("src", "/assets/images/captcha.php?" + d);
 	});
 
-	 // Foundation form abide
+	// Foundation form abide
 	$("#registration_form").on('valid', function() {
 		processRegistration();
 	});
-	
+
 
 	$("#splash-background").css("background-image", randImgSelect());
 
@@ -46,39 +46,37 @@ function register(){
 		var req = new APICaller("user", "create");
 
 		// Prepare the submission parameters
-		var params = 
-			{
-				first_name:$("#register_firstname").val(),
-				last_name:$("#register_lastname").val(),
-				email:$("#register_email").val(),
-				password:hex_sha512($("#register_password").val()),
-				gender:$("#register_gender-m").val() || $("#register_gender-f").val() || $("#register_gender-o").val(),
-				year:$("#register_year").val(),
-				captcha:$("#register_captcha").val(),
-			};
+		var params = {
+			first_name: $("#register_firstname").val(),
+			last_name: $("#register_lastname").val(),
+			email: $("#register_email").val(),
+			password: hex_sha512($("#register_password").val()),
+			gender: $("#register_gender-m").val() || $("#register_gender-f").val() || $("#register_gender-o").val(),
+			year: $("#register_year").val(),
+			captcha: $("#register_captcha").val(),
+		};
 
 		// React on the response from the server
 		req.send(params, function(result) {
 			console.log(result);
 			if (result == true) {
-				new alertHandler("info","<p>You've been registered! Check your email to confirm your account</p>");
-				
+				new alertHandler("info", "<p>You've been registered! Check your email to confirm your account</p>");
+
 				// Redirect browser page
 				ph.pageRequest("login");
-				
-			}
-			else {
-				if(result == "captcha-mismatch") {
+
+			} else {
+				if (result == "captcha-mismatch") {
 					console.log("merp");
 					new alertHandler("alert", "You're captcha code couldn't be verified. Are you human?");
 					return;
 				}
-				if(result == "duplicate-email") {
+				if (result == "duplicate-email") {
 					new alertHandler("alert", "This email has already been registered");
 					return;
 				} else {
 					new alertHandler("alert", "There was an error processing your request. Pleast try again later");
-				}	
+				}
 			}
 		});
 	}
@@ -89,10 +87,10 @@ function register(){
 	}
 }
 
-function preregister(){
+function preregister() {
 	//Redirect user to the app if already logged in
 	var req = new APICaller("user", "check");
-	req.send({}, function (result) {
+	req.send({}, function(result) {
 		if (result)
 			ph.pageRequest("dashboard"); // loads dash
 	});

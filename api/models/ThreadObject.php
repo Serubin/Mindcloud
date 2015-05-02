@@ -6,6 +6,8 @@
  * Model representation of a discussion thread.
  *****************************************************************************/
 
+require_once("models/PostObject.php");
+
 class ThreadObject {
 
 	private $_mysqli;
@@ -44,7 +46,9 @@ class ThreadObject {
 			throw new ThreadException("Insert failed: " . $this->_mysqli->error, __FUNCTION__);
 		}
 
-		$stmt->bind_param("isi", $this->op, $this->subject, $this->problem_id);
+		if (!$stmt->bind_param("isi", $this->op, $this->subject, $this->problem_id)) {
+			throw new ThreadException("Bind param failed: " . $stmt->error, __FUNCTION);
+		}
 
 		// submit thread
 		$stmt->execute();
@@ -82,7 +86,7 @@ class ThreadObject {
 				throw new ThreadException("thread doesn't exist", __FUNCTION__);
 			}
 
-			if (!$stmt = $this->_mysqli->prepare("SELECT `subject`, `created` FROM `threads` WHERE `id` = ?")) {
+			if (!$stmt = $this->_mysqli->prepare("SELECT `op_id`, `subject`, `created`, `problem_id` FROM `threads` WHERE `id` = ?")) {
 				throw new ThreadException("prepare failed: " . $this->_mysqli->error, __FUNCTION__);
 			}
 
@@ -93,12 +97,14 @@ class ThreadObject {
 			if ($stmt->num_rows != 1) {
 				throw new ThreadException ("multiple threads found with that id", __FUNCTION__);
 			}
-			$stmt->bind_result($subject, $created);
+			$stmt->bind_result($op_id, $subject, $created, $problem_id);
 			$stmt->fetch();
 
 			// set instance vars
 			$this->subject = $subject;
 			$this->created = $created;
+			$this->problem_id = $problem_id;
+			$this->op = $op_id;
 
 			// load the first post as body of thread
 			$stmt->close();

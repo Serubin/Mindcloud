@@ -1,9 +1,9 @@
 <div class="row">
 	<!-- coming soon overlay -->
 	<div class="overlay" style="background-color: rgba(0, 0, 0, 0.6);" id="about-page">
-		<div class="row" style="margin: 10rem 0;">
+		<div class="pre-login row" style="margin: 10rem 0;">
 			<div class="small-12 medium-6 column small-centered">
-				<div class="float-pane">
+				<div class="floating-pane">
 					<br/>
 					<h3>Account settings coming soon!</h3>
 					<br/>

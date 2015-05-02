@@ -1,23 +1,23 @@
-<div id="login-page">
+<div class="pre-login">
 	<!-- Background -->
 	<div id="splash-background">
 	</div>
-
-	<!-- title -->
-	<div id="title"> 
-		<p class="subtitle">welcome to</p>
-		<h1 class="title">mindcloud</h1>
-	</div>
 			
 	<div class="row" id="body-row">
-		<div id="login-pane" class="floating-pane small-10 medium-4 column small-offset-1 medium-offset-4">
+		<div id="login-pane" class="floating-pane small-10 medium-8 large-6 small-centered columns">
+
+			<!-- title -->
+			<img class="logo" src="/assets/images/logo/welcome_logo.png">
+
 			<p>Please log in.</p>
 			<form id="login_form" data-abide="ajax">
 				<!-- email -->
 				<div class="email-field">
-					<span class="label">email</span>
+					<label><span class="label">email</span>
 						<input type="email" required id="login_email" name="login_email" placeholder="you@example.com" />
+						</label>
 						<small class="error">email invalid</small>
+
 				</div>
 				
 				<!-- password -->
@@ -25,11 +25,11 @@
 					<label><span class="label">password</span>
 						<input type="password" id="login_password" name="login_password" required pattern="password" placeholder="password" />
 						</label>
-						<small id="login_pass_err" class="error">Passwords must be at least 8 charaters long and may only contain numbers, letters, and these charaters: @*#&.^!</small>
+						<small id="login_pass_err" class="error">Invalid password</small>
 				</div>
 
 				<div class="captcha" style="display: none;">
-					<label for="captcha"><span class="label">Human?</span></label>
+					<label for="captcha"><span class="label">Human?</span> <small>answer this simple math problem to prove yourself</small></label>
 					<div class="row">
 						<div class="large-6 medium-6 small-6 columns">
 							<img src="/assets/images/captcha.php" id="captcha-img" />
@@ -38,15 +38,18 @@
 							<!-- add input as needed -->
 						</div>
 						<div class="large-1 medium-1 small-1 columns">
-							<a class="keep-native" id="reload-captcha">
-								<i class="fi-loop"></i>
-							</a>
+							<span data-tooltip aria-haspopup="true" class="has-tip" title="click to reload if you have trouble seeing the image">
+								<a class="keep-native" id="reload-captcha">
+									<i class="fi-loop"></i>
+								</a>
+							</span>
 						</div>
 					</div>
 				</div>
 
-		<a href="/register" class="button btn-login">register</a>
-		<button type="submit" class="button btn-login">login</button>
+		<button type="submit" class="button primary">login</button>
+		<hr>
+		<a href="/register" class="button secondary">still need to register?</a>
 	</form>
 
 

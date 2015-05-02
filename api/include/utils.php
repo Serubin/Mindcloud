@@ -58,3 +58,11 @@ function sec_session_start() {
 	session_regenerate_id(true);
 	//setcookie($session_name, session_id());
 }
+
+/**
+ * Sortes problem arrays based on score
+ * For dashboard
+ */
+function sort_by_score($a, $b) {
+	return $a['votes'] < $b['votes'];
+}

@@ -6,6 +6,9 @@
  * Model representation of a notifcation.
  *****************************************************************************/
 
+require_once "models/UserObject.php";
+require_once "include/socket/Emitter.php";
+
 class NotificationObject {
 
 	private $_mysqli;
@@ -25,6 +28,26 @@ class NotificationObject {
 	 */
 	public function __construct($mysqli) {
 		$this->_mysqli = $mysqli;
+	}
+
+	/**
+	 * create()
+	 * Creates a new notification
+	 */
+	public function create(){
+		if(!isset($this->uid, $this->url, $this->message)) {
+			throw new UserException("unset vars: uid, url, message", __FUNCTION__);
+		}
+
+		if(!$stmt = $this->_mysqli->prepare("INSERT INTO `user_notifications` (`uid`, `url`, `message`) VALUES (?,?,?)")){
+			throw new UserException($this->_mysqli->error, __FUNCTION__);
+		}
+
+		$stmt->bind_param("iss", $this->uid, $this->url, $this->message);
+		$stmt->execute();
+
+		$this->id = $this->_mysqli->insert_id;
+		$stmt->close();
 	}
 
 	/**
@@ -57,26 +80,6 @@ class NotificationObject {
 		$this->message = $db_message;
 		$this->time = $db_time;
 
-		$stmt->close();
-	}
-
-	/**
-	 * create()
-	 * Creates a new notification
-	 */
-	public function create(){
-		if(!isset($this->uid, $this->url, $this->message)) {
-			throw new UserException("unset vars: uid, url, message, time");
-		}
-
-		if(!$stmt = $this->_mysqli->prepare("INSERT INTO `user_notifications` (`uid`, `url`, `message`) VALUES (?,?,?)")){
-			throw new UserException($this->_mysqli->error, __FUNCTION__);
-		}
-
-		$stmt->bind_param("iss", $this->uid, $this->url, $this->message);
-		$stmt->execute();
-
-		$this->id = $this->_mysqli->insert_id;
 		$stmt->close();
 	}
 
@@ -122,5 +125,49 @@ class NotificationObject {
 		$stmt->close();
 
 		return $notifications;
+	}
+
+	/* pushNotification()
+	 * Creates a new pusher stream based on users unique notification hash.
+	 */
+	public function pushNotification(){
+		if(!isset($this->uid, $this->id, $this->url, $this->message)){
+			throw new UserException("Unset vars", __FUNCTION__);
+		}
+		$user = new UserObject($this->_mysqli);
+		$user->uid = $this->uid;
+
+		$user->load();
+
+		$redis = new \Redis(); // Using the Redis extension provided client
+		$redis->connect('127.0.0.1', '6379');
+
+		$emitter = new SocketIO\Emitter($redis);
+		$emitter->emit($user->notification_hash, array('id' => $this->id, 'url' => $this->url, 'message' => $this->message));
+
+		return true;
+	}
+
+	/**
+	 * static method for producing notifications
+	 */
+	public static function notify ($uid, $url, $msg, $mysqli) {
+
+		// ensure we have values
+		if (!isset($uid, $url, $msg)) {
+			throw new UserException("Could not create notifcation. Got " . $uid . " and " . $url . " and " . $msg, __FUNCTION__);
+		}
+
+		// initialize a notification
+		$n = new NotificationObject($mysqli);
+		$n->uid = $uid;
+		$n->url = $url;
+		$n->message = $msg;
+
+		// submit it
+		$n->create();
+
+		$n->pushNotification();
+
 	}
 }

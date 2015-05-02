@@ -1,0 +1,11 @@
+#edit-page {
+	#edit-text-preview {
+		resize: both;
+		overflow-x: scroll; // enables scrolling and resize
+		height: 150px;
+		width: 100%;
+		max-width: 100%;
+		border: 1px solid #ccc; // matches text box
+		padding: 5px;
+	}
+}

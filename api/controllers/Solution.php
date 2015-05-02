@@ -8,6 +8,8 @@
  ******************************************************************************/
 
 require_once "models/SolutionObject.php";
+require_once "models/NotificationObject.php";
+require_once "models/ProblemObject.php";
 require_once "include/vote.php";
 
 class Solution
@@ -67,6 +69,17 @@ class Solution
 			
 			$solution->create();
 
+			// load the problem data
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $problem_id;
+			$problem->loadPreview();
+
+			// create notification if user is not posting to his/her own problem
+			if ($problem->uid != $_SESSION['uid']) {
+				NotificationObject::notify($problem->uid, "/solution/" . $solution->shorthand, 
+					"A new solution has been created for \"" . $problem->title . "\"", $this->_mysqli);
+			}
+
 			return $solution->shorthand;
 		} catch (Exception $e) {
 			return $e;
@@ -91,29 +104,25 @@ class Solution
 	public function updateSolution(){
 		try {
 			// Checks that all required post variables are set
-			if (!isset($this->_params['id'], $this->_params['shorthand'], $this->_params['title'], 
-				$this->_params['description'], $_SESSION['uid'])) {
+			if (!isset($this->_params['id'], $this->_params['title'], 
+				$this->_params['description'], $this->_params['status'], $_SESSION['uid'])) {
 				error_log(json_encode($this->_params));
 				throw new SolutionException("Unset vars", __FUNCTION__);
 			}
 
-			$solution = new SolutionObject();
+			$solution = new SolutionObject($this->_mysqli);
 			$solution->id = filter_var($this->_params['id'], FILTER_SANITIZE_NUMBER_INT);
-			$solution->load();
+			$solution->loadPreview();
 
 			// Ensures use is authorized
-			if($_SESSION['uid'] != $solution->uid)
+			if(!$solution->can_edit)
 				throw new SolutionException("User not authorized", __FUNCTION__);
-				
 
-			$shorthand = filter_var($this->_params['shorthand'], FILTER_SANITIZE_STRING);
-			$solution->shorthand = $shorthand;
+			$solution->title  = filter_var($this->_params['title'], FILTER_SANITIZE_STRING);
 
-			$title = filter_var($this->_params['title'], FILTER_SANITIZE_STRING);
-			$solution->title = $title;
+			$solution->description = strip_tags($this->_params['description']);
 
-			$description = strip_tags($this->_params['description']);
-			$solution->description = $description;
+			$solution->status = filter_var($this->_params['status'], FILTER_SANITIZE_NUMBER_INT);
 
 			$solution->update();
 

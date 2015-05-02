@@ -129,25 +129,65 @@ class Problem
 	 * Function for loading content of problem page.
 	 */
 	public function loadProblem() {
-		try {
-
-			if (!isset($this->_params['id'])) {
-				throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
-			}
-
-			// initialize problem object
-			$problem = new ProblemObject($this->_mysqli);
-			$problem->id = $this->_params['id'];
-
-			// inflate the problem with its own information
-			$problem->loadFull();
-
-			return $problem;
-
-		} catch (ProblemException $e) {
-			return $e;
+		if (!isset($this->_params['id'])) {
+			throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
 		}
 
+		// initialize problem object
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->id = $this->_params['id'];
+
+		// inflate the problem with its own information
+		$problem->loadFull();
+
+		return $problem;
+	}
+
+	/**
+	 * loadProblem()
+	 * Function for loading content of problem page.
+	 */
+	public function loadPreviewProblem() {
+		if (!isset($this->_params['id'])) {
+			throw new ProblemException("Could not load problem; no id provided.", __FUNCTION__);
+		}
+
+		// initialize problem object
+		$problem = new ProblemObject($this->_mysqli);
+		$problem->id = $this->_params['id'];
+
+		// inflate the problem with its own information
+		$problem->loadPreview();
+
+		return $problem;
+	}
+
+	public function updateProblem(){
+		try { 
+			if(!isset($this->_params['id'], $this->_params['title'], $this->_params['description'], $this->_params['status'], $_SESSION['uid'])) {
+				throw new ProblemException("Couldn't update problem; missing paramters", __FUNCTION__);
+			}
+
+			$problem = new ProblemObject($this->_mysqli);
+			$problem->id = $this->_params['id'];
+			$problem->loadPreview();
+
+			if(!$problem->can_edit)
+				throw new ProblemException("Unauthorized request", __FUNCTION__);
+
+			$problem->title = $this->_params['title'];
+			$problem->description = $this->_params['description'];
+			$problem->status = $this->_params['status'];
+
+			// sanitize strings
+			$problem->title = filter_var($problem->title, FILTER_SANITIZE_STRING);
+			$problem->description = strip_tags($problem->description);
+			$problem->status = filter_var($problem->status, FILTER_SANITIZE_NUMBER_INT);
+			
+			return $problem->update();
+		} catch(Exception $e) {
+			return $e;
+		}
 	}
 
 	/** 
@@ -267,8 +307,27 @@ class Problem
 	 * Begins the next trial of a problem, presuming it is now inactive.
 	 * @return true on success, exception on fail
 	 */
-	public function activateProblem() {
-		// TODO
+	public function showProblem() {
+		
+		// verify identity
+		if ($_SESSION['uid'] != RUBIN && $_SESSION['uid'] != SHULLICK) {
+			error_log("WARNING: ATTEMPT TO SHOW PROBLEM FROM UNAUTHORIZED USER");
+			return false;
+		}
+
+		// check that an id was passed
+		if (!isset($this->_params['id'])) {
+			error_log("Failed to hide problem, id provided");
+			return false;
+		}
+
+		// show the problem
+		if (!$stmt = $this->_mysqli->prepare("UPDATE `problems` SET `status` = 1 WHERE `id` = ?")) {
+			throw new ProblemException("Prepare failed for hiding problem: " . $this->_mysqli->error, __FUNCTION__);
+		}
+		$stmt->bind_param("i", $this->_params['id']);
+		$stmt->execute();
+		return true;
 	}
 
 	/**
@@ -276,8 +335,27 @@ class Problem
 	 * Ends the current trial and marks this problem as inactive.
 	 * @return true on success, exception on fail
 	 */
-	public function deactivateProblem() {
-		// TODO
+	public function hideProblem() {
+		
+		// verify identity
+		if ($_SESSION['uid'] != RUBIN && $_SESSION['uid'] != SHULLICK) {
+			error_log("WARNING: ATTEMPT TO HIDE PROBLEM FROM UNAUTHORIZED USER");
+			return false;
+		}
+
+		// check that we got an id to use
+		if (!isset($this->_params['id'])) {
+			error_log("Failed to hide problem, id provided");
+			return false;
+		}
+		
+		// hide the problem
+		if (!$stmt = $this->_mysqli->prepare("UPDATE `problems` SET `status` = 0 WHERE `id` = ?")) {
+			throw new ProblemException("Prepare failed for hiding problem: " . $this->_mysqli->error, __FUNCTION__);
+		}
+		$stmt->bind_param("i", $this->_params['id']);
+		$stmt->execute();
+		return true;
 	}
 
 	/**

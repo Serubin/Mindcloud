@@ -7,9 +7,17 @@
 		}
 	}
 
+	#edit-link {
+		padding: 5px 10px;
+	}
+
 	#description{
 		padding-left: 0.9375rem;
-  		padding-right: 0.9375rem;
+		padding-right: 0.9375rem;
+
+		img {
+			width: 45%;
+		}
 	}
 
 	#info_container{
@@ -35,7 +43,7 @@
 	}
 
 	#related-solutions {
-  		height: 230px;
+			height: 230px;
 
 		display: flex;
 		display: -webkit-flex;
@@ -70,7 +78,7 @@
 		}
 
 		#no-display{
-			  padding-top: 90px;
+				padding-top: 90px;
 		}
 	}
 }
