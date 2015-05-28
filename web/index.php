@@ -286,7 +286,7 @@
 		<div id="social">
 			<a href="https://www.facebook.com/mindcloudio" class="keep-native" target="_blanks" ><small><i class="fi-social-facebook"></i> like us</small></a>
 			<a href="/help" target="_blanks" >	<small><i class="fi-alert"></i> help</small></a>
-			<a href="/feedback" target="_blanks" >	<small><i class="fi-results-demographics"></i> feedback</small></a>
+			<a href="/problem/feedback" target="_blanks" >	<small><i class="fi-results-demographics"></i> feedback</small></a>
 			<small>&#169; mindcloud - beta</small>
 		</div>
 	</body>
