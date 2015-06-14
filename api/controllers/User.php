@@ -97,15 +97,15 @@ class User
 	private function sendVerification($uid, $first_name, $last_name, $email){
 			// submit email
 			$emailBody = "<h2>Welcome to mindcloud!</h2>
-					  <p>Hi $first_name $last_name,</p>
-					  <p>We've noticed that you created an account! We're very excited to have you! All you have left to do is verify your account by clicking the link below! <br/>
+					  <p>Greetings $first_name $last_name!</p>
+					  <p>We're very excited to bring you in. All that's left is to verify your email by clicking the link below. <br/>
 					  See you on the other side!
 					  </p>
 
 					  <p><a href='https://mindcloud.io/login/validate/" . hash("sha512", $uid . $first_name . $last_name . $email) . "/" . str_replace(".", "-", $email) . "'>Validate your account!</a></p>
-					  <p>-- The Mindcloud team! </p>";
+					  <p>-- The Mindcloud Team </p>";
 
-			Mail::send($email, "Welcome to Mindcloud, this is it!", $emailBody);
+			Mail::send($email, "Verify Your Mindcloud Email", $emailBody);
 	}
 	/* loginUser()
 	 * Logs users in and sets sessions and cookies

@@ -25,7 +25,8 @@ var more = true; // assume there are more until we get a result less then max
 
 function dashboard() {
 
-	window.document.title = "Mindcloud: Dashboard"
+	window.document.title = "Mindcloud: Dashboard";
+	$("#back_to_dashboard").css("display", "none");
 
 	// handle on content container
 	var $problems = $("#problems");

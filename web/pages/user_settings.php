@@ -5,9 +5,8 @@
 			<div class="small-12 medium-6 column small-centered">
 				<div class="floating-pane">
 					<br/>
-					<h3>Account settings coming soon!</h3>
-					<br/>
-					<p>Account settings and many more exciting features are on their way to you!</p>
+					<h3 class="text-center">This page is coming soon!</h3>
+					<p>Pardon our dust, but this page is under construction.</p>
 				</div>
 			</div>
 		</div>		

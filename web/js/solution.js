@@ -81,6 +81,7 @@ function solution(url) {
 	function populatePage(data) {
 		// show create solution
 		$("#create_solution").css("display", "");
+		$("#back_to_dashboard").css("display", "");
 
 		// set subject
 		window.document.title = "Solution: " + data.title;

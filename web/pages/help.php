@@ -1,4 +1,4 @@
-<div id="help-page" class="pre-login row">
+<div id="help-page" class="pre-login">
 	<!-- Background -->
 	<div id="splash-background">
 	</div>
@@ -6,8 +6,8 @@
 	<div class="floating-pane column small-10 small-offset-1 medium-8 medium-offset-2 large-6 large-offset-3">
 
 	<h4 class="text-center">Help and Contact</h4>
-	<p>We understand that mindcloud is very new and still has some issues laying around. We are eager to help you get the best experience from mindcloud. If you have any issues please just send us an email using the form below!</p>
-	<p>If you have any feed back, head to our <a href="/problem/feedback">feedback problem</a> and make a post or solution!</p> 
+	<p>Having issues? We're to help.</p>
+	<p>If you're looking to send us some feedback, Please check out our <a href="/problem/feedback">feedback problem.</a></p> 
 	
 	<form id="help_form" data-abide="ajax">
 		<!-- name -->
@@ -58,6 +58,6 @@
 			</div>
 		</div>
 		<br/>
-		<button type="submit" class="button primary">send</button>
+		<button type="submit" class="button primary">Submit</button>
 	</div>
 </div>

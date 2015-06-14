@@ -94,13 +94,19 @@ function topBar() {
 
 			// Sets home link to dashboard
 			$("#home-link").attr("href", "/dashboard");
-
 			$links.html(""); // clears current link
+
+			// dashboard
+			var $dashboard = createTopbarItem("/dashboard", "dashboard");
+			$dashboard.attr("id", "back_to_dashboard").css("display", "none");
+			$links.append($dashboard);
+
+			// problem
 			var $problem = createTopbarItem("#", "pose a problem");
 			$problem.attr("data-reveal-id", "pose_problem_modal")
 			$links.append($problem); //TODO attach/create global pose problem context
 
-
+			// solution
 			var $solution = createTopbarItem("#", "create a solution");
 			$solution.attr("data-reveal-id", "create_solution_modal")
 			$solution.attr("id", "create_solution").css("display", "none");
@@ -121,11 +127,12 @@ function topBar() {
 
 			// List for actual dropdown
 			var $dropdown = $("<ul><ul>").addClass("dropdown");
-			$dropdown.append(createTopbarItem("/user/settings", "settings <i class=\"fi-widget right\"></i>"));
-			$dropdown.append(createTopbarItem("/legal", "legal <i class=\"fi-torso-business right\"></i>"));
-			$dropdown.append(createTopbarItem("/help", "help <i class=\"fi-alert right\"></i>"));
-			$dropdown.append(createTopbarItem("/problem/feedback", "feedback <i class=\"fi-results-demographics right\"></i>"));
-			$dropdown.append(createTopbarItem("/user/logout", "log out <i class=\"fi-arrow-right right\"></i>"));
+			$dropdown.append(createTopbarItem("/user/settings", "<i class=\"fi-widget right\"></i><span>settings</span>"));
+			$dropdown.append(createTopbarItem("/legal", "<i class=\"fi-torso-business right\"></i><span>legal</span>"));
+			$dropdown.append(createTopbarItem("/help", "<i class=\"fi-alert right\"></i><span>help</span>"));
+			$dropdown.append(createTopbarItem("/problem/feedback", "<i class=\"fi-results-demographics right\"></i><span>feedback</span>"));
+			$dropdown.append(createTopbarItem("/faq", "FAQ"));
+			$dropdown.append(createTopbarItem("/user/logout", "<i class=\"fi-arrow-right right\"></i></span>log out</span>"));
 			$dropdownWrapper.append($dropdown);
 
 			// Adds bar to page and allows foundation to do it's magic.
