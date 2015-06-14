@@ -9,10 +9,19 @@ build_options="prd"
 
 cd $dir
 
+echo "Updating $branch"
+git checkout $branch
+git pull
+
+echo "Launching grunt build"
+cd $grunt_dir
+grunt build $build_options
+
+exit
 git checkout $branch
 git pull
 
 cd $grunt_dir
-grunt build $build_options
+grunt $build_options
 
 exit

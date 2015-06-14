@@ -23,7 +23,7 @@ function pageHandler(args) {
 	var history = window.history;
 
 	var pkg = "pageHandler"; // For logger
-
+	
 	// public functions
 	var pageRequest;
 	var parseUrl;

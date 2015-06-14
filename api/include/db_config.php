@@ -14,15 +14,15 @@ define ('DATABASE', 'dev_greymatters');*/
 
 // database credentials
 define ('HOST', 'localhost');
-define ('USER', 'mindcloud');
-define ('PASSWORD', '87654321');
-define ('DATABASE', 'dev_greymatters');
+define ('USER', 'mindcloud_prd');
+define ('PASSWORD', 'LXTf6x8HYa2P46WPy9wJ68ZSPHtEabx7AE8txcWXybc5ZWsNkv2PgK2E9NavRwc3');
+define ('DATABASE', 'mindcloud_io');
 
 $mysqli = new mysqli(HOST, USER, PASSWORD, DATABASE);
 
 // Specify cookie security details
 define("SECURE", false);
-define("DOMAIN", "mindcloud.loc");
+define("DOMAIN", "mindcloud.io");
 
 // authorized user ids
 define('RUBIN', 1);

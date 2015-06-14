@@ -11,7 +11,7 @@
 // 2 - info (default for develop)
 // 3 - debug 
 //
-var LEVEL = 3;
+var LEVEL = 0;
 
 var log = function() {
 	return {
@@ -60,7 +60,6 @@ var color = {
 		var no = Math.floor(Math.random() * 7 + 1);
 
 		return 'url("/assets/images/splash/' + no + '.jpg")';
-
 	}
 
 	/**
