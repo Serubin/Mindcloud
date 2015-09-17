@@ -12,7 +12,7 @@
 		<div class="tabs-content">
 			<div id="legal-overview" class="content active">
 				<h2>Overview</h2>
-				<p>We want make sure that our users know that their data and ideas are secure and protected; your protection is a priority to us. We encourage you to take a look through our terms and conditions as well as our privacy police to ensure you understand what we do to protect your rights.</p>
+				<p>We want make sure that you know that your data and ideas are secure and protected. Your protection is a priority to us. We encourage you to take a look through our terms and conditions as well as our privacy policy to ensure you understand what we do in your interest.</p>
 			</div>
 			<div id="privacy-policy" class="content">
 				<h2>Privacy Policy</h2>

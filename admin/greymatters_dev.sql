@@ -212,7 +212,7 @@ DROP TABLE IF EXISTS `problems`;
 CREATE TABLE `problems` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `shorthand` varchar(205) NOT NULL,
-  `title` varchar(160) NOT NULL,
+  `title` varchar(140) NOT NULL,
   `description` text NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `creator` int(11) NOT NULL,
