@@ -1,0 +1,9 @@
++ Changing max problem title length to 140 in order to fit in boxes (changed in form and sql file)
++ removed tooltip for "optional" in problem submission
++ Tweaked email verification body 
++ Tweaked robots.txt and seo meta for index page
++ Made hovering over problems a little more noticable on dashboard(@feedback:raoul)
++ Added toolbar button for dashboard ard for a more intuitive button to return from problem/solution
++ added an faq to the main menu worked on said faq
++ Made menu icons display inline with text (wrapped text in span and put icons first)
++ removed row class from help page to get rid of random space
